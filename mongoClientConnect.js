@@ -7,9 +7,7 @@ module.exports.mongoDatabaseClient = async (database) => {
     const clusterUrl = process.env.MONGODB_CLUSTER_URL;
     const uri = `mongodb+srv://${username}:${password}@${clusterUrl}/`;
 
-    const mongoDbClient = await mongoose
-      .createConnection(`${uri}${database}`)
-      .asPromise();
+    const mongoDbClient = await mongoose.connect(`${uri}${database}`);
     console.log('MongoDB 🌱 Connection 🔗 Successful 🌞🌞!!');
     return mongoDbClient;
   } catch (error) {
