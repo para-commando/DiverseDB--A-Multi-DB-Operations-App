@@ -1,30 +1,49 @@
 const { dataObjects } = require('./DatabaseSampleDataObjects');
 require('dotenv').config();
-const { mongoDatabaseClient } = require('./mongoClientConnect');
+const { getMongoDataBaseConnection } = require('./connectionUtils');
+const { getMongooseModels } = require('./mongooseModels');
+const { getMongooseSchemaObjects } = require('./mongooseSchemas');
+const validator = require('validator');
 async function mongoDbOperations() {
-  const mongoDbClient = await mongoDatabaseClient('MyMongoDB');
+  const connection = await getMongoDataBaseConnection('MyMongoDB');
 
   try {
-    const collectionName = mongoDbClient.collection('MyCollection21');
+    // Define a schema and create a model
 
-    const insertManyResult = await collectionName.insertMany(
-      dataObjects.mongDatabaseDataObjects.sampleInsertData
+    // lets say i change unique property to true then i need to change the index in database correspondingly
+    const schema = await getMongooseSchemaObjects({
+      mongoDatabaseConnection: connection,
+      schemaConstraints: {
+        email2: {
+          type: String,
+          required: true,
+          lowercase: true,
+          unique: true,
+          validate: (value) => {
+            return validator.isEmail(value);
+          },
+        },
+      },
+    });
+    const model = getMongooseModels({
+      modelName: 'myModel22',
+      schema: schema,
+      databaseConnection: connection,
+    });
+
+    // Insert many documents using the model
+    const insertManyResult = await model.insertMany(
+      dataObjects.mongDatabaseDataObjects.emailData
     );
-    console.log(
-      '🚀 ~ file: app.js:98 ~ run ~ insertManyResult:',
-      insertManyResult
-    );
-    console.log(
-      `${insertManyResult.insertedCount} documents successfully inserted.\n`
-    );
+    console.log('Insert Many Result:', insertManyResult);
+    console.log(`${insertManyResult.length} documents successfully inserted.`);
   } catch (err) {
-    console.error(
-      `Something went wrong trying to insert the new documents: ${err}\n`
-    );
+    console.error(`Error inserting documents: ${err}`);
   }
-  await mongoDbClient.close();
-  console.log('MongoDB 🌿 Connection closed ⚓⚓......');
+  await connection.disconnect();
+
 }
+
 mongoDbOperations().catch((error) => {
-  console.log('🚀 ~ file: app.js:98 ~ run ~ error:', error);
+  console.log('Error in mongoDbOperations:', error);
 });

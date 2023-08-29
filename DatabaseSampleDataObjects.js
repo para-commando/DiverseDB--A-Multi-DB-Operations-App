@@ -1,6 +1,9 @@
 module.exports.dataObjects = {
-"mongDatabaseDataObjects" :{
 
+"mongDatabaseDataObjects" :{
+    "emailData": {
+      "email2": 'ADA.LOVELACE@GMAIL.COM'
+    },
     "sampleInsertData": [
         {
           "name": "elotes",
