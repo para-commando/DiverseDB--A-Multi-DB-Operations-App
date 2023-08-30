@@ -4,46 +4,74 @@ const { getMongoDataBaseConnection } = require('./connectionUtils');
 const { getMongooseModels } = require('./mongooseModels');
 const { getMongooseSchemaObjects } = require('./mongooseSchemas');
 const validator = require('validator');
-async function mongoDbOperations() {
-  const connection = await getMongoDataBaseConnection('MyMongoDB');
+const connection = await getMongoDataBaseConnection('MyMongoDB');
+
+async function mongoDbCreateOperations(connection) {
 
   try {
     // Define a schema and create a model
 
-    // lets say i change unique property to true then i need to change the index in database correspondingly
-    const schema = await getMongooseSchemaObjects({
-      mongoDatabaseConnection: connection,
-      schemaConstraints: {
-        email2: {
-          type: String,
-          required: true,
-          lowercase: true,
-          unique: true,
-          validate: (value) => {
-            return validator.isEmail(value);
-          },
+    const schemaConstraints = {
+      email2: {
+        type: String,
+        required: true,
+        lowercase: true,
+        unique: false,
+        validate: (value) => {
+          return validator.isEmail(value);
         },
       },
+      email3: {
+        type: String,
+      },
+    };
+    const schema = await getMongooseSchemaObjects({
+      mongoDatabaseConnection: connection,
+      schemaConstraints: schemaConstraints,
     });
     const model = getMongooseModels({
       modelName: 'myModel22',
       schema: schema,
       databaseConnection: connection,
     });
-
-    // Insert many documents using the model
-    const insertManyResult = await model.insertMany(
-      dataObjects.mongDatabaseDataObjects.emailData
+    // making schema changes dynamic
+    await model.schema.index(
+      { email2_1: 1 },
+      { unique: schemaConstraints.email2.unique }
     );
-    console.log('Insert Many Result:', insertManyResult);
-    console.log(`${insertManyResult.length} documents successfully inserted.`);
+    // Ensure the indexes are applied
+    await model.ensureIndexes();
+
+    // Insert many documents using .create() method
+
+    const data = [
+      { email2: 'aba23423cd@gmail.com' },
+      { email2: 'abac34234d@gmail.com' },
+      { email2: 'abac23234d@gmail.com' },
+    ];
+    const insertManyResult = await model.create(data);
+    console.log(
+      '🚀 Total documents inserted using .create method:  ',
+      insertManyResult.length
+    );
+
+    // Insert many documents using the instance method
+
+    const instances = data.map((item) => new model(item));
+
+    const promises = instances.map((instance) => instance.save());
+
+    const insertingMultipleDocuments = await Promise.all(promises);
+    console.log(
+      '🚀 Total documents inserted using instance method:  ',
+      insertingMultipleDocuments.length
+    );
   } catch (err) {
     console.error(`Error inserting documents: ${err}`);
   }
   await connection.disconnect();
-
 }
 
-mongoDbOperations().catch((error) => {
-  console.log('Error in mongoDbOperations:', error);
+mongoDbCreateOperations(connection).catch((error) => {
+  console.log('Error in mongoDbCreateOperations:', error);
 });
