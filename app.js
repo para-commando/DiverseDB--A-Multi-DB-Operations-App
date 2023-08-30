@@ -16,22 +16,42 @@ async function mongoDbCreateOperations(connection) {
       mongoDatabaseConnection: connection,
       schemaConstraints: subSchemaConstraints,
     });
+    // the uppercase:true converts string to uppercase
+    //  default: () => new Date() When you use an arrow function, it will be executed each time a new document is inserted. This ensures that the default value for the createdAt field will be the date and time when the document is inserted into the database.
+    // beware: note that these validations only work with create/save methods for inserting documents. It is preferred to use findById and .save on it or findOne and .save on it to prevent bypassing of below schema validation
     const schemaConstraints = {
       name: {
         type: String,
         required: true,
-        lowercase: true,
+        uppercase: true,
         unique: false,
+        minlength: 3,
+        maxLength: 40
       },
-      age: Number,
+      age: {
+        type: Number,
+        min:1,
+        validate:{
+          validator: age=> age <= 150,
+          message: props => `${props.path} input(${props.value}) is  greater than 150`
+        }
+      },
       email: {
         type: String,
         validate: (value) => {
           return validator.isEmail(value);
         },
       },
-      createdAt: Date,
-      updatedAt: Date,
+      createdAt: {
+        type: Date,
+        immutable: true,
+        default: () => new Date(),
+      },
+      updatedAt: {
+        type: Date,
+        immutable: true,
+        default: () => new Date(),
+      },
       bestFriend: connection.SchemaTypes.ObjectId,
       hobbies: [String],
       address: subSchema,
