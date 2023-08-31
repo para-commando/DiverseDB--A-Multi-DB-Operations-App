@@ -53,6 +53,9 @@ module.exports.mongoDbCreateOperations = async (connection) => {
 
 module.exports.mongoDbReadOperations = async (connection) => {
   try {
+    const model = await mongooseModels.myTestModel({ connection: connection });
+    const result = await model.find({_id: '64ef82e540539ad992194b3f'})
+    console.log("🚀 ~ file: MongoDbOperations.js:58 ~ module.exports.mongoDbReadOperations= ~ result:", result)
   } catch (err) {
     console.error(`Error Finding documents: ${err}`);
     throw err;
