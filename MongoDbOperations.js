@@ -53,9 +53,24 @@ module.exports.mongoDbCreateOperations = async (connection) => {
 
 module.exports.mongoDbReadOperations = async (connection) => {
   try {
+    // if used any other Read methods apart from these like findOneAndUpdate then during the updation part schema validation will be bypassed
     const model = await mongooseModels.myTestModel({ connection: connection });
-    const result = await model.find({_id: '64ef82e540539ad992194b3f'})
-    console.log("🚀 ~ file: MongoDbOperations.js:58 ~ module.exports.mongoDbReadOperations= ~ result:", result)
+    const readOperationVariations = {
+      find: await model.find({ _id: '64ef82e540539ad992194b3f' }),
+      findOne: await model.findOne({ name: 'John Doe' }),
+      findById: await model.findById({ _id: '64ef82e540539ad992194b3f' }),
+      exists: await model.exists({ age: 22 }),
+      clauses: await model
+        .where('name')
+        .equals('JOHN DOE')
+        .where('age')
+        .gte(40)
+        .limit(1).select('createdAt'),
+    };
+    console.log(
+      '🚀 ~ file: MongoDbOperations.js:84 ~ module.exports.mongoDbReadOperations= ~ readOperationVariations:',
+      readOperationVariations
+    );
   } catch (err) {
     console.error(`Error Finding documents: ${err}`);
     throw err;
