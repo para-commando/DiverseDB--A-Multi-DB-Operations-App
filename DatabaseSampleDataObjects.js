@@ -1,58 +1,24 @@
+const mongoose = require('mongoose')
 module.exports.dataObjects = {
 
 "mongDatabaseDataObjects" :{
-    "emailData": {
-      "email2": 'ADA.LOVELACE@GMAIL.COM'
-    },
-    "sampleInsertData": [
-        {
-          "name": "elotes",
-          "ingredients": [
-            "corn",
-            "mayonnaise",
-            "cotija cheese",
-            "sour cream",
-            "lime"
-          ],
-          "prepTimeInMinutes": 35
+  
+    "sampleInsertData":[
+      {
+        name: 'john doe',
+        age: 28,
+        email: 'john@example.com',
+        createdAt: new Date('2023-08-29T00:00:00Z'),
+        updatedAt: new Date('2023-08-29T12:34:56Z'),
+        bestFriend: new mongoose.Types.ObjectId('5f41bfc57a22a9a23d3e5d0c'), // ObjectId of another document
+        hobbies: ['Reading', 'Hiking', 'Cooking'],
+        address: {
+          street: '123 Main St',
+          city: 'Anytown',
+          state: 'CA',
+          postalCode: '12345',
         },
-        {
-          "name": "loco moco",
-          "ingredients": [
-            "ground beef",
-            "butter",
-            "onion",
-            "egg",
-            "bread bun",
-            "mushrooms"
-          ],
-          "prepTimeInMinutes": 54
-        },
-        {
-          "name": "patatas bravas",
-          "ingredients": [
-            "potato",
-            "tomato",
-            "olive oil",
-            "onion",
-            "garlic",
-            "paprika"
-          ],
-          "prepTimeInMinutes": 80
-        },
-        {
-          "name": "fried rice",
-          "ingredients": [
-            "rice",
-            "soy sauce",
-            "egg",
-            "onion",
-            "pea",
-            "carrot",
-            "sesame oil"
-          ],
-          "prepTimeInMinutes": 40
-        }
+      },
     ]
     
 }
