@@ -8,7 +8,7 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       connection: connection,
       modelName: 'myTestModel',
       refModel: {},
-      collectionName: 'myTestCollection'
+      collectionName: 'myTestCollection',
     });
     // Ensure the indexes are applied
 
@@ -43,7 +43,7 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       connection: connection,
       modelName: 'PersonModel',
       refModel: { PersonModel: 'PersonModel' },
-      collectionName: 'PersonCollection'
+      collectionName: 'PersonCollection',
     });
 
     const alice = new PersonModel({ name: 'Alice', age: 28 });
@@ -58,13 +58,13 @@ module.exports.mongoDbCreateOperations = async (connection) => {
     const UserModel = await mongooseModels.UserModel({
       connection: connection,
       modelName: 'UserModel',
-      collectionName: 'UserCollection'
+      collectionName: 'UserCollection',
     });
     const PostsModel = await mongooseModels.PostsModel({
       connection: connection,
       modelName: 'PostsModel',
       refModel: { UserModel: 'UserModel' },
-      collectionName: 'PostsCollection'
+      collectionName: 'PostsCollection',
     });
     const newUser = new UserModel({
       username: 'john_doe',
@@ -92,24 +92,33 @@ module.exports.mongoDbCreateOperations = async (connection) => {
 module.exports.mongoDbReadOperations = async (connection) => {
   try {
     // if used any other Read methods apart from these like findOneAndUpdate then during the updation part schema validation will be bypassed
-    const model = await mongooseModels.myTestModel({
+    const myTestModel = await mongooseModels.myTestModel({
       connection: connection,
       modelName: 'myTestModel',
       refModel: {},
-      collectionName: 'myTestCollection'
+      collectionName: 'myTestCollection',
+    });
+    const PostsModel = await mongooseModels.PostsModel({
+      connection: connection,
+      modelName: 'PostsModel',
+      refModel: { UserModel: 'UserModel' },
+      collectionName: 'PostsCollection',
     });
     const readOperationVariations = {
-      find: await model.find({ _id: '64ef82e540539ad992194b3f' }),
-      findOne: await model.findOne({ name: 'John Doe' }),
-      findById: await model.findById({ _id: '64ef82e540539ad992194b3f' }),
-      exists: await model.exists({ age: 22 }),
-      clauses: await model
+      find: await myTestModel.find({ _id: '64ef82e540539ad992194b3f' }),
+      findOne: await myTestModel.findOne({ name: 'John Doe' }),
+      findById: await myTestModel.findById({ _id: '64ef82e540539ad992194b3f' }),
+      exists: await myTestModel.exists({ age: 22 }),
+      clauses: await myTestModel
         .where('name')
         .equals('JOHN DOE')
         .where('age')
         .gte(40)
         .limit(1)
         .select('createdAt'),
+      populate: await PostsModel.find({ title: 'My First Post' }).populate(
+        'author'
+      ),
     };
     console.log(
       '🚀 ~ file: MongoDbOperations.js:84 ~ module.exports.mongoDbReadOperations= ~ readOperationVariations:',
