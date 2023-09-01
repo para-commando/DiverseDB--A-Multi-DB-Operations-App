@@ -3,10 +3,66 @@ const { getMongooseSchemaObjects } = require('./mongooseSchemas');
 const validator = require('validator');
 const mongoose = require('mongoose');
 module.exports.mongooseModels = {
-  PersonModel: async (arguments) => {
-    const modelName = 'Person'; // Replace with your model name
+  PostsModel: async (arguments) => {
+    const modelName= arguments.modelName;
     const existingModel = mongoose.models[modelName];
-
+    
+    if (existingModel) {
+      console.log(`Model "${modelName}" already exists.`);
+      return existingModel;
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+      const postsConstraints = {
+        title: String,
+        content: String,
+        author: {
+          type: arguments.connection.Schema.Types.ObjectId,
+          ref: arguments.refModel.UserModel, // Reference to the 'User' model
+        },
+      };
+      const postsSchema = await getMongooseSchemaObjects({
+        mongoDatabaseConnection: arguments.connection,
+        schemaConstraints: postsConstraints,
+      });
+      const PostsModel = getMongooseModels({
+        modelName: modelName,
+        schema: postsSchema,
+        databaseConnection: arguments.connection,
+        collectionName: arguments.collectionName
+      });
+      return PostsModel;
+    }
+  },
+  UserModel: async (arguments) => {
+    const modelName = arguments.modelName; // Replace with your model name
+    const existingModel = mongoose.models[modelName];
+    
+    if (existingModel) {
+      console.log(`Model "${modelName}" already exists.`);
+      return existingModel;
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+      const userSchemaConstraints = {
+        username: String,
+        email: String,
+      };
+      const userSchema = await getMongooseSchemaObjects({
+        mongoDatabaseConnection: arguments.connection,
+        schemaConstraints: userSchemaConstraints,
+      });
+      const UserModel = getMongooseModels({
+        modelName: modelName,
+        schema: userSchema,
+        databaseConnection: arguments.connection,
+        collectionName: arguments.collectionName
+      });
+      return UserModel;
+    }
+  },
+  PersonModel: async (arguments) => {
+    const modelName = arguments.modelName; // Replace with your model name
+    const existingModel = mongoose.models[modelName];
+    
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
       return existingModel;
@@ -17,7 +73,7 @@ module.exports.mongooseModels = {
         age: Number,
         bestFriend: {
           type: arguments.connection.SchemaTypes.ObjectId,
-          ref: 'Person',
+          ref: arguments.refModel.PersonModel,
         }, // Reference to another Person document
       };
       const personSchema = await getMongooseSchemaObjects({
@@ -26,17 +82,18 @@ module.exports.mongooseModels = {
       });
       // Create the Person model
       const PersonModel = getMongooseModels({
-        modelName: 'Person',
+        modelName: modelName,
         schema: personSchema,
         databaseConnection: arguments.connection,
+        collectionName: arguments.collectionName
       });
       return PersonModel;
     }
   },
   myTestModel: async (arguments) => {
-    const modelName = 'myTestModel'; // Replace with your model name
+    const modelName =arguments.modelName; // Replace with your model name
     const existingModel = mongoose.models[modelName];
-
+    
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
       return existingModel;
@@ -98,9 +155,10 @@ module.exports.mongooseModels = {
         schemaConstraints: schemaConstraints,
       });
       const model = getMongooseModels({
-        modelName: 'myTestModel',
+        modelName: modelName,
         schema: mainSchema,
         databaseConnection: arguments.connection,
+        collectionName: arguments.collectionName
       });
       // making schema changes dynamic
       await model.schema.index(

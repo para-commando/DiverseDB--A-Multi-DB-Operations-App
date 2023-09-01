@@ -4,7 +4,12 @@ const { dataObjects } = require('./DatabaseSampleDataObjects');
 module.exports.mongoDbCreateOperations = async (connection) => {
   try {
     // Define a schema and create a model
-    const model = await mongooseModels.myTestModel({ connection: connection });
+    const model = await mongooseModels.myTestModel({
+      connection: connection,
+      modelName: 'myTestModel',
+      refModel: {},
+      collectionName: 'myTestCollection',
+    });
     // Ensure the indexes are applied
 
     // Insert many documents using .create() method
@@ -36,6 +41,9 @@ module.exports.mongoDbCreateOperations = async (connection) => {
     // Create the Person model
     const PersonModel = await mongooseModels.PersonModel({
       connection: connection,
+      modelName: 'PersonModel',
+      refModel: { PersonModel: 'PersonModel' },
+      collectionName: 'PersonCollection',
     });
 
     const alice = new PersonModel({ name: 'Alice', age: 28 });
@@ -45,6 +53,36 @@ module.exports.mongoDbCreateOperations = async (connection) => {
     alice.bestFriend = bob._id; // _id is the ObjectId of the bob document
     await alice.save();
     await bob.save();
+
+    // ************************ UseCase-3 *******************************
+    const UserModel = await mongooseModels.UserModel({
+      connection: connection,
+      modelName: 'UserModel',
+      collectionName: 'UserCollection',
+    });
+    const PostsModel = await mongooseModels.PostsModel({
+      connection: connection,
+      modelName: 'PostsModel',
+      refModel: { UserModel: 'UserModel' },
+      collectionName: 'PostsCollection',
+    });
+    const newUser = new UserModel({
+      username: 'john_doe',
+      email: 'john@example.com',
+    });
+
+    // Save the user document
+    await newUser.save();
+
+    // Create a new post and associate it with the user
+    const newPost = new PostsModel({
+      title: 'My First Post',
+      content: 'This is the content of my post.',
+      author: newUser._id, // Assign the user's _id to the author field
+    });
+
+    // Save the post document
+    await newPost.save();
   } catch (err) {
     console.error(`Error inserting documents: ${err}`);
     throw err;
@@ -54,18 +92,33 @@ module.exports.mongoDbCreateOperations = async (connection) => {
 module.exports.mongoDbReadOperations = async (connection) => {
   try {
     // if used any other Read methods apart from these like findOneAndUpdate then during the updation part schema validation will be bypassed
-    const model = await mongooseModels.myTestModel({ connection: connection });
+    const myTestModel = await mongooseModels.myTestModel({
+      connection: connection,
+      modelName: 'myTestModel',
+      refModel: {},
+      collectionName: 'myTestCollection',
+    });
+    const PostsModel = await mongooseModels.PostsModel({
+      connection: connection,
+      modelName: 'PostsModel',
+      refModel: { UserModel: 'UserModel' },
+      collectionName: 'PostsCollection',
+    });
     const readOperationVariations = {
-      find: await model.find({ _id: '64ef82e540539ad992194b3f' }),
-      findOne: await model.findOne({ name: 'John Doe' }),
-      findById: await model.findById({ _id: '64ef82e540539ad992194b3f' }),
-      exists: await model.exists({ age: 22 }),
-      clauses: await model
+      find: await myTestModel.find({ _id: '64ef82e540539ad992194b3f' }),
+      findOne: await myTestModel.findOne({ name: 'John Doe' }),
+      findById: await myTestModel.findById({ _id: '64ef82e540539ad992194b3f' }),
+      exists: await myTestModel.exists({ age: 22 }),
+      clauses: await myTestModel
         .where('name')
         .equals('JOHN DOE')
         .where('age')
         .gte(40)
-        .limit(1).select('createdAt'),
+        .limit(1)
+        .select('createdAt'),
+      populate: await PostsModel.find({ title: 'My First Post' }).populate(
+        'author'
+      ),
     };
     console.log(
       '🚀 ~ file: MongoDbOperations.js:84 ~ module.exports.mongoDbReadOperations= ~ readOperationVariations:',
