@@ -3,6 +3,60 @@ const { getMongooseSchemaObjects } = require('./mongooseSchemas');
 const validator = require('validator');
 const mongoose = require('mongoose');
 module.exports.mongooseModels = {
+  PostsModel: async (arguments) => {
+    const modelName = 'Posts'; // Replace with your model name
+    const existingModel = mongoose.models[modelName];
+
+    if (existingModel) {
+      console.log(`Model "${modelName}" already exists.`);
+      return existingModel;
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+      const postsConstraints = {
+        title: String,
+        content: String,
+        author: {
+          type: arguments.connection.Schema.Types.ObjectId,
+          ref: 'User', // Reference to the 'User' model
+        },
+      };
+      const postsSchema = await getMongooseSchemaObjects({
+        mongoDatabaseConnection: arguments.connection,
+        schemaConstraints: postsConstraints,
+      });
+      const PostsModel = getMongooseModels({
+        modelName: 'Posts',
+        schema: postsSchema,
+        databaseConnection: arguments.connection,
+      });
+      return PostsModel;
+    }
+  },
+  UserModel: async (arguments) => {
+    const modelName = 'User'; // Replace with your model name
+    const existingModel = mongoose.models[modelName];
+
+    if (existingModel) {
+      console.log(`Model "${modelName}" already exists.`);
+      return existingModel;
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+      const userSchemaConstraints = {
+        username: String,
+        email: String,
+      };
+      const userSchema = await getMongooseSchemaObjects({
+        mongoDatabaseConnection: arguments.connection,
+        schemaConstraints: userSchemaConstraints,
+      });
+      const UserModel = getMongooseModels({
+        modelName: 'Person',
+        schema: userSchema,
+        databaseConnection: arguments.connection,
+      });
+      return UserModel;
+    }
+  },
   PersonModel: async (arguments) => {
     const modelName = 'Person'; // Replace with your model name
     const existingModel = mongoose.models[modelName];
