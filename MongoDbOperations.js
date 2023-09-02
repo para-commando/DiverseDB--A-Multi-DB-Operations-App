@@ -104,18 +104,33 @@ module.exports.mongoDbReadOperations = async (connection) => {
       refModel: { UserModel: 'UserModel' },
       collectionName: 'PostsCollection',
     });
+    const PersonModel = await mongooseModels.PersonModel({
+      connection: connection,
+      modelName: 'PersonModel',
+      refModel: { PersonModel: 'PersonModel' },
+      collectionName: 'PersonCollection',
+    });
+
     const readOperationVariations = {
       find: await myTestModel.find({ _id: '64ef82e540539ad992194b3f' }),
       findOne: await myTestModel.findOne({ name: 'John Doe' }),
       findById: await myTestModel.findById({ _id: '64ef82e540539ad992194b3f' }),
       exists: await myTestModel.exists({ age: 22 }),
-      clauses: await myTestModel
+      clauses: {case1: await myTestModel
         .where('name')
         .equals('JOHN DOE')
         .where('age')
         .gte(40)
         .limit(1)
         .select('createdAt'),
+        case2: await PersonModel
+        .where('name')
+        .equals('Alice')
+        .limit(1)
+        .populate('bestFriend'),
+        case3: await PersonModel.findByName('Alice'),
+        case4: await PersonModel.find().byName('Alice')
+      },
       populate: await PostsModel.find({ title: 'My First Post' }).populate(
         'author'
       ),

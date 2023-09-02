@@ -80,6 +80,22 @@ module.exports.mongooseModels = {
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: personSchemaConstraints,
       });
+      // static custom methods which can use over all the instances of the concerned model
+      personSchema.statics.findByName = function (username) {
+        return this.findOne({ name:username });
+      };
+
+      // query methods are the ones which can only be used post one query operation that is needs a query object for its performance which is normally used to create a custom query to chain with existing ones which are unlike static methods which can be called directly over a model
+      // also it would be better to use it over a .find() query object as the below implementation corresponds to it as well also i read that the query object which one gets upon which we apply below implementation is bit specific to the type of query object we call. For example .find() returns a query object which can be used for find operations
+      personSchema.query.byName= function(name){
+        return this.where({name: name})
+      }
+      personSchema.query.sortByField = function (field) {
+        return this.sort({ [field]: 'asc' });
+      };
+      personSchema.query.byDateRange = function (lowerAgeLimit, upperAgeLimit) {
+        return this.where('age').gte(lowerAgeLimit).lte(upperAgeLimit);
+      };
       // Create the Person model
       const PersonModel = getMongooseModels({
         modelName: modelName,
