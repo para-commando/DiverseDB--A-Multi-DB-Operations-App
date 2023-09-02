@@ -10,6 +10,20 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       refModel: {},
       collectionName: 'myTestCollection',
     });
+        const aggregateFunctionValue= await model.aggregate([
+      // Match names by a a value that is get all documents whose name match the below value then pass it as input to the next operation under this .aggregate method that is to $group 
+      { $match: { name: 'JOHN DOE' } },
+    
+      // Group persons who have name as above value by their unique email as their group name then compute their average age value of each group
+      {
+        $group: {
+          _id: '$email',
+          averageAge: { $avg: '$age' },
+        },
+      },
+    ]);
+    console.log("🚀 ~ file: MongoDbOperations.js:25 ~ module.exports.mongoDbCreateOperations= ~ aggregateFunctionValue:", aggregateFunctionValue)
+    
     // Ensure the indexes are applied
 
     // Insert many documents using .create() method
@@ -45,7 +59,7 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       refModel: { PersonModel: 'PersonModel' },
       collectionName: 'PersonCollection',
     });
-
+    
     const alice = new PersonModel({ name: 'Alice', age: 28 });
     const bob = new PersonModel({ name: 'Bob', age: 30 });
 
@@ -60,6 +74,7 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       modelName: 'UserModel',
       collectionName: 'UserCollection',
     });
+ 
     const PostsModel = await mongooseModels.PostsModel({
       connection: connection,
       modelName: 'PostsModel',
@@ -70,7 +85,8 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       username: 'john_doe',
       email: 'john@example.com',
     });
-
+  await newUser.updateEmail('new.email@example.com')
+  
     // Save the user document
     await newUser.save();
 
@@ -104,18 +120,34 @@ module.exports.mongoDbReadOperations = async (connection) => {
       refModel: { UserModel: 'UserModel' },
       collectionName: 'PostsCollection',
     });
+    const PersonModel = await mongooseModels.PersonModel({
+      connection: connection,
+      modelName: 'PersonModel',
+      refModel: { PersonModel: 'PersonModel' },
+      collectionName: 'PersonCollection',
+    });
+const testingVirtualProperty =await myTestModel.findOne({ name: 'John Doe' })
+    console.log("🚀 ~ file: MongoDbOperations.js:131 ~ module.exports.mongoDbReadOperations= ~ testingVirtualProperty.greetUser: ", testingVirtualProperty.greetUser);
     const readOperationVariations = {
       find: await myTestModel.find({ _id: '64ef82e540539ad992194b3f' }),
       findOne: await myTestModel.findOne({ name: 'John Doe' }),
       findById: await myTestModel.findById({ _id: '64ef82e540539ad992194b3f' }),
       exists: await myTestModel.exists({ age: 22 }),
-      clauses: await myTestModel
+      clauses: {case1: await myTestModel
         .where('name')
         .equals('JOHN DOE')
         .where('age')
         .gte(40)
         .limit(1)
         .select('createdAt'),
+        case2: await PersonModel
+        .where('name')
+        .equals('Alice')
+        .limit(1)
+        .populate('bestFriend'),
+        case3: await PersonModel.findByName('Alice'),
+        case4: await PersonModel.find().byName('Alice')
+      },
       populate: await PostsModel.find({ title: 'My First Post' }).populate(
         'author'
       ),

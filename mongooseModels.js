@@ -4,9 +4,9 @@ const validator = require('validator');
 const mongoose = require('mongoose');
 module.exports.mongooseModels = {
   PostsModel: async (arguments) => {
-    const modelName= arguments.modelName;
+    const modelName = arguments.modelName;
     const existingModel = mongoose.models[modelName];
-    
+
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
       return existingModel;
@@ -24,11 +24,26 @@ module.exports.mongooseModels = {
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: postsConstraints,
       });
+      const coll = arguments.collectionName;
+      postsSchema.pre('save', async function () {
+        console.log(
+          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${coll} using model: ${modelName}`
+        );
+
+        return true;
+      });
+      postsSchema.post('save', async function () {
+        console.log(
+          `🚀🚀🚀🚀 Data, Successfully saved in collection: ${coll} using model: ${modelName}`
+        );
+
+        return true;
+      });
       const PostsModel = getMongooseModels({
         modelName: modelName,
         schema: postsSchema,
         databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName
+        collectionName: arguments.collectionName,
       });
       return PostsModel;
     }
@@ -36,7 +51,7 @@ module.exports.mongooseModels = {
   UserModel: async (arguments) => {
     const modelName = arguments.modelName; // Replace with your model name
     const existingModel = mongoose.models[modelName];
-    
+
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
       return existingModel;
@@ -50,11 +65,35 @@ module.exports.mongooseModels = {
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: userSchemaConstraints,
       });
+      // adding instance methods which are called on each documents instances
+      userSchema.methods.updateEmail = function (newEmail) {
+        this.email = newEmail;
+        return this.save();
+      };
+      userSchema.methods.sayHi = function () {
+        console.log(
+          '🚀 ~ file: mongooseModels.js:76 ~ UserModel: user greeting message: ',
+          'Heyyyy ' + this.username
+        );
+        return;
+      };
+      const coll = arguments.collectionName;
+      userSchema.pre('save', function () {
+        console.log(
+          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${coll} using model: ${modelName}`
+        );
+        if (!validator.isEmail(this.email)) {
+          throw new Error('Invalid Email');
+        }
+        this.sayHi();
+        return true;
+      });
+
       const UserModel = getMongooseModels({
         modelName: modelName,
         schema: userSchema,
         databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName
+        collectionName: arguments.collectionName,
       });
       return UserModel;
     }
@@ -62,7 +101,7 @@ module.exports.mongooseModels = {
   PersonModel: async (arguments) => {
     const modelName = arguments.modelName; // Replace with your model name
     const existingModel = mongoose.models[modelName];
-    
+
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
       return existingModel;
@@ -80,20 +119,51 @@ module.exports.mongooseModels = {
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: personSchemaConstraints,
       });
+      // static custom methods which can use over all the instances of the concerned model
+      personSchema.statics.findByName = function (username) {
+        return this.findOne({ name: username });
+      };
+
+      // query methods are the ones which can only be used post one query operation that is needs a query object for its performance which is normally used to create a custom query to chain with existing ones which are unlike static methods which can be called directly over a model
+      // also it would be better to use it over a .find() query object as the below implementation corresponds to it as well also i read that the query object which one gets upon which we apply below implementation is bit specific to the type of query object we call. For example .find() returns a query object which can be used for find operations
+      personSchema.query.byName = function (name) {
+        return this.where({ name: name });
+      };
+      personSchema.query.sortByField = function (field) {
+        return this.sort({ [field]: 'asc' });
+      };
+      personSchema.query.byDateRange = function (lowerAgeLimit, upperAgeLimit) {
+        return this.where('age').gte(lowerAgeLimit).lte(upperAgeLimit);
+      };
+      // Instance methods: unlike query and static methods this methods are applied on each documents of the respective model/collection
+      // these are different from .virtual as these are parameterized and virtuals are not
+      personSchema.methods.isAgeWithinLimit = function (age, limit) {
+        return age <= limit;
+      };
+      personSchema.methods.updateTitle = function (newTitle) {
+        this.title = newTitle;
+        return this.save();
+      };
+      personSchema.methods.validateData = function (data) {
+        // validate the data using required mechanism and return true if it passes else false
+        if (typeof data === 'string') return true;
+        else return false;
+      };
       // Create the Person model
       const PersonModel = getMongooseModels({
         modelName: modelName,
         schema: personSchema,
         databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName
+        collectionName: arguments.collectionName,
       });
+
       return PersonModel;
     }
   },
   myTestModel: async (arguments) => {
-    const modelName =arguments.modelName; // Replace with your model name
+    const modelName = arguments.modelName; // Replace with your model name
     const existingModel = mongoose.models[modelName];
-    
+
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
       return existingModel;
@@ -154,11 +224,15 @@ module.exports.mongooseModels = {
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: schemaConstraints,
       });
+      mainSchema.virtual('greetUser').get(function () {
+        // Calculate the discounted price
+        return 'Hello,' + this.name;
+      });
       const model = getMongooseModels({
         modelName: modelName,
         schema: mainSchema,
         databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName
+        collectionName: arguments.collectionName,
       });
       // making schema changes dynamic
       await model.schema.index(
