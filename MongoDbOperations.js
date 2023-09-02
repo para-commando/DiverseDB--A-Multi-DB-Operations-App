@@ -10,7 +10,7 @@ module.exports.mongoDbCreateOperations = async (connection) => {
       refModel: {},
       collectionName: 'myTestCollection',
     });
-    const aggregateFunctionValue= await model.aggregate([
+        const aggregateFunctionValue= await model.aggregate([
       // Match names by a a value that is get all documents whose name match the below value then pass it as input to the next operation under this .aggregate method that is to $group 
       { $match: { name: 'JOHN DOE' } },
     
