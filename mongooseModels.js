@@ -50,6 +50,12 @@ module.exports.mongooseModels = {
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: userSchemaConstraints,
       });
+      // adding instance methods which are called on each documents instances
+      userSchema.methods.updateEmail = function (newEmail) {
+        this.email = newEmail;
+        return this.save();
+      };
+
       const UserModel = getMongooseModels({
         modelName: modelName,
         schema: userSchema,
@@ -95,6 +101,20 @@ module.exports.mongooseModels = {
       };
       personSchema.query.byDateRange = function (lowerAgeLimit, upperAgeLimit) {
         return this.where('age').gte(lowerAgeLimit).lte(upperAgeLimit);
+      };
+      // Instance methods: unlike query and static methods this methods are applied on each documents of the respective model/collection
+      personSchema.methods.isAgeWithinLimit = function (age,limit) {
+        return age <= limit ;
+      };
+      personSchema.methods.updateTitle = function (newTitle) {
+        this.title = newTitle;
+        return this.save();
+      };
+      personSchema.methods.validateData = function (data) {
+        // validate the data using required mechanism and return true if it passes else false
+        if(typeof data === 'string') return true;
+        else return false;
+        
       };
       // Create the Person model
       const PersonModel = getMongooseModels({
