@@ -103,6 +103,7 @@ module.exports.mongooseModels = {
         return this.where('age').gte(lowerAgeLimit).lte(upperAgeLimit);
       };
       // Instance methods: unlike query and static methods this methods are applied on each documents of the respective model/collection
+      // these are different from .virtual as these are parameterized and virtuals are not
       personSchema.methods.isAgeWithinLimit = function (age,limit) {
         return age <= limit ;
       };
@@ -123,6 +124,7 @@ module.exports.mongooseModels = {
         databaseConnection: arguments.connection,
         collectionName: arguments.collectionName
       });
+      console.log("🚀 ~ file: mongooseModels.js:126 ~ PersonModel: ~ PersonModel:", PersonModel.methods)
       return PersonModel;
     }
   },
@@ -189,6 +191,10 @@ module.exports.mongooseModels = {
       const mainSchema = await getMongooseSchemaObjects({
         mongoDatabaseConnection: arguments.connection,
         schemaConstraints: schemaConstraints,
+      });
+      mainSchema.virtual('greetUser').get(function () {
+        // Calculate the discounted price
+        return 'Hello,' + this.name;
       });
       const model = getMongooseModels({
         modelName: modelName,

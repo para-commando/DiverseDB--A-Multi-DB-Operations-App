@@ -126,7 +126,8 @@ module.exports.mongoDbReadOperations = async (connection) => {
       refModel: { PersonModel: 'PersonModel' },
       collectionName: 'PersonCollection',
     });
-
+const testingVirtualProperty =await myTestModel.findOne({ name: 'John Doe' })
+    console.log("🚀 ~ file: MongoDbOperations.js:131 ~ module.exports.mongoDbReadOperations= ~ testingVirtualProperty.greetUser: ", testingVirtualProperty.greetUser);
     const readOperationVariations = {
       find: await myTestModel.find({ _id: '64ef82e540539ad992194b3f' }),
       findOne: await myTestModel.findOne({ name: 'John Doe' }),
