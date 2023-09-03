@@ -137,7 +137,7 @@ module.exports.mongoDbReadOperations = async (connection) => {
       testingVirtualProperty.greetUser
     );
     const readOperationVariations = {
-      find: await myTestModel.find({ _id: '64ef82e540539ad992194b3f' }),
+      find: await myTestModel.find({ name: 'John Doe', }).select('-name -updatedAt -hobbies -address -age'),
       findOne: await myTestModel.findOne({ name: 'John Doe' }),
       findById: await myTestModel.findById({ _id: '64ef82e540539ad992194b3f' }),
       exists: await myTestModel.exists({ age: 22 }),
@@ -148,7 +148,7 @@ module.exports.mongoDbReadOperations = async (connection) => {
           .where('age')
           .gte(40)
           .limit(1)
-          .select('createdAt'),
+          .select('createdAt updatedAt'),
         case2: await PersonModel.where('name')
           .equals('Alice')
           .limit(1)
