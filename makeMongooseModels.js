@@ -2,7 +2,7 @@ module.exports.getMongooseModels = ({
   modelName,
   schema,
   databaseConnection,
-  collectionName
+  collectionName,
 }) => {
   return databaseConnection.model(modelName, schema, collectionName);
 };
