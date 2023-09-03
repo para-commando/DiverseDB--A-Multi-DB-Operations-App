@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose, { Mongoose } from 'mongoose';
 
-module.exports.mongoDatabaseClient = async (database) => {
+export const mongoDatabaseClient = async (database: string): Promise<Mongoose> => {
   try {
     const username = process.env.MONGODB_USERNAME;
     const password = process.env.MONGODB_PASSWORD;
@@ -11,8 +11,8 @@ module.exports.mongoDatabaseClient = async (database) => {
     console.log('MongoDB 🌱 Connection 🔗 Successful 🌞🌞!!');
     return mongoDbClient;
   } catch (error) {
-    console.log(
-      '🚀 ~ file: mongoClientConnect.js:14 ~ module.exports.mongoDatabaseClient= ~ error:',
+    console.error(
+      '🚀 ~ file: mongoClientConnect.ts:14 ~ module.exports.mongoDatabaseClient= ~ error:',
       error
     );
     throw error;
