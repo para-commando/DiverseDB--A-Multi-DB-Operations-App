@@ -1,10 +1,10 @@
-import { Mongoose } from 'mongoose';
+import {   Connection } from 'mongoose';
 
 import { mongoDatabaseClient } from "./mongoClientConnect"
 // Establish the connection once and reuse it across functions
-let mongoDatabaseConnections: Promise<Mongoose> | null = null;
+let mongoDatabaseConnections: Promise<Connection> | null = null;
 
-module.exports.getMongoDataBaseConnection = async (databaseName: string): Promise<Mongoose> => {
+export const getMongoDataBaseConnection = async (databaseName: string): Promise<Connection> => {
   if (!mongoDatabaseConnections) {
     mongoDatabaseConnections = mongoDatabaseClient(databaseName);
   }

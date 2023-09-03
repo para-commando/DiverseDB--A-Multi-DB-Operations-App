@@ -1,13 +1,13 @@
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 
-export const mongoDatabaseClient = async (database: string): Promise<Mongoose> => {
+export const mongoDatabaseClient = async (database: string): Promise<Connection> => {
   try {
     const username = process.env.MONGODB_USERNAME;
     const password = process.env.MONGODB_PASSWORD;
     const clusterUrl = process.env.MONGODB_CLUSTER_URL;
     const uri = `mongodb+srv://${username}:${password}@${clusterUrl}/`;
 
-    const mongoDbClient = await mongoose.connect(`${uri}${database}`);
+    const mongoDbClient: Connection = await mongoose.createConnection(`${uri}${database}`);
     console.log('MongoDB 🌱 Connection 🔗 Successful 🌞🌞!!');
     return mongoDbClient;
   } catch (error) {
