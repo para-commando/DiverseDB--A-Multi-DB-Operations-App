@@ -1,9 +1,7 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 module.exports.dataObjects = {
-
-"mongDatabaseDataObjects" :{
-  
-    "sampleInsertData":[
+  mongDatabaseDataObjects: {
+    sampleInsertData: [
       {
         name: 'john doe',
         age: 28,
@@ -19,8 +17,6 @@ module.exports.dataObjects = {
           postalCode: '12345',
         },
       },
-    ]
-    
-}
-
-}
+    ],
+  },
+};

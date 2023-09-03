@@ -108,8 +108,15 @@ module.exports.mongooseModels = {
     } else {
       console.log(`Model "${modelName}" does not exist.`);
       const personSchemaConstraints = {
-        name: String,
-        age: Number,
+        name: { type: String, required: true },
+        age: {
+          type: Number,
+          validate: {
+            validator: (age) => age <= 150,
+            message: (props) =>
+              `${props.path} input(${props.value}) is  greater than 150`,
+          },
+        },
         bestFriend: {
           type: arguments.connection.SchemaTypes.ObjectId,
           ref: arguments.refModel.PersonModel,
