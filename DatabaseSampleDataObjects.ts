@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-module.exports.dataObjects = {
+export const dataObjects = {
   mongDatabaseDataObjects: {
     sampleInsertData: [
       {

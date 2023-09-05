@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { mongooseModels } = require('./mongooseModels');
-const { dataObjects } = require('./DatabaseSampleDataObjects');
+import {dataObjects} from './DatabaseSampleDataObjects';
 import { Connection } from 'mongoose';
 
 export const mongoDbCreateOperations = async (connection: Connection) => {
@@ -110,7 +110,7 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
   }
 };
 
-export const mongoDbReadOperations = async (connection) => {
+export const mongoDbReadOperations = async (connection : Connection) => {
   try {
     // if used any other Read methods apart from these like findOneAndUpdate then during the updation part schema validation will be bypassed in order to solve that issue we need to use the option   { runValidators: true }, while using that
     const myTestModel = await mongooseModels.myTestModel({
@@ -174,7 +174,7 @@ export const mongoDbReadOperations = async (connection) => {
   }
 };
 
-export const mongoDbUpdateOperations = async (connection) => {
+export const mongoDbUpdateOperations = async (connection : Connection) => {
   try {
 
     const PersonModel = await mongooseModels.PersonModel({
@@ -206,7 +206,7 @@ export const mongoDbUpdateOperations = async (connection) => {
   }
 };
 
-export const mongoDbDeleteOperations = async (connection) => {
+export const mongoDbDeleteOperations = async (connection : Connection) => {
   try {
     const myTestModel = await mongooseModels.myTestModel({
       connection: connection,
