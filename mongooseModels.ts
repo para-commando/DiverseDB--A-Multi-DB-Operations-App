@@ -1,10 +1,17 @@
 const { getMongooseModels } = require('./makeMongooseModels');
-const { getMongooseSchemaObjects } = require('./mongooseSchemas');
+import { getMongooseSchemaObjects } from './mongooseSchemas';
 const validator = require('validator');
-const mongoose = require('mongoose');
+import mongoose, { Connection, Document } from 'mongoose';
+
+interface argumentType {
+  refModel: { userModel: string },
+  connection: Connection,
+  modelName: string,
+  collectionName: string
+}
 module.exports.mongooseModels = {
-  PostsModel: async (arguments) => {
-    const modelName = arguments.modelName;
+  PostsModel: async (funcArguments: argumentType) => {
+    const { refModel, modelName, collectionName, connection } = funcArguments;
     const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
@@ -16,34 +23,36 @@ module.exports.mongooseModels = {
         title: String,
         content: String,
         author: {
-          type: arguments.connection.Schema.Types.ObjectId,
-          ref: arguments.refModel.UserModel, // Reference to the 'User' model
+          type: mongoose.Schema.Types.ObjectId,
+          ref: refModel.userModel, // Reference to the 'User' model
         },
       };
-      const postsSchema = await getMongooseSchemaObjects({
-        mongoDatabaseConnection: arguments.connection,
+      type postsConstraints_type = Document & typeof postsConstraints;
+
+
+      const postsSchema = getMongooseSchemaObjects<postsConstraints_type>({
         schemaConstraints: postsConstraints,
       });
-      const coll = arguments.collectionName;
-      postsSchema.pre('save', async function () {
-        console.log(
-          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${coll} using model: ${modelName}`
-        );
 
-        return true;
-      });
-      postsSchema.post('save', async function () {
-        console.log(
-          `🚀🚀🚀🚀 Data, Successfully saved in collection: ${coll} using model: ${modelName}`
-        );
-
-        return true;
-      });
       const PostsModel = getMongooseModels({
         modelName: modelName,
         schema: postsSchema,
-        databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName,
+        databaseConnection: connection,
+        collectionName: collectionName,
+      });
+      PostsModel.pre('save', function () {
+        console.log(
+          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${collectionName} using model: ${modelName}`
+        );
+
+        return true;
+      });
+      PostsModel.post('save', async function () {
+        console.log(
+          `🚀🚀🚀🚀 Data, Successfully saved in collection: ${collectionName} using model: ${modelName}`
+        );
+
+        return true;
       });
       return PostsModel;
     }
