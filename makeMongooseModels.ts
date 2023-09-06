@@ -5,13 +5,13 @@ interface ModelArguments<T extends Document> {
   schema: Schema<T>;
   collectionName: string;
 }
-
-export const getMongooseModels = <T extends Document, I_METHODS>({
+// https://mongoosejs.com/docs/typescript/statics-and-methods.html
+export const getMongooseModels = <T extends Document, model_type>({
   modelName,
   schema,
   collectionName,
 }: ModelArguments<T>): Model<T> => {
-  type UserModel = Model<T, {}, I_METHODS>;
+  // type UserModel = Model<T, {}, I_METHODS>;
 
-  return model<T, UserModel>(modelName, schema, collectionName);
+  return model<T, model_type>(modelName, schema, collectionName);
 };

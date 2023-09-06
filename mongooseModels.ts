@@ -1,7 +1,7 @@
 import { getMongooseModels } from './makeMongooseModels';
 import { getMongooseSchemaObjects } from './mongooseSchemas';
 const validator = require('validator');
-import mongoose, { Connection, Schema, Document, Query, HydratedDocument } from 'mongoose';
+import mongoose, { Connection, Schema, Document, Query, Model } from 'mongoose';
 
 interface argumentType {
   readonly refModel?: {
@@ -48,7 +48,7 @@ module.exports.mongooseModels = {
         next();
       });
 
-      const PostsModel = getMongooseModels<postsConstraints_type>({
+      const PostsModel = getMongooseModels<postsConstraints_type, postsSchema_methods>({
         modelName: modelName,
         schema: postsSchema,
         collectionName: collectionName,
@@ -132,7 +132,8 @@ module.exports.mongooseModels = {
         }, // Reference to another Person document
       };
       type personSchemaConstraints_type = Document & typeof personSchemaConstraints
-      type personSchemaConstraints_methods = {
+      // for statics we need to extend from Model<T>
+      type personSchemaConstraints_methods = Model<personSchemaConstraints_type, {}> & {
         isAgeWithinLimit(): boolean,
         validateData(): boolean,
         updateTitle(): void
