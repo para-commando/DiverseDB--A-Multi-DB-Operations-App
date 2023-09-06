@@ -1,16 +1,15 @@
-import mongoose, { Connection } from 'mongoose';
+import { Schema, Document, Model, model } from 'mongoose';
 
-interface modelArguments {
-  modelName: string,
-  schema: ,
-  databaseConnection: Connection,
-  collectionName: string,
+interface ModelArguments<T extends Document> {
+  modelName: string;
+  schema: Schema<T>;
+  collectionName: string;
 }
-export const getMongooseModels = ({
+
+export const getMongooseModels = <T extends Document>({
   modelName,
   schema,
-  databaseConnection,
   collectionName,
-}: modelArguments) => {
-  return databaseConnection.model(modelName, schema, collectionName);
+}: ModelArguments<T>): Model<T> => {
+  return model<T>(modelName, schema, collectionName);
 };

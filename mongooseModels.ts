@@ -1,13 +1,13 @@
-const { getMongooseModels } = require('./makeMongooseModels');
+import { getMongooseModels } from './makeMongooseModels';
 import { getMongooseSchemaObjects } from './mongooseSchemas';
 const validator = require('validator');
 import mongoose, { Connection, Document } from 'mongoose';
 
 interface argumentType {
-  refModel: { userModel: string },
-  connection: Connection,
-  modelName: string,
-  collectionName: string
+  readonly refModel?: { userModel: string },
+  readonly connection: Connection,
+  readonly modelName: string,
+  readonly collectionName: string
 }
 module.exports.mongooseModels = {
   PostsModel: async (funcArguments: argumentType) => {
@@ -24,7 +24,7 @@ module.exports.mongooseModels = {
         content: String,
         author: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: refModel.userModel, // Reference to the 'User' model
+          ref: refModel?.userModel === undefined ? '' : refModel.userModel, // Reference to the 'User' model
         },
       };
       type postsConstraints_type = Document & typeof postsConstraints;
@@ -33,33 +33,30 @@ module.exports.mongooseModels = {
       const postsSchema = getMongooseSchemaObjects<postsConstraints_type>({
         schemaConstraints: postsConstraints,
       });
-
-      const PostsModel = getMongooseModels({
+      postsSchema.pre('save', function (this: Document, next) {
+        // 'this' refers to the document being saved
+        console.log('Pre-save middleware for User schema');
+        next();
+      });
+      
+      postsSchema.post('save', function (doc: Document, next) {
+        // 'doc' is the saved document
+        console.log('Post-save middleware for User schema');
+        next();
+      });
+      
+      const PostsModel = getMongooseModels<postsConstraints_type>({
         modelName: modelName,
         schema: postsSchema,
-        databaseConnection: connection,
-        collectionName: collectionName,
+         collectionName: collectionName,
       });
-      PostsModel.pre('save', function () {
-        console.log(
-          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${collectionName} using model: ${modelName}`
-        );
-
-        return true;
-      });
-      PostsModel.post('save', async function () {
-        console.log(
-          `🚀🚀🚀🚀 Data, Successfully saved in collection: ${collectionName} using model: ${modelName}`
-        );
-
-        return true;
-      });
+       
       return PostsModel;
     }
   },
-  UserModel: async (arguments) => {
-    const modelName = arguments.modelName; // Replace with your model name
-    const existingModel = mongoose.models[modelName];
+  UserModel: async (funcArguments: argumentType
+  ) => {
+    const { refModel, modelName, collectionName, connection } = funcArguments; const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
@@ -70,12 +67,11 @@ module.exports.mongooseModels = {
         username: String,
         email: String,
       };
-      const userSchema = await getMongooseSchemaObjects({
-        mongoDatabaseConnection: arguments.connection,
-        schemaConstraints: userSchemaConstraints,
+      const userSchema =   getMongooseSchemaObjects({
+         schemaConstraints: userSchemaConstraints,
       });
       // adding instance methods which are called on each documents instances
-      userSchema.methods.updateEmail = function (newEmail) {
+      userSchema.methods.updateEmail = function (newEmail: String) {
         this.email = newEmail;
         return this.save();
       };
@@ -86,10 +82,18 @@ module.exports.mongooseModels = {
         );
         return;
       };
-      const coll = arguments.collectionName;
-      userSchema.pre('save', function () {
+       
+      const UserModel = getMongooseModels({
+        modelName: modelName,
+        schema: userSchema,
+        databaseConnection:  connection,
+        collectionName:  collectionName,
+      });
+      type UserInstance = InstanceType<typeof UserModel>;
+
+      UserModel.pre('save', function (this : UserInstance) {
         console.log(
-          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${coll} using model: ${modelName}`
+          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${collectionName} using model: ${modelName}`
         );
         if (!validator.isEmail(this.email)) {
           throw new Error('Invalid Email');
@@ -98,12 +102,6 @@ module.exports.mongooseModels = {
         return true;
       });
 
-      const UserModel = getMongooseModels({
-        modelName: modelName,
-        schema: userSchema,
-        databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName,
-      });
       return UserModel;
     }
   },
