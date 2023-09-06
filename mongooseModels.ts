@@ -1,10 +1,13 @@
 import { getMongooseModels } from './makeMongooseModels';
 import { getMongooseSchemaObjects } from './mongooseSchemas';
 const validator = require('validator');
-import mongoose, { Connection, Document } from 'mongoose';
+import mongoose, { Connection, Schema, Document, Query, HydratedDocument } from 'mongoose';
 
 interface argumentType {
-  readonly refModel?: { userModel: string },
+  readonly refModel?: {
+    userModel?: string,
+    PersonModel?: string
+  },
   readonly connection: Connection,
   readonly modelName: string,
   readonly collectionName: string
@@ -23,14 +26,14 @@ module.exports.mongooseModels = {
         title: String,
         content: String,
         author: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: Schema.Types.ObjectId,
           ref: refModel?.userModel === undefined ? '' : refModel.userModel, // Reference to the 'User' model
         },
       };
       type postsConstraints_type = Document & typeof postsConstraints;
 
-
-      const postsSchema = getMongooseSchemaObjects<postsConstraints_type>({
+      type postsSchema_methods = {}
+      const postsSchema = getMongooseSchemaObjects<postsConstraints_type, postsSchema_methods>({
         schemaConstraints: postsConstraints,
       });
       postsSchema.pre('save', function (this: Document, next) {
@@ -38,19 +41,19 @@ module.exports.mongooseModels = {
         console.log('Pre-save middleware for User schema');
         next();
       });
-      
+
       postsSchema.post('save', function (doc: Document, next) {
         // 'doc' is the saved document
         console.log('Post-save middleware for User schema');
         next();
       });
-      
+
       const PostsModel = getMongooseModels<postsConstraints_type>({
         modelName: modelName,
         schema: postsSchema,
-         collectionName: collectionName,
+        collectionName: collectionName,
       });
-       
+
       return PostsModel;
     }
   },
@@ -67,46 +70,45 @@ module.exports.mongooseModels = {
         username: String,
         email: String,
       };
-      const userSchema =   getMongooseSchemaObjects({
-         schemaConstraints: userSchemaConstraints,
+      type userSchemaConstraints_type = Document & typeof userSchemaConstraints;
+      type userSchema_methods = {
+        updateEmail: void,
+        sayHi: string
+      }
+
+      const userSchema = getMongooseSchemaObjects<userSchemaConstraints_type, userSchema_methods>({
+        schemaConstraints: userSchemaConstraints,
       });
       // adding instance methods which are called on each documents instances
-      userSchema.methods.updateEmail = function (newEmail: String) {
+      userSchema.methods.updateEmail = function (newEmail: String):void {
         this.email = newEmail;
-        return this.save();
+        this.save();
+        return;
       };
-      userSchema.methods.sayHi = function () {
+      userSchema.methods.sayHi = function ():string {
         console.log(
           '🚀 ~ file: mongooseModels.js:76 ~ UserModel: user greeting message: ',
           'Heyyyy ' + this.username
         );
-        return;
+        return 'Heyyyy ' + this.username ;
       };
-       
-      const UserModel = getMongooseModels({
+      userSchema.pre('save', function (this: Document, next) {
+        // 'this' refers to the document being saved
+        console.log('Pre-save middleware for User schema');
+        next();
+      });
+      const UserModel = getMongooseModels<userSchemaConstraints_type>({
         modelName: modelName,
         schema: userSchema,
-        databaseConnection:  connection,
-        collectionName:  collectionName,
+        collectionName: collectionName,
       });
-      type UserInstance = InstanceType<typeof UserModel>;
 
-      UserModel.pre('save', function (this : UserInstance) {
-        console.log(
-          `🚀🚀🚀🚀 Alert, Save action triggered for collection:  ${collectionName} using model: ${modelName}`
-        );
-        if (!validator.isEmail(this.email)) {
-          throw new Error('Invalid Email');
-        }
-        this.sayHi();
-        return true;
-      });
 
       return UserModel;
     }
   },
-  PersonModel: async (arguments) => {
-    const modelName = arguments.modelName; // Replace with your model name
+  PersonModel: async (funcArguments: argumentType) => {
+    const { refModel, modelName, collectionName, connection } = funcArguments;
     const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
@@ -119,56 +121,64 @@ module.exports.mongooseModels = {
         age: {
           type: Number,
           validate: {
-            validator: (age) => age <= 150,
-            message: (props) =>
+            validator: (age: number) => age <= 150,
+            message: (props: { path: string, value: String | Number }) =>
               `${props.path} input(${props.value}) is  greater than 150`,
           },
         },
         bestFriend: {
-          type: arguments.connection.SchemaTypes.ObjectId,
-          ref: arguments.refModel.PersonModel,
+          type: Schema.Types.ObjectId,
+          ref: refModel?.PersonModel === undefined ? '' : refModel.PersonModel,
         }, // Reference to another Person document
       };
-      const personSchema = await getMongooseSchemaObjects({
-        mongoDatabaseConnection: arguments.connection,
+      type personSchemaConstraints_type = Document & typeof personSchemaConstraints
+      type personSchemaConstraints_methods = {
+        updateEmail: void,
+        sayHi: string
+      }
+      const personSchema = getMongooseSchemaObjects<personSchemaConstraints_type, personSchemaConstraints_methods>({
         schemaConstraints: personSchemaConstraints,
       });
-      // static custom methods which can use over all the instances of the concerned model
+      interface PersonQuery extends Query<personSchemaConstraints_type | null, personSchemaConstraints_type> {
+        byName(name: string): PersonQuery;
+        sortByField(field: string): PersonQuery;
+        byDateRange(lowerAgeLimit: number, upperAgeLimit: number): PersonQuery;
+      }
+      // static custom methods which can use over all the instances of the concerned model which is using this schema
       personSchema.statics.findByName = function (username) {
         return this.findOne({ name: username });
       };
 
       // query methods are the ones which can only be used post one query operation that is needs a query object for its performance which is normally used to create a custom query to chain with existing ones which are unlike static methods which can be called directly over a model
       // also it would be better to use it over a .find() query object as the below implementation corresponds to it as well also i read that the query object which one gets upon which we apply below implementation is bit specific to the type of query object we call. For example .find() returns a query object which can be used for find operations
-      personSchema.query.byName = function (name) {
+      personSchema.query.byName = function (this: PersonQuery, name: string) {
         return this.where({ name: name });
       };
-      personSchema.query.sortByField = function (field) {
+      personSchema.query.sortByField = function (field: string) {
         return this.sort({ [field]: 'asc' });
       };
-      personSchema.query.byDateRange = function (lowerAgeLimit, upperAgeLimit) {
+      personSchema.query.byDateRange = function (lowerAgeLimit: number, upperAgeLimit: number) {
         return this.where('age').gte(lowerAgeLimit).lte(upperAgeLimit);
       };
       // Instance methods: unlike query and static methods this methods are applied on each documents of the respective model/collection
       // these are different from .virtual as these are parameterized and virtuals are not
-      personSchema.methods.isAgeWithinLimit = function (age, limit) {
+      personSchema.methods.isAgeWithinLimit = function (age: number, limit: number) {
         return age <= limit;
       };
-      personSchema.methods.updateTitle = function (newTitle) {
+      personSchema.methods.updateTitle = function (newTitle: string) {
         this.title = newTitle;
         return this.save();
       };
-      personSchema.methods.validateData = function (data) {
+      personSchema.methods.validateData = function (data: unknown) {
         // validate the data using required mechanism and return true if it passes else false
         if (typeof data === 'string') return true;
         else return false;
       };
       // Create the Person model
-      const PersonModel = getMongooseModels({
+      const PersonModel: HydratedDocument<personSchemaConstraints_type> = getMongooseModels<personSchemaConstraints_type>({
         modelName: modelName,
         schema: personSchema,
-        databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName,
+        collectionName: collectionName,
       });
 
       return PersonModel;
