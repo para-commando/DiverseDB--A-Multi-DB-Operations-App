@@ -6,10 +6,12 @@ interface ModelArguments<T extends Document> {
   collectionName: string;
 }
 
-export const getMongooseModels = <T extends Document>({
+export const getMongooseModels = <T extends Document, I_METHODS>({
   modelName,
   schema,
   collectionName,
 }: ModelArguments<T>): Model<T> => {
-  return model<T>(modelName, schema, collectionName);
+  type UserModel = Model<T, {}, I_METHODS>;
+
+  return model<T, UserModel>(modelName, schema, collectionName);
 };

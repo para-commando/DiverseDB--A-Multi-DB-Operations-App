@@ -80,24 +80,24 @@ module.exports.mongooseModels = {
         schemaConstraints: userSchemaConstraints,
       });
       // adding instance methods which are called on each documents instances
-      userSchema.methods.updateEmail = function (newEmail: String):void {
+      userSchema.methods.updateEmail = function (newEmail: String): void {
         this.email = newEmail;
         this.save();
         return;
       };
-      userSchema.methods.sayHi = function ():string {
+      userSchema.methods.sayHi = function (): string {
         console.log(
           '🚀 ~ file: mongooseModels.js:76 ~ UserModel: user greeting message: ',
           'Heyyyy ' + this.username
         );
-        return 'Heyyyy ' + this.username ;
+        return 'Heyyyy ' + this.username;
       };
       userSchema.pre('save', function (this: Document, next) {
         // 'this' refers to the document being saved
         console.log('Pre-save middleware for User schema');
         next();
       });
-      const UserModel = getMongooseModels<userSchemaConstraints_type>({
+      const UserModel = getMongooseModels<userSchemaConstraints_type, userSchema_methods>({
         modelName: modelName,
         schema: userSchema,
         collectionName: collectionName,
@@ -133,8 +133,10 @@ module.exports.mongooseModels = {
       };
       type personSchemaConstraints_type = Document & typeof personSchemaConstraints
       type personSchemaConstraints_methods = {
-        updateEmail: void,
-        sayHi: string
+        isAgeWithinLimit(): boolean,
+        validateData(): boolean,
+        updateTitle(): void
+
       }
       const personSchema = getMongooseSchemaObjects<personSchemaConstraints_type, personSchemaConstraints_methods>({
         schemaConstraints: personSchemaConstraints,
@@ -162,20 +164,21 @@ module.exports.mongooseModels = {
       };
       // Instance methods: unlike query and static methods this methods are applied on each documents of the respective model/collection
       // these are different from .virtual as these are parameterized and virtuals are not
-      personSchema.methods.isAgeWithinLimit = function (age: number, limit: number) {
+      personSchema.methods.isAgeWithinLimit = function (age: number, limit: number): boolean {
         return age <= limit;
       };
-      personSchema.methods.updateTitle = function (newTitle: string) {
+      personSchema.methods.updateTitle = function (newTitle: string): void {
         this.title = newTitle;
-        return this.save();
+        this.save();
+        return;
       };
-      personSchema.methods.validateData = function (data: unknown) {
+      personSchema.methods.validateData = function (data: unknown): boolean {
         // validate the data using required mechanism and return true if it passes else false
         if (typeof data === 'string') return true;
         else return false;
       };
       // Create the Person model
-      const PersonModel: HydratedDocument<personSchemaConstraints_type> = getMongooseModels<personSchemaConstraints_type>({
+      const PersonModel = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods>({
         modelName: modelName,
         schema: personSchema,
         collectionName: collectionName,
