@@ -1,7 +1,9 @@
 require('dotenv').config();
 const { mongooseModels } = require('./mongooseModels');
-const { dataObjects } = require('./DatabaseSampleDataObjects');
-module.exports.mongoDbCreateOperations = async (connection) => {
+import {dataObjects} from './DatabaseSampleDataObjects';
+import { Connection } from 'mongoose';
+
+export const mongoDbCreateOperations = async (connection: Connection) => {
   try {
     // Define a schema and create a model
     const model = await mongooseModels.myTestModel({
@@ -108,7 +110,7 @@ module.exports.mongoDbCreateOperations = async (connection) => {
   }
 };
 
-module.exports.mongoDbReadOperations = async (connection) => {
+export const mongoDbReadOperations = async (connection : Connection) => {
   try {
     // if used any other Read methods apart from these like findOneAndUpdate then during the updation part schema validation will be bypassed in order to solve that issue we need to use the option   { runValidators: true }, while using that
     const myTestModel = await mongooseModels.myTestModel({
@@ -172,9 +174,9 @@ module.exports.mongoDbReadOperations = async (connection) => {
   }
 };
 
-module.exports.mongoDbUpdateOperations = async (connection) => {
+export const mongoDbUpdateOperations = async (connection : Connection) => {
   try {
- 
+
     const PersonModel = await mongooseModels.PersonModel({
       connection: connection,
       modelName: 'PersonModel',
@@ -184,27 +186,27 @@ module.exports.mongoDbUpdateOperations = async (connection) => {
     // the second argument or object passed is the payload to be updated, setting upsert as true will create a new document if its not found
     // when you use the findOneAndUpdate method with runValidators: true, it will run validators defined in your schema, but it won't check for the presence of required fields that aren't part of the update. In your case, the name field is marked as required in your schema, but you didn't include it in your update operation. This behavior is by design because Mongoose assumes that when you are using findOneAndUpdate, you may only want to update specific fields and not necessarily the entire document.
     // used to find a single document that matches a given filter/query, update it, and return the original document by default (before the update). It is useful when you want to find a document, modify it, and possibly return its previous state.
-      await PersonModel.findOneAndUpdate(
+    await PersonModel.findOneAndUpdate(
       { name: 'adult' },
       { age: '54' },
       { new: true, upsert: true, runValidators: true }
     );
- // updates all the records which satisfy the conditions
+    // updates all the records which satisfy the conditions
     await PersonModel.updateMany(
       { age: { $gt: 25 } },
       { name: 'adult' },
       { new: true, runValidators: true }
     );
-// used to update a single document that matches a given filter/query. It is designed to perform the update operation without returning the updated document itself.
-   await PersonModel.updateOne({ name: 'adult' }, { age: 30 });
-  
+    // used to update a single document that matches a given filter/query. It is designed to perform the update operation without returning the updated document itself.
+    await PersonModel.updateOne({ name: 'adult' }, { age: 30 });
+
   } catch (err) {
     console.error(`Error updating documents: ${err}`);
     throw err;
   }
 };
 
-module.exports.mongoDbDeleteOperations = async (connection) => {
+export const mongoDbDeleteOperations = async (connection : Connection) => {
   try {
     const myTestModel = await mongooseModels.myTestModel({
       connection: connection,
@@ -225,15 +227,15 @@ module.exports.mongoDbDeleteOperations = async (connection) => {
       collectionName: 'PostsCollection',
     });
     await PersonModel.deleteOne({ _id: '64f4474c4bf70034aff3793c' })
- 
+
     // can use in operator here like { _id: { $in: idsToDelete } } to delete an array of documents whose IDs are given in the array 'idsToDelete'
     await myTestModel.deleteMany({ email: 'john@example.com' })
-     
+
     await myTestModel.findOneAndDelete({ name: 'JOHN DOE' })
-    
+
     // Can delete only one document at a time
-    await PostsModel.findByIdAndDelete('64f4474c4bf70034aff37942' )
-    
+    await PostsModel.findByIdAndDelete('64f4474c4bf70034aff37942')
+
   } catch (err) {
     console.error(`Error deleting documents: ${err}`);
     throw err;
