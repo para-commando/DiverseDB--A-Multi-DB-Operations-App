@@ -33,7 +33,8 @@ module.exports.mongooseModels = {
       type postsConstraints_type = Document & typeof postsConstraints;
 
       type postsSchema_methods = {}
-      const postsSchema = getMongooseSchemaObjects<postsConstraints_type, postsSchema_methods>({
+      type model_type = Model<postsConstraints_type, {}, postsSchema_methods> & {}
+      const postsSchema = getMongooseSchemaObjects<postsConstraints_type, postsSchema_methods, model_type>({
         schemaConstraints: postsConstraints,
       });
       postsSchema.pre('save', function (this: Document, next) {
@@ -48,7 +49,7 @@ module.exports.mongooseModels = {
         next();
       });
 
-      const PostsModel = getMongooseModels<postsConstraints_type, postsSchema_methods>({
+      const PostsModel = getMongooseModels<postsConstraints_type, postsSchema_methods, model_type>({
         modelName: modelName,
         schema: postsSchema,
         collectionName: collectionName,
@@ -67,22 +68,25 @@ module.exports.mongooseModels = {
     } else {
       console.log(`Model "${modelName}" does not exist.`);
       const userSchemaConstraints = {
-        username: String,
+        username: String ,
         email: String,
       };
-      type userSchemaConstraints_type = Document & typeof userSchemaConstraints;
+      type userSchemaConstraints_type = Document & {
+        username: string ,
+        email: string,
+      };
       type userSchema_methods = {
-        updateEmail: void,
-        sayHi: string
+        updateEmail(doc: userSchemaConstraints_type, newEmail: String): void,
+        sayHi(): string
       }
-
-      const userSchema = getMongooseSchemaObjects<userSchemaConstraints_type, userSchema_methods>({
+      type model_type = Model<userSchemaConstraints_type, {}, userSchema_methods> & {}
+      const userSchema = getMongooseSchemaObjects<userSchemaConstraints_type, userSchema_methods, model_type>({
         schemaConstraints: userSchemaConstraints,
       });
       // adding instance methods which are called on each documents instances
-      userSchema.methods.updateEmail = function (newEmail: String): void {
-        this.email = newEmail;
-        this.save();
+      userSchema.methods.updateEmail = function (doc: userSchemaConstraints_type, newEmail: string): void {
+        doc.email = newEmail;
+        doc.save();
         return;
       };
       userSchema.methods.sayHi = function (): string {
@@ -97,7 +101,7 @@ module.exports.mongooseModels = {
         console.log('Pre-save middleware for User schema');
         next();
       });
-      const UserModel = getMongooseModels<userSchemaConstraints_type, userSchema_methods>({
+      const UserModel = getMongooseModels<userSchemaConstraints_type, userSchema_methods, model_type>({
         modelName: modelName,
         schema: userSchema,
         collectionName: collectionName,
