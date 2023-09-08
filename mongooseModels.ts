@@ -68,11 +68,11 @@ module.exports.mongooseModels = {
     } else {
       console.log(`Model "${modelName}" does not exist.`);
       const userSchemaConstraints = {
-        username: String ,
+        username: String,
         email: String,
       };
       type userSchemaConstraints_type = Document & {
-        username: string ,
+        username: string,
         email: string,
       };
       type userSchema_methods = {
@@ -136,14 +136,18 @@ module.exports.mongooseModels = {
         }, // Reference to another Person document
       };
       type personSchemaConstraints_type = Document & typeof personSchemaConstraints
-      // for statics we need to extend from Model<T>
-      type personSchemaConstraints_methods = Model<personSchemaConstraints_type, {}> & {
-        isAgeWithinLimit(): boolean,
-        validateData(): boolean,
-        updateTitle(): void
+      type personSchemaConstraints_methods = {
+        isAgeWithinLimit(age: number, limit: number): boolean,
+        updateTitle(newTitle: string): void,
+        validateData(data: unknown): boolean
 
       }
-      const personSchema = getMongooseSchemaObjects<personSchemaConstraints_type, personSchemaConstraints_methods>({
+      // for statics we need to extend from Model<T>
+      type model_type = Model<personSchemaConstraints_type, {}, personSchemaConstraints_methods> & {
+        findByName(username: string): Promise<personSchemaConstraints_type | null>
+
+      }
+      const personSchema = getMongooseSchemaObjects<personSchemaConstraints_type, personSchemaConstraints_methods, model_type>({
         schemaConstraints: personSchemaConstraints,
       });
       interface PersonQuery extends Query<personSchemaConstraints_type | null, personSchemaConstraints_type> {
@@ -152,7 +156,7 @@ module.exports.mongooseModels = {
         byDateRange(lowerAgeLimit: number, upperAgeLimit: number): PersonQuery;
       }
       // static custom methods which can use over all the instances of the concerned model which is using this schema
-      personSchema.statics.findByName = function (username) {
+      personSchema.statics.findByName = function (username: string): Promise<personSchemaConstraints_type | null> {
         return this.findOne({ name: username });
       };
 
@@ -183,7 +187,7 @@ module.exports.mongooseModels = {
         else return false;
       };
       // Create the Person model
-      const PersonModel = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods>({
+      const PersonModel = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods, model_type>({
         modelName: modelName,
         schema: personSchema,
         collectionName: collectionName,
@@ -192,9 +196,9 @@ module.exports.mongooseModels = {
       return PersonModel;
     }
   },
-  myTestModel: async (arguments) => {
-    const modelName = arguments.modelName; // Replace with your model name
-    const existingModel = mongoose.models[modelName];
+  myTestModel: async (funcArguments: argumentType) => {
+    const { refModel, modelName, collectionName, connection } = funcArguments; 
+     const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
@@ -206,14 +210,24 @@ module.exports.mongooseModels = {
         street: String,
         city: String,
       };
+      type subSchemaSchemaConstraints_type = Document & {
+        street: string,
+        city: string,
+      };
 
-      const subSchema = await getMongooseSchemaObjects({
-        mongoDatabaseConnection: arguments.connection,
+      type subSchemaSchema_methods = {
+
+      }
+      type model_type = Model<subSchemaSchemaConstraints_type, {}, subSchemaSchema_methods> & {}
+
+
+      const subSchema = getMongooseSchemaObjects<subSchemaSchemaConstraints_type, subSchemaSchema_methods, model_type>({
         schemaConstraints: subSchemaConstraints,
       });
       // the uppercase:true converts string to uppercase
       //  default: () => new Date() When you use an arrow function, it will be executed each time a new document is inserted. This ensures that the default value for the createdAt field will be the date and time when the document is inserted into the database.
       // beware: note that these validations only work with create/save methods for inserting documents. It is preferred to use findById and .save on it or findOne and .save on it to prevent bypassing of below schema validation
+
       const schemaConstraints = {
         name: {
           type: String,
@@ -227,14 +241,14 @@ module.exports.mongooseModels = {
           type: Number,
           min: 1,
           validate: {
-            validator: (age) => age <= 150,
-            message: (props) =>
+            validator: (age: number): boolean => age <= 150,
+            message: (props: { path: string, value: Number }): string =>
               `${props.path} input(${props.value}) is  greater than 150`,
           },
         },
         email: {
           type: String,
-          validate: (value) => {
+          validate: (value: string) => {
             return validator.isEmail(value);
           },
         },
@@ -248,32 +262,36 @@ module.exports.mongooseModels = {
           immutable: true,
           default: () => new Date(),
         },
-        bestFriend: arguments.connection.SchemaTypes.ObjectId,
+        bestFriend: Schema.Types.ObjectId,
         hobbies: [String],
         address: subSchema,
       };
-      const mainSchema = await getMongooseSchemaObjects({
-        mongoDatabaseConnection: arguments.connection,
+      type mainSchemaSchemaConstraints_type = Document & typeof schemaConstraints;
+
+      type mainSchemaSchema_methods = {
+
+      }
+      type model_type_main = Model<mainSchemaSchemaConstraints_type, {}, mainSchemaSchema_methods> & {}
+      const mainSchema = getMongooseSchemaObjects<mainSchemaSchemaConstraints_type, mainSchemaSchema_methods, model_type_main>({
         schemaConstraints: schemaConstraints,
       });
       mainSchema.virtual('greetUser').get(function () {
         // Calculate the discounted price
         return 'Hello,' + this.name;
       });
-      const model = getMongooseModels({
+      const modell = getMongooseModels<mainSchemaSchemaConstraints_type, mainSchemaSchema_methods, model_type_main>({
         modelName: modelName,
         schema: mainSchema,
-        databaseConnection: arguments.connection,
-        collectionName: arguments.collectionName,
+         collectionName:  collectionName,
       });
       // making schema changes dynamic
-      await model.schema.index(
+      await modell.schema.index(
         { address_1: 1 },
         { unique: schemaConstraints.name.unique }
       );
       // Ensure the indexes are applied
-      await model.ensureIndexes();
-      return model;
+      await modell.ensureIndexes();
+      return modell;
     }
   },
 };
