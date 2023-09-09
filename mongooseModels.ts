@@ -14,7 +14,7 @@ interface argumentType {
 }
 module.exports.mongooseModels = {
   PostsModel: async (funcArguments: argumentType) => {
-    const { refModel, modelName, collectionName, connection } = funcArguments;
+    const { refModel, modelName, collectionName  } = funcArguments;
     const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
@@ -31,10 +31,12 @@ module.exports.mongooseModels = {
         },
       };
       type postsConstraints_type = Document & typeof postsConstraints;
-
+      type postsSchemaConstraints_query_methods = Query<postsConstraints_type | null, postsConstraints_type> & {
+         
+      }
       type postsSchema_methods = {}
-      type model_type = Model<postsConstraints_type, {}, postsSchema_methods> & {}
-      const postsSchema = getMongooseSchemaObjects<postsConstraints_type, postsSchema_methods, model_type>({
+      type model_type = Model<postsConstraints_type, postsSchemaConstraints_query_methods, postsSchema_methods> & {}
+      const postsSchema = getMongooseSchemaObjects<postsConstraints_type, postsSchema_methods,postsSchemaConstraints_query_methods, model_type>({
         schemaConstraints: postsConstraints,
       });
       postsSchema.pre('save', function (this: Document, next) {
@@ -49,7 +51,7 @@ module.exports.mongooseModels = {
         next();
       });
 
-      const PostsModel = getMongooseModels<postsConstraints_type, postsSchema_methods, model_type>({
+      const PostsModel = getMongooseModels<postsConstraints_type, postsSchema_methods,postsSchemaConstraints_query_methods,  model_type>({
         modelName: modelName,
         schema: postsSchema,
         collectionName: collectionName,
@@ -60,7 +62,7 @@ module.exports.mongooseModels = {
   },
   UserModel: async (funcArguments: argumentType
   ) => {
-    const { refModel, modelName, collectionName, connection } = funcArguments; const existingModel = mongoose.models[modelName];
+    const {   modelName, collectionName    } = funcArguments; const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
@@ -75,12 +77,15 @@ module.exports.mongooseModels = {
         username: string,
         email: string,
       };
+      type userSchemaConstraints_query_methods = Query<userSchemaConstraints_type | null, userSchemaConstraints_type> & {
+         
+      }
       type userSchema_methods = {
         updateEmail(doc: userSchemaConstraints_type, newEmail: String): void,
         sayHi(): string
       }
-      type model_type = Model<userSchemaConstraints_type, {}, userSchema_methods> & {}
-      const userSchema = getMongooseSchemaObjects<userSchemaConstraints_type, userSchema_methods, model_type>({
+      type model_type = Model<userSchemaConstraints_type, userSchemaConstraints_query_methods, userSchema_methods> & {}
+      const userSchema = getMongooseSchemaObjects<userSchemaConstraints_type, userSchema_methods,userSchemaConstraints_query_methods, model_type>({
         schemaConstraints: userSchemaConstraints,
       });
       // adding instance methods which are called on each documents instances
@@ -101,7 +106,7 @@ module.exports.mongooseModels = {
         console.log('Pre-save middleware for User schema');
         next();
       });
-      const UserModel = getMongooseModels<userSchemaConstraints_type, userSchema_methods, model_type>({
+      const UserModel = getMongooseModels<userSchemaConstraints_type, userSchema_methods, userSchemaConstraints_query_methods, model_type>({
         modelName: modelName,
         schema: userSchema,
         collectionName: collectionName,
@@ -112,7 +117,7 @@ module.exports.mongooseModels = {
     }
   },
   PersonModel: async (funcArguments: argumentType) => {
-    const { refModel, modelName, collectionName, connection } = funcArguments;
+    const { refModel, modelName, collectionName  } = funcArguments;
     const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
@@ -142,19 +147,21 @@ module.exports.mongooseModels = {
         validateData(data: unknown): boolean
 
       }
+
+      type personSchemaConstraints_query_methods = Query<personSchemaConstraints_type | null, personSchemaConstraints_type> & {
+        byName(this: personSchemaConstraints_query_methods, name: string): Promise<personSchemaConstraints_type | null>,
+        sortByField(this: personSchemaConstraints_query_methods, field: string): Promise<personSchemaConstraints_type | null>,
+        byDateRange(this: personSchemaConstraints_query_methods, lowerAgeLimit: number, upperAgeLimit: number): Promise<personSchemaConstraints_type | null>
+      }
       // for statics we need to extend from Model<T>
-      type model_type = Model<personSchemaConstraints_type, {}, personSchemaConstraints_methods> & {
-        findByName(username: string): Promise<personSchemaConstraints_type | null>
+      type model_type = Model<personSchemaConstraints_type, personSchemaConstraints_query_methods, personSchemaConstraints_methods> & {
+        findByName(username: string): Promise<personSchemaConstraints_type | null>,
 
       }
-      const personSchema = getMongooseSchemaObjects<personSchemaConstraints_type, personSchemaConstraints_methods, model_type>({
+      const personSchema = getMongooseSchemaObjects<personSchemaConstraints_type, personSchemaConstraints_methods, personSchemaConstraints_query_methods, model_type>({
         schemaConstraints: personSchemaConstraints,
       });
-      interface PersonQuery extends Query<personSchemaConstraints_type | null, personSchemaConstraints_type> {
-        byName(name: string): PersonQuery;
-        sortByField(field: string): PersonQuery;
-        byDateRange(lowerAgeLimit: number, upperAgeLimit: number): PersonQuery;
-      }
+
       // static custom methods which can use over all the instances of the concerned model which is using this schema
       personSchema.statics.findByName = function (username: string): Promise<personSchemaConstraints_type | null> {
         return this.findOne({ name: username });
@@ -162,13 +169,13 @@ module.exports.mongooseModels = {
 
       // query methods are the ones which can only be used post one query operation that is needs a query object for its performance which is normally used to create a custom query to chain with existing ones which are unlike static methods which can be called directly over a model
       // also it would be better to use it over a .find() query object as the below implementation corresponds to it as well also i read that the query object which one gets upon which we apply below implementation is bit specific to the type of query object we call. For example .find() returns a query object which can be used for find operations
-      personSchema.query.byName = function (this: PersonQuery, name: string) {
+      personSchema.query.byName = function (this: personSchemaConstraints_query_methods, name: string): Promise<personSchemaConstraints_type | null> {
         return this.where({ name: name });
       };
-      personSchema.query.sortByField = function (field: string) {
+      personSchema.query.sortByField = function (this: personSchemaConstraints_query_methods, field: string): Promise<personSchemaConstraints_type | null> {
         return this.sort({ [field]: 'asc' });
       };
-      personSchema.query.byDateRange = function (lowerAgeLimit: number, upperAgeLimit: number) {
+      personSchema.query.byDateRange = function (this: personSchemaConstraints_query_methods, lowerAgeLimit: number, upperAgeLimit: number): Promise<personSchemaConstraints_type | null> {
         return this.where('age').gte(lowerAgeLimit).lte(upperAgeLimit);
       };
       // Instance methods: unlike query and static methods this methods are applied on each documents of the respective model/collection
@@ -187,7 +194,7 @@ module.exports.mongooseModels = {
         else return false;
       };
       // Create the Person model
-      const PersonModel = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods, model_type>({
+      const PersonModel = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods,personSchemaConstraints_query_methods, model_type>({
         modelName: modelName,
         schema: personSchema,
         collectionName: collectionName,
@@ -197,8 +204,8 @@ module.exports.mongooseModels = {
     }
   },
   myTestModel: async (funcArguments: argumentType) => {
-    const { refModel, modelName, collectionName, connection } = funcArguments; 
-     const existingModel = mongoose.models[modelName];
+    const {   modelName, collectionName } = funcArguments;
+    const existingModel = mongoose.models[modelName];
 
     if (existingModel) {
       console.log(`Model "${modelName}" already exists.`);
@@ -218,10 +225,13 @@ module.exports.mongooseModels = {
       type subSchemaSchema_methods = {
 
       }
-      type model_type = Model<subSchemaSchemaConstraints_type, {}, subSchemaSchema_methods> & {}
+      type subSchemaConstraints_query_methods = Query<subSchemaSchemaConstraints_type | null, subSchemaSchemaConstraints_type> & {
+
+      }
+      type model_type = Model<subSchemaSchemaConstraints_type, subSchemaConstraints_query_methods, subSchemaSchema_methods> & {}
 
 
-      const subSchema = getMongooseSchemaObjects<subSchemaSchemaConstraints_type, subSchemaSchema_methods, model_type>({
+      const subSchema = getMongooseSchemaObjects<subSchemaSchemaConstraints_type, subSchemaSchema_methods, subSchemaConstraints_query_methods, model_type>({
         schemaConstraints: subSchemaConstraints,
       });
       // the uppercase:true converts string to uppercase
@@ -271,26 +281,29 @@ module.exports.mongooseModels = {
       type mainSchemaSchema_methods = {
 
       }
-      type model_type_main = Model<mainSchemaSchemaConstraints_type, {}, mainSchemaSchema_methods> & {}
-      const mainSchema = getMongooseSchemaObjects<mainSchemaSchemaConstraints_type, mainSchemaSchema_methods, model_type_main>({
+      type mainSchemaConstraints_query_methods = Query<mainSchemaSchemaConstraints_type | null, mainSchemaSchemaConstraints_type> & {
+
+      }
+      type model_type_main = Model<mainSchemaSchemaConstraints_type, mainSchemaConstraints_query_methods, mainSchemaSchema_methods> & {}
+      const mainSchema = getMongooseSchemaObjects<mainSchemaSchemaConstraints_type, mainSchemaSchema_methods, mainSchemaConstraints_query_methods, model_type_main>({
         schemaConstraints: schemaConstraints,
       });
       mainSchema.virtual('greetUser').get(function () {
         // Calculate the discounted price
         return 'Hello,' + this.name;
       });
-      const modell = getMongooseModels<mainSchemaSchemaConstraints_type, mainSchemaSchema_methods, model_type_main>({
+      const modell = getMongooseModels<mainSchemaSchemaConstraints_type, mainSchemaSchema_methods,mainSchemaConstraints_query_methods, model_type_main>({
         modelName: modelName,
         schema: mainSchema,
-         collectionName:  collectionName,
+        collectionName: collectionName,
       });
       // making schema changes dynamic
-      await modell.schema.index(
+      modell.schema.index(
         { address_1: 1 },
         { unique: schemaConstraints.name.unique }
       );
       // Ensure the indexes are applied
-      await modell.ensureIndexes();
+      modell.ensureIndexes();
       return modell;
     }
   },
