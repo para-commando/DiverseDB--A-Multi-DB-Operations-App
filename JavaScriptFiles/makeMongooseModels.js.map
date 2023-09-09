@@ -1,0 +1,1 @@
+{"version":3,"file":"makeMongooseModels.js","sourceRoot":"","sources":["../TypeScriptFiles/makeMongooseModels.ts"],"names":[],"mappings":";;;AAAA,uCAAiE;AAOjE,kEAAkE;AAC3D,MAAM,iBAAiB,GAAG,CAAqI,EACpK,SAAS,EACT,MAAM,EACN,cAAc,GAC4C,EAAwC,EAAE;IACpG,4CAA4C;IAE5C,OAAO,IAAA,gBAAK,EAAgB,SAAS,EAAE,MAAM,EAAE,cAAc,CAAC,CAAC;AACjE,CAAC,CAAC;AARW,QAAA,iBAAiB,qBAQ5B"}

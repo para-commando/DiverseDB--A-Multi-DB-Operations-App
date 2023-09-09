@@ -1,18 +1,18 @@
 require('dotenv').config();
-const { mongooseModels } = require('./mongooseModels');
+import {mongooseModels } from './mongooseModels';
 import {dataObjects} from './DatabaseSampleDataObjects';
-import { Connection } from 'mongoose';
+import { Connection, FilterQuery } from 'mongoose';
 
 export const mongoDbCreateOperations = async (connection: Connection) => {
   try {
     // Define a schema and create a model
-    const model = await mongooseModels.myTestModel({
+    const modell = await mongooseModels.myTestModel({
       connection: connection,
       modelName: 'myTestModel',
       refModel: {},
       collectionName: 'myTestCollection',
     });
-    const aggregateFunctionValue = await model.aggregate([
+    const aggregateFunctionValue = await modell.aggregate([
       // Match names by a a value that is get all documents whose name match the below value then pass it as input to the next operation under this .aggregate method that is to $group
       { $match: { name: 'JOHN DOE' } },
 
@@ -33,7 +33,7 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
 
     // Insert many documents using .create() method
 
-    const insertManyResult = await model.create(
+    const insertManyResult = await modell.create(
       dataObjects.mongDatabaseDataObjects.sampleInsertData
     );
     console.log(
@@ -44,7 +44,7 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
     // Insert many documents using the instance method
 
     const instances = dataObjects.mongDatabaseDataObjects.sampleInsertData.map(
-      (item) => new model(item)
+      (item) => new modell(item)
     );
 
     const promises = instances.map((instance) => instance.save());
@@ -83,7 +83,7 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
     const PostsModel = await mongooseModels.PostsModel({
       connection: connection,
       modelName: 'PostsModel',
-      refModel: { UserModel: 'UserModel' },
+      refModel: { userModel: 'UserModel' },
       collectionName: 'PostsCollection',
     });
     const newUser = new UserModel({
@@ -122,7 +122,7 @@ export const mongoDbReadOperations = async (connection : Connection) => {
     const PostsModel = await mongooseModels.PostsModel({
       connection: connection,
       modelName: 'PostsModel',
-      refModel: { UserModel: 'UserModel' },
+      refModel: { userModel: 'UserModel' },
       collectionName: 'PostsCollection',
     });
     const PersonModel = await mongooseModels.PersonModel({
@@ -138,6 +138,7 @@ export const mongoDbReadOperations = async (connection : Connection) => {
       '🚀 ~ file: MongoDbOperations.js:131 ~ module.exports.mongoDbReadOperations= ~ testingVirtualProperty.greetUser: ',
       testingVirtualProperty.greetUser
     );
+    
     const readOperationVariations = {
       find: await myTestModel
         .find({ name: 'John Doe' })
@@ -223,7 +224,7 @@ export const mongoDbDeleteOperations = async (connection : Connection) => {
     const PostsModel = await mongooseModels.PostsModel({
       connection: connection,
       modelName: 'PostsModel',
-      refModel: { UserModel: 'UserModel' },
+      refModel: { userModel: 'UserModel' },
       collectionName: 'PostsCollection',
     });
     await PersonModel.deleteOne({ _id: '64f4474c4bf70034aff3793c' })

@@ -12,7 +12,7 @@ interface argumentType {
   readonly modelName: string,
   readonly collectionName: string
 }
-module.exports.mongooseModels = {
+export const mongooseModels = {
   PostsModel: async (funcArguments: argumentType) => {
     const { refModel, modelName, collectionName  } = funcArguments;
     const existingModel = mongoose.models[modelName];
@@ -51,7 +51,7 @@ module.exports.mongooseModels = {
         next();
       });
 
-      const PostsModel = getMongooseModels<postsConstraints_type, postsSchema_methods,postsSchemaConstraints_query_methods,  model_type>({
+      const PostsModel : Model<postsConstraints_type, postsSchemaConstraints_query_methods, postsSchema_methods> = getMongooseModels<postsConstraints_type, postsSchema_methods,postsSchemaConstraints_query_methods,  model_type>({
         modelName: modelName,
         schema: postsSchema,
         collectionName: collectionName,
@@ -194,7 +194,7 @@ module.exports.mongooseModels = {
         else return false;
       };
       // Create the Person model
-      const PersonModel = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods,personSchemaConstraints_query_methods, model_type>({
+      const PersonModel : Model<personSchemaConstraints_type, personSchemaConstraints_query_methods, personSchemaConstraints_methods> = getMongooseModels<personSchemaConstraints_type, personSchemaConstraints_methods,personSchemaConstraints_query_methods, model_type>({
         modelName: modelName,
         schema: personSchema,
         collectionName: collectionName,
