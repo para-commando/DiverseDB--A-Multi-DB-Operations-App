@@ -44,11 +44,35 @@ export const mongooseModels = {
     } else {
       console.log(`Model "${modelName}" does not exist.`);
     }
-   const populate_case =  await modelUsed.find({ title: 'My First Post' }).populate(
-      'author'
+    const populate_case = await modelUsed
+      .find({ title: 'My First Post' })
+      .populate('author');
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:50 ~ PostsModel_read_ops: ~ populate_case:',
+      populate_case
     );
-    console.log("🚀 ~ file: mongooseModels.ts:50 ~ PostsModel_read_ops: ~ populate_case:", populate_case)
-    
+
+    return true;
+  },
+  PostsModel_delete_ops: async (funcArguments: argumentType) => {
+    const { refModel, modelName, collectionName } = funcArguments;
+    const existingModel = mongoose.models[modelName];
+
+    let modelUsed = (existingModel as posts_model_type) || PostsModel;
+    if (!existingModel) {
+      console.log(`Model "${modelName}"  exist.`);
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+    }
+    // Can delete only one document at a time
+    const find_byId_delete = await modelUsed.findByIdAndDelete(
+      '64f4474c4bf70034aff37942'
+    );
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:71 ~ PostsModel_delete_ops: ~ find_byId_delete:',
+      find_byId_delete
+    );
+
     return true;
   },
   UserModel_create_ops: async (funcArguments: argumentType) => {
@@ -105,22 +129,34 @@ export const mongooseModels = {
     // the second argument or object passed is the payload to be updated, setting upsert as true will create a new document if its not found
     // when you use the findOneAndUpdate method with runValidators: true, it will run validators defined in your schema, but it won't check for the presence of required fields that aren't part of the update. In your case, the name field is marked as required in your schema, but you didn't include it in your update operation. This behavior is by design because Mongoose assumes that when you are using findOneAndUpdate, you may only want to update specific fields and not necessarily the entire document.
     // used to find a single document that matches a given filter/query, update it, and return the original document by default (before the update). It is useful when you want to find a document, modify it, and possibly return its previous state.
-  const find_and_update =  await modelUsed.findOneAndUpdate(
+    const find_and_update = await modelUsed.findOneAndUpdate(
       { name: 'adult' },
       { age: '54' },
       { new: true, upsert: true, runValidators: true }
     );
-    console.log("🚀 ~ file: mongooseModels.ts:113 ~ PersonModel_update_ops: ~ find_and_update:", find_and_update)
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:113 ~ PersonModel_update_ops: ~ find_and_update:',
+      find_and_update
+    );
     // updates all the records which satisfy the conditions
-   const update_many =  await modelUsed.updateMany(
+    const update_many = await modelUsed.updateMany(
       { age: { $gt: 25 } },
       { name: 'adult' },
       { new: true, runValidators: true }
     );
-    console.log("🚀 ~ file: mongooseModels.ts:120 ~ PersonModel_update_ops: ~ update_many:", update_many)
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:120 ~ PersonModel_update_ops: ~ update_many:',
+      update_many
+    );
     // used to update a single document that matches a given filter/query. It is designed to perform the update operation without returning the updated document itself.
-  const update_one =   await modelUsed.updateOne({ name: 'adult' }, { age: 30 });
-  console.log("🚀 ~ file: mongooseModels.ts:123 ~ PersonModel_update_ops: ~ update_one:", update_one)
+    const update_one = await modelUsed.updateOne(
+      { name: 'adult' },
+      { age: 30 }
+    );
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:123 ~ PersonModel_update_ops: ~ update_one:',
+      update_one
+    );
 
     return true;
   },
@@ -153,7 +189,27 @@ export const mongooseModels = {
       '🚀 ~ file: mongooseModels.ts:97 ~ PersonModel_read_ops: ~ queryHelper:',
       queryHelper
     );
-    
+
+    return true;
+  },
+
+  PersonModel_delete_ops: async (funcArguments: argumentType) => {
+    const { modelName } = funcArguments;
+    const existingModel = mongoose.models[modelName];
+
+    let modelUsed = (existingModel as person_model_type) || PersonModel;
+    if (!existingModel) {
+      console.log(`Model "${modelName}"  exist.`);
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+    }
+    const delete_one = await modelUsed.deleteOne({
+      _id: '64f4474c4bf70034aff3793c',
+    });
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:186 ~ PersonModel_delete_ops: ~ delete_one:',
+      delete_one
+    );
 
     return true;
   },
@@ -207,11 +263,6 @@ export const mongooseModels = {
       aggregateFunctionValue
     );
 
-    const deletes = await modelUsed.findOneAndDelete({ name: 'JOHN DOE' });
-    console.log(
-      '🚀 ~ file: mongooseModels.ts:246 ~ myTestModel: ~ deletes:',
-      deletes
-    );
     const findOnes = await modelUsed.findOne({ name: 'John Doe' });
     console.log(
       '🚀 ~ file: mongooseModels.ts:248 ~ myTestModel: ~ findOne:',
@@ -272,6 +323,35 @@ export const mongooseModels = {
     console.log(
       '🚀 ~ file: mongooseModels.ts:188 ~ myTestModel_read_ops: ~ selectVariations_2:',
       selectVariations_2
+    );
+    return true;
+  },
+  myTestModel_delete_ops: async (funcArguments: any) => {
+    const { modelName } = funcArguments;
+
+    const existingModel = mongoose.models[modelName];
+    let modelUsed = (existingModel as test_model_type) || myTestModel;
+    if (!existingModel) {
+      console.log(`Model "${modelName}"  exist.`);
+    } else {
+      console.log(`Model "${modelName}" does not exist.`);
+    }
+
+    // can use in operator here like { _id: { $in: idsToDelete } } to delete an array of documents whose IDs are given in the array 'idsToDelete'
+    const delete_many = await modelUsed.deleteMany({
+      email: 'john@example.com',
+    });
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:316 ~ myTestModel_delete_ops: ~ delete_many:',
+      delete_many
+    );
+
+    const findOne_Delete = await modelUsed.findOneAndDelete({
+      name: 'JOHN DOE',
+    });
+    console.log(
+      '🚀 ~ file: mongooseModels.ts:319 ~ myTestModel_delete_ops: ~ findOne_Delete:',
+      findOne_Delete
     );
     return true;
   },

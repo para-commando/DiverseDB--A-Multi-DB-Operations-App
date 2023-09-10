@@ -13,9 +13,6 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
       collectionName: 'myTestCollection',
     });
 
-    // ************************ UseCase-2 *******************************
-
-    // Create the Person model
     await mongooseModels.PersonModel_create_ops({
       connection: connection,
       modelName: 'PersonModel',
@@ -23,7 +20,6 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
       collectionName: 'PersonCollection',
     });
 
-    // ************************ UseCase-3 *******************************
     await mongooseModels.UserModel_create_ops({
       connection: connection,
       modelName: 'UserModel',
@@ -36,6 +32,7 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
       refModel: { userModel: 'UserModel' },
       collectionName: 'PostsCollection',
     });
+    return true;
   } catch (err) {
     console.error(`Error inserting documents: ${err}`);
     throw err;
@@ -63,6 +60,7 @@ export const mongoDbReadOperations = async (connection: Connection) => {
       refModel: { PersonModel: 'PersonModel' },
       collectionName: 'PersonCollection',
     });
+    return true;
   } catch (err) {
     console.error(`Error Finding documents: ${err}`);
     throw err;
@@ -84,37 +82,28 @@ export const mongoDbUpdateOperations = async (connection: Connection) => {
   }
 };
 
-// export const mongoDbDeleteOperations = async (connection: Connection) => {
-//   try {
-//     const myTestModel_ops = await mongooseModels.myTestModel_ops({
-//       connection: connection,
-//       modelName: 'myTestModel_ops',
-//       refModel: {},
-//       collectionName: 'myTestCollection',
-//     });
-//     const PersonModel = await mongooseModels.PersonModel({
-//       connection: connection,
-//       modelName: 'PersonModel',
-//       refModel: { PersonModel: 'PersonModel' },
-//       collectionName: 'PersonCollection',
-//     });
-//     const PostsModel = await mongooseModels.PostsModel({
-//       connection: connection,
-//       modelName: 'PostsModel',
-//       refModel: { userModel: 'UserModel' },
-//       collectionName: 'PostsCollection',
-//     });
-//     await PersonModel.deleteOne({ _id: '64f4474c4bf70034aff3793c' });
-
-//     // can use in operator here like { _id: { $in: idsToDelete } } to delete an array of documents whose IDs are given in the array 'idsToDelete'
-//     await myTestModel_ops.deleteMany({ email: 'john@example.com' });
-
-//     await myTestModel_ops.findOneAndDelete({ name: 'JOHN DOE' });
-
-//     // Can delete only one document at a time
-//     await PostsModel.findByIdAndDelete('64f4474c4bf70034aff37942');
-//   } catch (err) {
-//     console.error(`Error deleting documents: ${err}`);
-//     throw err;
-//   }
-// };
+export const mongoDbDeleteOperations = async (connection: Connection) => {
+  try {
+    await mongooseModels.myTestModel_delete_ops({
+      connection: connection,
+      modelName: 'myTestModel_ops',
+      refModel: {},
+      collectionName: 'myTestCollection',
+    });
+    await mongooseModels.PersonModel_delete_ops({
+      connection: connection,
+      modelName: 'PersonModel',
+      refModel: { PersonModel: 'PersonModel' },
+      collectionName: 'PersonCollection',
+    });
+    await mongooseModels.PostsModel_delete_ops({
+      connection: connection,
+      modelName: 'PostsModel',
+      refModel: { userModel: 'UserModel' },
+      collectionName: 'PostsCollection',
+    });
+  } catch (err) {
+    console.error(`Error deleting documents: ${err}`);
+    throw err;
+  }
+};
