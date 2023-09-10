@@ -15,6 +15,7 @@ export const mongoDatabaseCRUD_Ops = async () => {
     await mongoDbReadOperations(connection);
     await mongoDbUpdateOperations(connection);
     await mongoDbDeleteOperations(connection);
+
     return true;
   } catch (err) {
     console.log('🚀 ~ file: app.js:81 ~ err:', err);

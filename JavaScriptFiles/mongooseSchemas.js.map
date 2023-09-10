@@ -1,0 +1,1 @@
+{"version":3,"file":"mongooseSchemas.js","sourceRoot":"","sources":["../TypeScriptFiles/mongooseSchemas.ts"],"names":[],"mappings":";;;AAAA,uCAA0D;AAI1D,kEAAkE;AAC3D,MAAM,wBAAwB,GAAG,CAAqI,EAC3K,iBAAiB,GACY,EAAqD,EAAE;IACpF,6CAA6C;IAC7C,MAAM,MAAM,GAAG,IAAI,iBAAM,CAA4C,iBAAiB,CAAC,CAAC;IACxF,OAAO,MAAM,CAAC;AAChB,CAAC,CAAC;AANW,QAAA,wBAAwB,4BAMnC"}
