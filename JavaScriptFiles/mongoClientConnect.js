@@ -19,10 +19,10 @@ const mongoDatabaseClient = (database) => __awaiter(void 0, void 0, void 0, func
         const username = process.env.MONGODB_USERNAME;
         const password = process.env.MONGODB_PASSWORD;
         const clusterUrl = process.env.MONGODB_CLUSTER_URL;
-        const uri = `mongodb+srv://${username}:${password}@${clusterUrl}/`;
-        const mongoDbClient = yield mongoose_1.default.createConnection(`${uri}${database}`);
+        const uri = `mongodb+srv://${username}:${password}@${clusterUrl}/${database}`;
+        yield mongoose_1.default.connect(uri, { retryWrites: true, w: 'majority' });
         console.log('MongoDB 🌱 Connection 🔗 Successful 🌞🌞!!');
-        return mongoDbClient;
+        return mongoose_1.default.connection;
     }
     catch (error) {
         console.error('🚀 ~ file: mongoClientConnect.ts:14 ~ module.exports.mongoDatabaseClient= ~ error:', error);
