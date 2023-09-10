@@ -8,7 +8,7 @@ export const mongoDbCreateOperations = async (connection: Connection) => {
     // Define a schema and create a model
     await mongooseModels.myTestModel_create_ops({
       connection: connection,
-      modelName: 'myTestModel_ops',
+      modelName: 'myTestModel',
       refModel: {},
       collectionName: 'myTestCollection',
     });
@@ -44,7 +44,7 @@ export const mongoDbReadOperations = async (connection: Connection) => {
     // if used any other Read methods apart from these like findOneAndUpdate then during the updation part schema validation will be bypassed in order to solve that issue we need to use the option   { runValidators: true }, while using that
     await mongooseModels.myTestModel_read_ops({
       connection: connection,
-      modelName: 'myTestModel_ops',
+      modelName: 'myTestModel',
       refModel: {},
       collectionName: 'myTestCollection',
     });
@@ -86,7 +86,7 @@ export const mongoDbDeleteOperations = async (connection: Connection) => {
   try {
     await mongooseModels.myTestModel_delete_ops({
       connection: connection,
-      modelName: 'myTestModel_ops',
+      modelName: 'myTestModel',
       refModel: {},
       collectionName: 'myTestCollection',
     });

@@ -16,6 +16,9 @@ const mongoDatabaseCRUD_Ops = () => __awaiter(void 0, void 0, void 0, function* 
     let connection = yield (0, connectionUtils_1.getMongoDataBaseConnection)('MyMongoDB');
     try {
         yield (0, MongoDbOperations_1.mongoDbCreateOperations)(connection);
+        yield (0, MongoDbOperations_1.mongoDbReadOperations)(connection);
+        yield (0, MongoDbOperations_1.mongoDbUpdateOperations)(connection);
+        yield (0, MongoDbOperations_1.mongoDbDeleteOperations)(connection);
         return true;
     }
     catch (err) {

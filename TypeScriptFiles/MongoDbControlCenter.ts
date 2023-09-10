@@ -1,7 +1,9 @@
 import { getMongoDataBaseConnection } from './connectionUtils';
 import {
   mongoDbCreateOperations,
-
+  mongoDbReadOperations,
+  mongoDbUpdateOperations,
+  mongoDbDeleteOperations,
 } from './MongoDbOperations';
 import { Connection } from 'mongoose';
 
@@ -10,6 +12,9 @@ export const mongoDatabaseCRUD_Ops = async () => {
 
   try {
     await mongoDbCreateOperations(connection);
+    await mongoDbReadOperations(connection);
+    await mongoDbUpdateOperations(connection);
+    await mongoDbDeleteOperations(connection);
 
     return true;
   } catch (err) {
