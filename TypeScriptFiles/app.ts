@@ -1,4 +1,4 @@
-import { mongoDatabaseCRUD_Ops } from './MongoDbControlCenter';
+import { mongoDatabaseCRUD_Ops } from './MONGODB/MongoDbControlCenter';
 
 async function callAllOps() {
   try {
