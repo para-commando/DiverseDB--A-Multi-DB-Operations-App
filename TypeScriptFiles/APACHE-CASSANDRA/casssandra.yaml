@@ -187,6 +187,14 @@ concurrent_reads: 32
 # Writes in Cassandra are rarely I/O bound, so the ideal number of concurrent writes depends on the number of CPU cores on the node. The recommended value is 8 × number_of_cpu_cores
 concurrent_writes: 32
 
+#  A counter is a numeric value that can be incremented or decremented atomically across multiple columns within a single row. It's a data type used to keep track of counts or metrics in a distributed database like Cassandra.
+#  This setting determines the number of simultaneous counter writes that Cassandra can handle concurrently on a single replica (node) without blocking other write operations. Counter writes read the current values before incrementing and writing them back. The recommended value is (16 × number_of_drives) .
+concurrent_counter_writes: 32
+
+# configuration file controls the level of parallelism for batch log writes. Batch log writes are used to ensure that multiple write operations (updates, inserts, deletes) are applied atomically, even if they affect multiple rows or columns across different tables.
+# This setting determines the number of simultaneous batch log write operations that Cassandra can handle concurrently on a single replica (node) without blocking other write operations
+
+concurrent_batchlog_writes: 32 
 
 
 
