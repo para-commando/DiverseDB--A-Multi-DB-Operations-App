@@ -1,0 +1,32 @@
+# Cassandra storage config YAML 
+
+ 
+# The name of the cluster. This is mainly used to prevent machines in
+# one logical cluster from joining another.
+cluster_name: 'Test Cluster'
+
+# The number of tokens randomly assigned to this node in a cluster that uses virtual nodes (vnodes). This setting is evaluated in relation to the num_tokens set on other nodes in the cluster. If this node's num_tokens value is higher than the values on other nodes, the vnode logic assigns this node a larger proportion of data relative to other nodes. In general, if all nodes have equal hardware capability, each one should have the same num_tokens value . The recommended value is 256. If this property is commented out (#num_tokens), Cassandra uses 1 (equivalent to #num_tokens : 1) for legacy compatibility and assigns tokens using the initial_token property.
+# If this cluster is not using vnodes, comment out num_tokens or set num_tokens: 1 and use initial_token.
+num_tokens: 256
+
+# this is node-specific
+# The listen_address in Cassandra's configuration specifies the IP address or hostname the node uses to connect to other nodes. Key considerations:
+# Single-Node: For single-node setups, comment out this property or use the default (localhost).
+# Multi-Node: In multi-node setups, set listen_address to the node's IP or hostname.
+# Multi-Network: In complex setups with multiple networks or data centers, configure listen_address accordingly.
+# Caution: Never set listen_address to 0.0.0.0; it's always incorrect.
+# Exclusive Setting: Do not set both listen_address and listen_interface on the same node; choose one or the other.
+
+# listen_address: 172.17.0.2
+
+# This approach abstracts away the need to specify an IP address directly and simply tells Cassandra to use the network interface named eth0.
+# It can be more convenient in situations where the network interface name (eth0) is stable and less likely to change, especially in static or well-configured environments.
+# It's a way to delegate the responsibility of choosing the IP address to the system's network configuration.
+# If your network setup is relatively stable and you want a more abstract way to specify the network interface without worrying about IP address changes, then using listen_interface can be more convenient.
+# Note that this doesn't support ip-aliasing, IP aliasing is a technique used in computer networking to assign multiple IP addresses to a single network interface (NIC) on a computer or network device. This technique allows a single NIC to have multiple IP addresses associated with it, each serving different purposes or used for specific network-related tasks. 
+
+listen_interface: eth0
+
+# If an interface has an ipv4 and an ipv6 address, Cassandra uses the first ipv4 address by default. Set this property to true to configure Cassandra to use the first ipv6 address.
+# since ipv6 is more improved version when compared to ipv4 hence set as true
+listen_interface_prefer_ipv6: true
