@@ -165,5 +165,18 @@ enable_user_defined_functions: false
 # This option has no effect, if enable_user_defined_functions is false.
 enable_scripted_user_defined_functions: false
 
+# The setting is used to throttle the rate at which data compaction occurs. Compaction can be an I/O-intensive operation, and without rate limiting, it can potentially consume excessive system resources, causing performance issues.
+# this determines the rate at which compaction processes are allowed to consume system resources, specifically measured in megabytes per second (MB/s). Compaction is the process of merging and compacting data files (SSTables) to optimize storage and improve read performance You can set compaction_throughput_mb_per_sec to a specific value in MB/s that represents the maximum rate at which compaction processes are allowed to run
+# The optimal value for compaction_throughput_mb_per_sec depends on your hardware, workload, and the overall cluster configuration. You might need to experiment with different values to find the right balance. In general:
+
+# For spinning hard drives (HDDs), a lower value is often appropriate, such as 16-64 MB/s, to avoid excessive I/O contention.
+# For solid-state drives (SSDs) or high-performance storage, you can set a higher value, such as 128-256 MB/s, to take advantage of the faster I/O capabilities.
+#  Setting the value to 0 disables compaction throttling.
+compaction_throughput_mb_per_sec: 16
+
+# Cassandra logs a warning when compacting partitions larger than the set value.
+compaction_large_partition_warning_threshold_mb: 100
+
+
 
 
