@@ -75,3 +75,24 @@ saved_caches_directory: /var/lib/cassandra/saved_caches
 # ignore: ignore fatal errors and let the batches fail
 # More conservative policies like "die" or "stop" prioritize data safety and require manual intervention to bring the node back online. Less conservative policies like "ignore" prioritize availability but can risk data loss or corruption.
 commit_failure_policy : stop
+
+# The strategy for optimizing disk read
+# Possible values are:
+# ssd (for solid state disks, the default)
+# spinning (for spinning disks)
+disk_optimization_strategy: ssd
+
+# This setting defines the action Cassandra should take in response to a disk failure, specifically when one of the disks where data is stored becomes unavailable or fails.
+# Disk failures can occur due to hardware issues, disk corruption, or other factors. When a disk failure is detected, Cassandra will respond according to the specified policy.
+# policy for data disk failures:
+# die: shut down gossip and client transports and kill the JVM for any fs errors or
+#      single-sstable errors, so the node can be replaced.
+# stop_paranoid: shut down gossip and client transports even for single-sstable errors,
+#                kill the JVM for errors during startup.
+# stop: shut down gossip and client transports, leaving the node effectively dead, but
+#       can still be inspected via JMX, kill the JVM for errors during startup.
+# best_effort: stop using the failed disk and respond to requests based on
+#              remaining available sstables.  This means you WILL see obsolete
+#              data at CL.ONE!
+# ignore: ignore fatal errors and let requests fail, as in pre-1.2 Cassandra
+disk_failure_policy: stop
