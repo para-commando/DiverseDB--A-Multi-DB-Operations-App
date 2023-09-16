@@ -177,6 +177,11 @@ compaction_throughput_mb_per_sec: 16
 # Cassandra logs a warning when compacting partitions larger than the set value.
 compaction_large_partition_warning_threshold_mb: 100
 
+# The amount of on-heap memory allocated for memtables. Cassandra uses the total of this amount and the value of memtable_offheap_space_in_mb to set a threshold for automatic memtable flush.
+memtable_heap_space_in_mb : 500
+# Sets the total amount of off-heap memory allocated for memtables. Cassandra uses the total of this amount and the value of memtable_heap_space_in_mb to set a threshold for automatic memtable flush.
+memtable_offheap_space_in_mb: 500
+
 
 
 
