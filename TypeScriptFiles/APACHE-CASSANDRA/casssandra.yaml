@@ -182,6 +182,11 @@ memtable_heap_space_in_mb : 500
 # Sets the total amount of off-heap memory allocated for memtables. Cassandra uses the total of this amount and the value of memtable_heap_space_in_mb to set a threshold for automatic memtable flush.
 memtable_offheap_space_in_mb: 500
 
+# Workloads with more data than can fit in memory encounter a bottleneck in fetching data from disk during reads. Setting concurrent_reads to (16 × number_of_drives) allows operations to queue low enough in the stack so that the OS and drives can reorder them. The default setting applies to both logical volume managed (LVM) and RAID drives
+concurrent_reads: 32
+# Writes in Cassandra are rarely I/O bound, so the ideal number of concurrent writes depends on the number of CPU cores on the node. The recommended value is 8 × number_of_cpu_cores
+concurrent_writes: 32
+
 
 
 
