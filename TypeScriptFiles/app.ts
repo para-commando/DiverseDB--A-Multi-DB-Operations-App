@@ -1,9 +1,11 @@
-const { mongoDatabaseCRUD_Ops } = require('./MongoDbControlCenter');
+import { mongoDatabaseCRUD_Ops } from './MONGODB/MongoDbControlCenter';
 
-function aa(){try{mongoDatabaseCRUD_Ops();}
-catch(error:any){
-    console.log("🚀 ~ file: app.ts:5 ~ error:", error.message)
-    
-}}
+async function callAllOps() {
+  try {
+   await mongoDatabaseCRUD_Ops();
+  } catch (error: any) {
+    console.log('🚀 ~ file: app.ts:5 ~ error:', error.message);
+  }
+}
 
-aa();
+callAllOps();
