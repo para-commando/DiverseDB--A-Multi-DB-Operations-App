@@ -202,5 +202,10 @@ concurrent_materialized_view_writes: 32
 # Backs up data updated since the last snapshot was taken. When enabled, Cassandra creates a hard link to each SSTable flushed or streamed locally in a backups subdirectory of the keyspace data. Removing these links is the operator's responsibility.
 incremental_backups: true
 
+# Enables or disables taking a snapshot before each compaction. A snapshot is useful to back up data when there is a data format change. Be careful using this option: Cassandra does not clean up older snapshots automatically.
+snapshot_before_compaction: true
+
+# Adjusts the sensitivity of the failure detector on an exponential scale. Generally this setting does not need adjusting
+phi_convict_threshold: 8
 
 
