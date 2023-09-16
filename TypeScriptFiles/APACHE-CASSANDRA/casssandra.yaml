@@ -46,6 +46,32 @@ commitlog_directory: /var/lib/cassandra/commitlog
 # If not set, the default directory is $CASSANDRA_HOME/data/data.
 data_file_directories: /var/lib/cassandra/data
 
+# saved caches
+# saved_caches_directory setting specifies the directory where Cassandra stores its saved caches. Saved caches are used to speed up certain read operations by caching frequently accessed data structures, such as the row key cache and the counter cache.
+# The saved_caches_directory is used for storing various types of caches, including:
 
+# Row Key Cache: This cache stores frequently accessed row keys, improving read performance by reducing the number of disk seeks when retrieving data.
 
+# Counter Cache: The counter cache stores frequently accessed counter values (used in Cassandra's counter column type).
 
+# Key Cache: The key cache stores frequently accessed partition keys, further optimizing read performance.
+
+# Bloom Filter: While not exactly a cache, Cassandra's bloom filters are also persisted to disk in this directory. Bloom filters are used to reduce disk I/O by quickly determining whether data for a particular key may exist on disk.
+
+# Having a dedicated directory for saved caches helps in managing cache data across node restarts and ensures that the cache data is persistent. This can lead to improved read performance, especially for frequently accessed data.
+
+# It's important to allocate sufficient space for the saved_caches_directory, as the size of saved caches can grow over time depending on the workload and usage patterns. Additionally, you should monitor and maintain the saved cache directory to prevent it from consuming too much disk space.
+# If not set, the default directory is $CASSANDRA_HOME/data/saved_caches.
+saved_caches_directory: /var/lib/cassandra/saved_caches
+
+# determines how the system should respond when a commit disk failure occurs. A commit disk failure refers to a situation where the disk that stores the commit log, which is essential for ensuring data durability, encounters an issue
+
+# policy for commit disk failures:
+# die: shut down gossip and Thrift and kill the JVM, so the node can be replaced.
+# stop: shut down gossip and Thrift, leaving the node effectively dead, but
+#       can still be inspected via JMX.
+# stop_commit: shutdown the commit log, letting writes collect but
+#              continuing to service reads, as in pre-2.0.5 Cassandra
+# ignore: ignore fatal errors and let the batches fail
+# More conservative policies like "die" or "stop" prioritize data safety and require manual intervention to bring the node back online. Less conservative policies like "ignore" prioritize availability but can risk data loss or corruption.
+commit_failure_policy : stop
