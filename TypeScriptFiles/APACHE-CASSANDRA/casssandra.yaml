@@ -196,5 +196,11 @@ concurrent_counter_writes: 32
 
 concurrent_batchlog_writes: 32 
 
+#  Limit on the number of concurrent materialized view writes. Set this to the lesser of concurrent reads or concurrent writes, because there is a read involved in each materialized view write.
+concurrent_materialized_view_writes: 32
+
+# Backs up data updated since the last snapshot was taken. When enabled, Cassandra creates a hard link to each SSTable flushed or streamed locally in a backups subdirectory of the keyspace data. Removing these links is the operator's responsibility.
+incremental_backups: true
+
 
 
