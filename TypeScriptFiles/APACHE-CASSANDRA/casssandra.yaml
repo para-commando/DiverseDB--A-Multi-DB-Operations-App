@@ -125,3 +125,33 @@ endpoint_snitch: org.apache.cassandra.locator.GossipingPropertyFileSnitch
 
 # The listen address for client connections. Interface must correspond to a single address, IP aliasing is not supported
 rpc_interface: eth1
+
+
+rpc_interface_prefer_ipv6: true
+
+# In Apache Cassandra, a seed node is a special type of node within a Cassandra cluster that is used as an initial contact point for other nodes in the cluster to join or discover the cluster. Seed nodes play a crucial role in the node discovery process and are used during the bootstrapping of new nodes in the cluster. Here's what seed nodes are used for and how they work:
+
+# Node Discovery: When a new node is added to a Cassandra cluster or when a node restarts, it needs to discover and establish initial connections with other nodes in the cluster to become a part of the cluster. Seed nodes act as the entry points for this discovery process.
+
+# Gossip Protocol: Cassandra uses a protocol called the Gossip Protocol for node-to-node communication and cluster metadata distribution. Seed nodes are used to initiate the Gossip Protocol. When a new node starts, it contacts one or more seed nodes to get information about the cluster, such as the IP addresses of other nodes.
+
+# Cluster Membership: Seed nodes maintain information about the cluster's topology and the addresses of other nodes. New nodes use seed nodes to learn about the existing nodes in the cluster and establish connections with them.
+
+# Scalability: Seed nodes help maintain the scalability and stability of the cluster by providing a controlled way for new nodes to join. Without seed nodes, each node might need to know the addresses of all other nodes in the cluster, which can become impractical in large clusters.
+
+# It's important to note that while seed nodes are used during the initial node discovery and cluster formation, they do not have any special status within the cluster once it is up and running. All nodes in a Cassandra cluster communicate with each other using the Gossip Protocol, and seed nodes are just the starting points for that communication.
+
+# Typically, you would designate a few nodes in your Cassandra cluster as seed nodes by configuring them in the Cassandra configuration file (cassandra.yaml). These seed nodes should be stable and well-connected nodes within your cluster.
+
+# In summary, seed nodes in Cassandra are initial contact points that help new or restarting nodes discover and join the cluster by providing information about the cluster's topology and other nodes.
+
+
+seed_provider :
+
+    - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+      parameters:
+          # seeds is actually a comma-delimited list of addresses.
+          # Ex: "<ip1>,<ip2>,<ip3>" 
+          # this is node-specific
+          - seeds: "172.17.0.2,172.17.0.3"
+
