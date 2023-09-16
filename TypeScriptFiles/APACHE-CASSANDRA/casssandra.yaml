@@ -32,6 +32,9 @@ listen_interface: eth0
 listen_interface_prefer_ipv6: true
 
 # while the commit log and CDC log directories should be within the same filesystem for management reasons, it's also a common practice to consider placing the commit log on a separate storage device or partition to improve write performance and data durability, especially in production environments with high write workloads.
+# commit log.  when running on magnetic HDD, this should be a
+# separate spindle than the data directories.
+# If not set, the default directory is $CASSANDRA_HOME/data/commitlog.
 commitlog_directory: /var/lib/cassandra/commitlog
 
 # the data_file_directories setting is used to specify the directories where Cassandra stores its data files, including SSTables (Sorted String Table files). SSTables are the primary on-disk storage format for data in Cassandra.
@@ -40,7 +43,9 @@ commitlog_directory: /var/lib/cassandra/commitlog
 
 # data_file_directories: This is a list of one or more directory paths where Cassandra will store its data files. You can specify multiple directories by separating them with commas. Cassandra will evenly distribute the data across these directories, helping to balance the I/O load.
 # Having multiple data directories can help distribute the I/O load across multiple devices or disks, improving both read and write performance and increasing fault tolerance. It can also be useful when you have different types of storage devices (e.g., SSDs and HDDs) and want to allocate specific keyspaces or column families to different storage types based on their performance requirements.
+# If not set, the default directory is $CASSANDRA_HOME/data/data.
 data_file_directories: /var/lib/cassandra/data
+
 
 
 
