@@ -96,3 +96,32 @@ disk_optimization_strategy: ssd
 #              data at CL.ONE!
 # ignore: ignore fatal errors and let requests fail, as in pre-1.2 Cassandra
 disk_failure_policy: stop
+
+# determines how Cassandra nodes perceive and locate each other within the cluster based on their network topology. The endpoint_snitch is a critical configuration option for cluster management, as it helps nodes make decisions about which other nodes to communicate with and how to route requests effectively.
+# Cassandra provides several built-in endpoint snitches, each designed for different network topologies and use cases. Some common built-in snitches include:
+
+# SimpleSnitch: A basic snitch that doesn't take network topology into account. It assumes that all nodes are in the same data center and rack.
+
+# GossipingPropertyFileSnitch: This snitch uses a configuration file (cassandra-rackdc.properties) to specify the data center and rack assignments for each node. It's a good choice for small to medium-sized clusters with simple topologies.
+
+# EC2Snitch: Designed for clusters deployed on Amazon EC2, this snitch uses EC2's metadata service to automatically determine the data center and rack information for nodes
+ # PropertyFileSnitch
+# Determines proximity by rack and datacenter, which are explicitly configured in cassandra-topology.properties file.
+# Ec2MultiRegionSnitch
+# Uses the public IP as the broadcast_address to allow cross-region connectivity. This means you must also set seed addresses to the public IP and open the storage_port or ssl_storage_port on the public IP firewall. For intra-region traffic, Cassandra switches to the private IP after establishing a connection.
+# RackInferringSnitch:
+# Proximity is determined by rack and datacenter, which are assumed to correspond to the 3rd and 2nd octet of each node's IP address, respectively. Best used as an example for writing a custom snitch class (unless this happens to match your deployment conventions).
+
+# GoogleCloudSnitch:
+# Use for Cassandra deployments on Google Cloud Platform across one or more regions. The region is treated as a datacenter and the availability zones are treated as racks within the datacenter. All communication occurs over private IP addresses within the same logical network.
+# CloudstackSnitch
+# Use the CloudstackSnitch for Apache Cloudstack environments.
+
+
+endpoint_snitch: org.apache.cassandra.locator.GossipingPropertyFileSnitch
+#  This setting is used for client communication with the Cassandra cluster. It defines the IP address or hostname that clients (such as application servers) should use to connect to the Cassandra cluster. The rpc_address is where the Cassandra Query Language (CQL) clients send their requests for reading or writing data.
+# rpc_address : localhost
+
+
+# The listen address for client connections. Interface must correspond to a single address, IP aliasing is not supported
+rpc_interface: eth1
