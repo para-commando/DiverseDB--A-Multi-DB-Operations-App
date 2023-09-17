@@ -237,3 +237,15 @@ commitlog_sync_batch_window_in_ms: 2
 # controls the segment size on disk, where the commit logs are stored and once that size is reached then new segment is created.
 
 commitlog_segment_size_in_mb: 32
+
+# Max mutation size is also configurable via max_mutation_size_in_kb setting in
+# cassandra.yaml. The default is half the size commitlog_segment_size_in_mb * 1024.
+#
+# NOTE: If max_mutation_size_in_kb is set explicitly then commitlog_segment_size_in_mb must
+# be set to at least twice the size of max_mutation_size_in_kb / 1024
+# formula is max_mutation_size_in_kb = (commitlog_segment_size_in_mb/2)*2
+max_mutation_size_in_kb: 16384
+
+# warning is been set to trigger when batch size is greater than or equal to 12 mb ( 12288 kb)
+batch_size_warn_threshold_in_kb: 12288
+
