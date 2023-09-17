@@ -208,4 +208,32 @@ snapshot_before_compaction: true
 # Adjusts the sensitivity of the failure detector on an exponential scale. Generally this setting does not need adjusting
 phi_convict_threshold: 8
 
+# commitlog_sync: periodic:
 
+# When set to periodic, Cassandra will periodically sync (flush) data to the commit log based on the commitlog_sync_period_in_ms configuration parameter.
+# The commitlog_sync_period_in_ms specifies the time interval in milliseconds between sync operations.
+# This mode is less I/O-intensive than batch mode, as it doesn't immediately sync every write operation but rather batches them and syncs periodically. This can lead to a slight risk of data loss in case of a crash if data hasn't been synced yet.
+# in this writes may be acked immediately
+# and the CommitLog is simply synced every commitlog_sync_period_in_ms
+# milliseconds. 
+# commitlog_sync: periodic
+# commitlog_sync_period_in_ms: 10000
+# commitlog_sync: batch:
+
+# When set to batch, Cassandra will immediately sync (flush) data to the commit log after each write operation. This means that every write operation is guaranteed to be safely written to the commit log before it is considered complete.
+# batch mode provides stronger durability guarantees and minimizes the risk of data loss in case of a crash because data is immediately written to disk.
+# However, it can be more I/O-intensive compared to periodic mode, potentially affecting write performance, especially on systems with high write throughput.
+# commitlog_sync may be either "periodic" or "batch." 
+# 
+# When in batch mode, Cassandra won't ack writes until the commit log
+# has been fsynced to disk.  It will wait
+# commitlog_sync_batch_window_in_ms milliseconds between fsyncs.
+# This window should be kept short because the writer threads will
+# be unable to do extra work while waiting.  (You may need to increase
+# concurrent_writes for the same reason.)
+commitlog_sync: batch
+commitlog_sync_batch_window_in_ms: 2
+
+# controls the segment size on disk, where the commit logs are stored and once that size is reached then new segment is created.
+
+commitlog_segment_size_in_mb: 32
