@@ -396,3 +396,8 @@ partitioner: org.apache.cassandra.dht.Murmur3Partitioner
 
 # This setting specifies the port on which the Cassandra node listens for inter-node communication related to data storage and replication. It is essential for internal communication among nodes within the Cassandra cluster for data synchronization, consistency, and replication. The storage_port is primarily used for node-to-node communication for data distribution
 storage_port: 7000
+# used to specify the time-to-live (TTL) for trace data related to query events. Cassandra's tracing functionality allows you to monitor and trace the execution of queries in the database, providing insights into query performance and execution paths
+tracetype_query_ttl: 86400
+# used to specify the time-to-live (TTL) for trace data related to repair operations
+tracetype_repair_ttl: 604800
+
