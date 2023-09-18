@@ -208,4 +208,164 @@ snapshot_before_compaction: true
 # Adjusts the sensitivity of the failure detector on an exponential scale. Generally this setting does not need adjusting
 phi_convict_threshold: 8
 
+# commitlog_sync: periodic:
+
+# When set to periodic, Cassandra will periodically sync (flush) data to the commit log based on the commitlog_sync_period_in_ms configuration parameter.
+# The commitlog_sync_period_in_ms specifies the time interval in milliseconds between sync operations.
+# This mode is less I/O-intensive than batch mode, as it doesn't immediately sync every write operation but rather batches them and syncs periodically. This can lead to a slight risk of data loss in case of a crash if data hasn't been synced yet.
+# in this writes may be acked immediately
+# and the CommitLog is simply synced every commitlog_sync_period_in_ms
+# milliseconds. 
+# commitlog_sync: periodic
+# commitlog_sync_period_in_ms: 10000
+# commitlog_sync: batch:
+
+# When set to batch, Cassandra will immediately sync (flush) data to the commit log after each write operation. This means that every write operation is guaranteed to be safely written to the commit log before it is considered complete.
+# batch mode provides stronger durability guarantees and minimizes the risk of data loss in case of a crash because data is immediately written to disk.
+# However, it can be more I/O-intensive compared to periodic mode, potentially affecting write performance, especially on systems with high write throughput.
+# commitlog_sync may be either "periodic" or "batch." 
+# 
+# When in batch mode, Cassandra won't ack writes until the commit log
+# has been fsynced to disk.  It will wait
+# commitlog_sync_batch_window_in_ms milliseconds between fsyncs.
+# This window should be kept short because the writer threads will
+# be unable to do extra work while waiting.  (You may need to increase
+# concurrent_writes for the same reason.)
+commitlog_sync: batch
+commitlog_sync_batch_window_in_ms: 2
+
+# controls the segment size on disk, where the commit logs are stored and once that size is reached then new segment is created.
+
+commitlog_segment_size_in_mb: 32
+
+# Max mutation size is also configurable via max_mutation_size_in_kb setting in
+# cassandra.yaml. The default is half the size commitlog_segment_size_in_mb * 1024.
+#
+# NOTE: If max_mutation_size_in_kb is set explicitly then commitlog_segment_size_in_mb must
+# be set to at least twice the size of max_mutation_size_in_kb / 1024
+# formula is max_mutation_size_in_kb = (commitlog_segment_size_in_mb/2)*2
+max_mutation_size_in_kb: 16384
+
+# warning is been set to trigger when batch size is greater than or equal to 12 mb ( 12288 kb)
+batch_size_warn_threshold_in_kb: 12288
+
+# When commitlog_compression is enabled, Cassandra uses compressed commit log segments instead of memory-mapped segments. This can help reduce disk usage and improve performance, especially when dealing with large amounts of data. However, it is important to note that enabling compression can also increase CPU usage, as the data must be compressed and decompressed as it is written and read from disk
+# "Snappy" refers to the Snappy compression algorithm, which is a fast and efficient compression algorithm. Snappy is known for its speed and low CPU usage, making it a good choice for systems where compression and decompression need to be performed quickly with minimal impact on system performance
+commitlog_compression: Snappy
+
+
+# captures change data capture, Change Data Capture is a mechanism that allows you to capture and track changes made to data within Cassandra tables. It is particularly useful in scenarios where you need to replicate data changes to external systems, perform data synchronization, or enable real-time analytics and auditing.
+cdc_enabled: true
+
+# This setting specifies the directory where the raw CDC log files are stored. 
+cdc_raw_directory: /var/lib/cassandra/cdc_raw
+
+
+# Cassandra provides a CDC feature that allows you to capture change data for tables in a cluster. These changes can be consumed by external applications or used for auditing and data analysis purposes. The cdc_total_space_in_mb property is used to specify the maximum amount of disk space, in megabytes, that can be consumed by the CDC log files.
+
+# When CDC is enabled for a table in Cassandra, change data is written to CDC log files on disk. These log files capture the details of the changes, such as inserts, updates, and deletes made to the table. The CDC log files are stored in a directory defined by the cdc_raw_directory property.
+
+# The cdc_total_space_in_mb property ensures that the CDC log files do not consume excessive disk space and helps manage the overall storage requirements for change data. If the total space occupied by the CDC log files exceeds the value set for this property, Cassandra stops writing change data until enough log files are removed or cleared to free up space.
+cdc_total_space_in_mb: 500
+
+# When the cdc_raw limit is hit and the CDCCompactor is either running behind or experiencing backpressure, this interval is checked to see if any new space for cdc-tracked tables has been made available.
+cdc_free_space_check_interval_ms: 250 
+
+
+#  allows you to set a limit on the total disk space that the commit log directory can use. When this limit is reached, Cassandra will start recycling or removing older commit log segments to free up space for new write operations. This limit helps prevent the commit log from consuming all available disk space
+commitlog_total_space_in_mb : 40
+
+# control how many simultaneous compaction tasks can be executed at once, In Apache Cassandra, compaction is not inherently a blocking operation. However, during the compaction process, different compaction strategies and configurations can impact the behavior of reads and writes in the system.
+
+# By default, Cassandra utilizes a concurrent compaction model, where multiple compaction tasks can be executed concurrently. This means that compactions can occur simultaneously with read and write operations without blocking them entirely.
+
+# However, it's important to consider that compaction operations can consume system resources such as CPU, I/O, and disk bandwidth. If the compaction workload or system resources are heavily utilized, it may have an impact on the overall performance of read and write operations during compaction.
+concurrent_compactors: 2
+
+#  determines the size threshold, in megabytes (MB), that triggers preemptive opening of SSTable files during read operations. This setting is related to the optimization of read performance in Cassandra.
+
+# Here's an explanation of sstable_preemptive_open_interval_in_mb:
+
+# SSTable Preemptive Open: Cassandra stores data in SSTables (Sorted String Tables) on disk. When a read operation is requested, Cassandra typically opens the SSTable file associated with the read request, reads the necessary data, and serves the request.
+
+# Preemptive Opening: Preemptive opening refers to the practice of opening and caching SSTable files in memory before they are explicitly requested by read operations. This can improve read performance because it reduces the latency associated with opening files from disk when a read request arrives.
+
+# sstable_preemptive_open_interval_in_mb: This setting defines the size threshold for SSTable files. When a read operation is requested, Cassandra checks the size of the SSTable file. If the file's size exceeds the value specified in sstable_preemptive_open_interval_in_mb, Cassandra may preemptively open and cache the SSTable in memory, anticipating future read requests.
+sstable_preemptive_open_interval_in_mb: 50
+
+# The method Cassandra uses to allocate and manage memtable memory. See Off-heap memtables in Cassandra 2.1. In releases 3.2.0 and 3.2.1, the only option that works is: heap-buffers (On heap NIO (non-blocking I/O) buffers).
+memtable_allocation_type: heap_buffers
+
+#  Cassandra adds memtable_heap_space_in_mb to memtable_offheap_space_in_mb and multiplies the total by memtable_cleanup_threshold to get a space amount in MB. When the total amount of memory used by all non-flushing memtables exceeds this amount, Cassandra flushes the largest memtable to disk.
+# For example, consider a node where the total of memtable_heap_space_in_mb and memtable_offheap_space_in_mb is 1000, and memtable_cleanup_threshold is 0.50. The memtable_cleanup amount is 500MB. This node has two memtables: Memtable A (150MB) and Memtable B (350MB). When either memtable increases, the total space they use exceeds 500MB and Cassandra flushes the Memtable B to disk.
+# A larger value for memtable_cleanup_threshold means larger flushes, less frequent flushes and potentially less compaction activity, but also less concurrent flush activity, which can make it difficult to keep your disks saturated under heavy write load
+memtable_cleanup_threshold: 0.5
+#  As read operations are performed on SSTables, Cassandra checks the file cache first to see if the requested data is already in memory. If found, the data is retrieved from the cache, avoiding disk I/O.
+file_cache_size_in_mb : 100
+#  Indicates whether Cassandra allocates allocate on-heap or off-heap memory when the SSTable buffer pool is exhausted (when the buffer pool has exceeded the maximum memory file_cache_size_in_mb), beyond this amount, Cassandra stops caching buffers, but allocates on request.
+buffer_pool_use_heap_if_exhausted: true
+
+# configure the number of concurrent writer threads that can perform memtable flushes. These writer threads work in parallel to flush data from multiple memtables, which can improve write performance by reducing the time it takes to write data to disk.  setting it too high may result in excessive contention for system resources and may not necessarily lead to better performance.
+
+memtable_flush_writers: 2
+
+#  In Cassandra, data is organized into columns within rows. To efficiently look up and retrieve specific columns, Cassandra uses on-disk column indexes. These indexes contain information about the location of columns within SSTables, allowing for fast data retrieval.
+
+# Column Index Size: column_index_size_in_kb specifies the maximum size, in kilobytes (KB), for the on-disk column indexes associated with SSTables. In other words, it determines how much disk space can be used for storing column indexes.
+
+# Default Value: The default value for column_index_size_in_kb may vary depending on the Cassandra version and configuration. It is usually set to a moderate value that balances the need for efficient indexing with disk space considerations.
+
+# Tuning Considerations:
+
+# Increasing column_index_size_in_kb allows for larger and potentially more detailed column indexes, which can improve read performance by reducing the need to perform extensive scans of SSTable data.
+# Decreasing this setting conserves disk space but may result in less detailed indexes and slower read performance, especially for queries that need to locate specific columns within large SSTables.
+column_index_size_in_kb : 64
+
+# Fixed memory pool size in MB for SSTable index summaries. If the memory usage of all index summaries exceeds this limit, any SSTables with low read rates shrink their index summaries to meet this limit. This is a best-effort process. In extreme conditions, Cassandra may use more than this amount of memory.
+# The primary purpose of an index summary is to provide a high-level overview of the column index data contained within an SSTable. Rather than storing the complete index information for every column, which can be space-intensive, an index summary contains a subset of key information
+# leave it as empty for default values
+index_summary_capacity_in_mb:
+
+# Resizing Index Summaries: Over time, as data is written to an SSTable, the structure and distribution of data within the SSTable may change. For example, column values may be added, updated, or deleted. To maintain optimal query performance, index summaries need to be periodically updated to reflect these changes.
+
+# Resize Interval: index_summary_resize_interval_in_minutes specifies the time interval, in minutes, at which Cassandra checks if index summaries need to be resized or rebuilt for an SSTable. If an SSTable has experienced significant changes since the last index summary was built, resizing may be necessary to ensure the summary remains accurate and efficient.
+
+# Default Value: The default value for index_summary_resize_interval_in_minutes is typically set to a reasonable interval, such as 60 minutes. This means that every hour, Cassandra checks SSTables for changes and may initiate index summary resizing if needed.
+
+# Performance Impact: Resizing index summaries can consume CPU and I/O resources, as it involves scanning the SSTable to update the summary. Therefore, the frequency of resizing should be balanced with the system's resource availability and query performance requirements.
+index_summary_resize_interval_in_minutes: 60
+
+# This setting controls the maximum outbound network throughput (in megabits per second, Mbps) for streaming file transfers on a node.
+# Streaming is often used during operations like bootstrap or repair. These operations involve transferring data between nodes.
+# Limiting the throughput helps prevent excessive network saturation during streaming, which could negatively impact other network activities like client (RPC) requests.
+# The default value is 200 Mbps.
+stream_throughput_outbound_megabits_per_sec: 200
+
+# Similar to the previous setting, this one throttles the outbound network throughput for streaming file transfers, but it specifically applies to data transfers between datacenters.
+# It also affects network stream traffic configured with stream_throughput_outbound_megabits_per_sec.
+# Controlling the inter-datacenter streaming throughput helps manage the bandwidth usage between different datacenter locations
+inter_dc_stream_throughput_outbound_megabits_per_sec: 200
+
+# When set to true, this option forces the operating system to periodically flush dirty buffers ( 
+# Dirty buffers are areas of memory that contain data that has been changed but not yet written to disk. This data is typically stored in dirty buffers until there is enough data to write to disk efficiently.
+
+# Dirty buffers can improve performance by reducing the number of times that the operating system has to write to disk. However, if the operating system crashes or there is a power outage, the data in the dirty buffers may be lost. )to disk at the interval defined by trickle_fsync_interval_in_kb.
+# trickle_fsync is a configuration parameter in the Cassandra cassandra.yaml file that controls how Cassandra flushes data to disk. When set to true, Cassandra will force the operating system to flush the dirty buffers at a set interval (trickle_fsync_interval_in_kb) when doing sequential writing. This can help to improve read latencies by preventing sudden dirty buffer flushing from impacting them.
+
+# trickle_fsync is recommended to use on SSDs, but not on HDDs. This is because SSDs have much faster flush times than HDDs, so the impact on read latencies is less significant.
+trickle_fsync: true
+
+# The default value of trickle_fsync_interval_in_kb is 10240. This means that Cassandra will flush the dirty buffers to disk every 10240 kilobytes of data written when trickle_fsync is enabled.
+
+trickle_fsync_interval_in_kb: 10240
+
+# specific to windows kernel's power consumption and in linux systems this feature has no effect
+windows_timer_interval: 1
+
+# not included
+# auto_bootstrap
+
+
+#  Cassandra fails any batch whose size exceeds this setting. The default value is 10X the value of batch_size_warn_threshold_in_kb.
+batch_size_fail_threshold_in_kb: 50
 
