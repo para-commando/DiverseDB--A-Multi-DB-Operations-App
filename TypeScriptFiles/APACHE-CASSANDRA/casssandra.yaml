@@ -409,3 +409,7 @@ auto_snapshot: true
 # Cassandra allows you to configure the consistency level for your read operations. You can choose from consistency levels like ONE, QUORUM, LOCAL_QUORUM, and more. These levels determine how many replicas must agree on the data's value before it is considered valid. Choosing a higher consistency level increases the likelihood of reading the most recent data but may impact read performance.
 key_cache_save_period: 14400
 
+# A global cache setting for the maximum size of the key cache in memory (for all tables). If no value is set, the cache is set to the smaller of 5% of the available heap, or 100MB. To disable set to 0
+key_cache_size_in_mb: 100
+# determines the maximum amount of memory allocated for caching column index data on a per-column-family basis. This cache helps improve read performance by storing column index information in memory
+column_index_cache_size_in_kb: 2
