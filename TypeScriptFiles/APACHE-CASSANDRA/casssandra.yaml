@@ -335,3 +335,14 @@ index_summary_capacity_in_mb:
 # Performance Impact: Resizing index summaries can consume CPU and I/O resources, as it involves scanning the SSTable to update the summary. Therefore, the frequency of resizing should be balanced with the system's resource availability and query performance requirements.
 index_summary_resize_interval_in_minutes: 60
 
+# This setting controls the maximum outbound network throughput (in megabits per second, Mbps) for streaming file transfers on a node.
+# Streaming is often used during operations like bootstrap or repair. These operations involve transferring data between nodes.
+# Limiting the throughput helps prevent excessive network saturation during streaming, which could negatively impact other network activities like client (RPC) requests.
+# The default value is 200 Mbps.
+stream_throughput_outbound_megabits_per_sec: 200
+
+# Similar to the previous setting, this one throttles the outbound network throughput for streaming file transfers, but it specifically applies to data transfers between datacenters.
+# It also affects network stream traffic configured with stream_throughput_outbound_megabits_per_sec.
+# Controlling the inter-datacenter streaming throughput helps manage the bandwidth usage between different datacenter locations
+inter_dc_stream_throughput_outbound_megabits_per_sec: 200
+
