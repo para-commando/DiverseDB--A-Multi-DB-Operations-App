@@ -369,3 +369,115 @@ windows_timer_interval: 1
 #  Cassandra fails any batch whose size exceeds this setting. The default value is 10X the value of batch_size_warn_threshold_in_kb.
 batch_size_fail_threshold_in_kb: 50
 
+# specifies a threshold for warning messages related to unlogged batch operations that span multiple partitions. Unlogged batch operations are a type of write operation in Cassandra that are not guaranteed to be atomic and durable. They are typically used for non-critical data, where high write throughput is more important than data consistency and durability. in this when write request come it is directly written to memtables and commit log is skipped this poses a risk as if the node shuts down before data being flushed to disk then that would cause data loss as no commit log entry would be present for it, this approach is preferred sometimes as it's performance overhead is comparatively less than logged batch operations where entries are added to the commit log
+unlogged_batch_across_partitions_warn_threshold: 10
+
+# listen_address (or listen_interface) is used for internal communication among Cassandra nodes within the cluster.
+# broadcast_address is used for cluster discovery and external client access. It's like telling others how to find your Cassandra cluster.
+# rpc_address is specifically for client applications to connect and communicate with the Cassandra cluster. It's like the "front desk" where clients interact with the database.
+# The "public" IP address this node uses to broadcast to other nodes outside the network or across regions in multiple-region EC2 deployments. If this property is commented out, the node uses the same IP address or hostname as listen_address. A node does not need a separate broadcast_address in a single-node or single-datacenter installation, or in an EC2-based network that supports automatic switching between private and public communication. It is necessary to set a separate listen_address and broadcast_address on a node with multiple physical network interfaces or other topologies where not all nodes have access to other nodes by their private IP addresses
+broadcast_address: 172.17.0.2
+
+# The listen_on_broadcast_address setting in Cassandra's configuration determines whether the node should listen for connections on the broadcast_address in addition to the listen_address. When set to true, the node listens on both addresses; when set to false (the default), it listens only on the listen_address.
+
+# Here's what happens when you set listen_on_broadcast_address to true:
+
+# Listening on Multiple Addresses: When listen_on_broadcast_address is set to true, the Cassandra node will bind and listen for connections on both the listen_address and the broadcast_address. This means it will accept incoming connections on both network interfaces or addresses.
+
+# No Overrides: Setting listen_on_broadcast_address to true does not override any other settings, such as listen_address, rpc_address, or broadcast_address. Instead, it adds an additional address for the node to listen on.
+
+# Enhanced Network Flexibility: This configuration can be useful in scenarios where the node has multiple network interfaces or addresses, and you want to ensure that it accepts connections on both of them. It provides greater network flexibility and can be used in specific deployment situations.
+listen_on_broadcast_address: true
+
+# Commented out
+# allocate_tokens_keyspace
+
+partitioner: org.apache.cassandra.dht.Murmur3Partitioner
+
+# This setting specifies the port on which the Cassandra node listens for inter-node communication related to data storage and replication. It is essential for internal communication among nodes within the Cassandra cluster for data synchronization, consistency, and replication. The storage_port is primarily used for node-to-node communication for data distribution
+storage_port: 7000
+# used to specify the time-to-live (TTL) for trace data related to query events. Cassandra's tracing functionality allows you to monitor and trace the execution of queries in the database, providing insights into query performance and execution paths
+tracetype_query_ttl: 86400
+# used to specify the time-to-live (TTL) for trace data related to repair operations
+tracetype_repair_ttl: 604800
+
+# Enables or disables whether Cassandra takes a snapshot of the data before truncating a keyspace or dropping a table
+auto_snapshot: true
+# determines how frequently the key cache data is saved to disk. The key cache is a component in Cassandra that caches the keys and their locations (e.g., row offsets) in memory to improve read performance
+# While the key cache is primarily a memory-based cache for quick access, its content can be persisted to disk to speed up warm-up times when a Cassandra node restarts or joins the cluster. This persistence ensures that the key cache can be efficiently rebuilt from disk after a restart.
+# on the consistency of data in cache
+# Cassandra allows you to configure the consistency level for your read operations. You can choose from consistency levels like ONE, QUORUM, LOCAL_QUORUM, and more. These levels determine how many replicas must agree on the data's value before it is considered valid. Choosing a higher consistency level increases the likelihood of reading the most recent data but may impact read performance.
+key_cache_save_period: 14400
+
+# A global cache setting for the maximum size of the key cache in memory (for all tables). If no value is set, the cache is set to the smaller of 5% of the available heap, or 100MB. To disable set to 0
+key_cache_size_in_mb: 100
+# determines the maximum amount of memory allocated for caching column index data on a per-column-family basis. This cache helps improve read performance by storing column index information in memory
+column_index_cache_size_in_kb: 2
+# The row cache is a cache mechanism in Cassandra used to store entire rows of data in memory for fast retrieval. Caching frequently accessed rows can significantly improve read performance, as it reduces the need to access data from disk.
+
+# Custom Caching Strategies: Cassandra supports different caching strategies, and you can choose the strategy that best suits your use case. The row_cache_class_name setting allows you to specify the Java class that implements the caching strategy for a specific column family.
+row_cache_class_name: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvide
+
+# commented code
+# row_cache_keys_to_save:
+
+# Maximum size of the row cache in memory. The row cache can save more time than key_cache_size_in_mb,, but it is space-intensive because it contains the entire row. 
+row_cache_size_in_mb: 100
+# The number of seconds that rows are kept in cache. Caches are saved to saved_caches_directory. This setting has limited use as described in row_cache_size_in_mb.
+row_cache_save_period: 10
+
+# non researched, used default value
+counter_cache_size_in_mb:
+
+# non researched, used default value
+counter_cache_save_period: 7200
+
+# code-commented
+# Number of keys from the counter cache to save. When this property is disabled, Cassandra saves all keys.
+# counter_cache_keys_to_save: 100
+
+
+#Tombstones
+
+# Tombstones are a crucial part of Cassandra's distributed and eventual consistency model, allowing deleted data to be propagated throughout the cluster and ensuring that data deletions are eventually consistent across all nodes.
+
+# Here are the key points to understand about tombstones in Cassandra:
+
+# Data Deletion: In Cassandra, data is not physically removed from disk immediately when you issue a delete operation. Instead, Cassandra marks the data to be deleted with a tombstone.
+
+# TTL (Time to Live): You can also set a TTL (Time to Live) for data when writing it to Cassandra. After the TTL expires, Cassandra treats the data as if it has been deleted, effectively creating a tombstone for it.
+
+# Deletion Propagation: Tombstones are distributed across the Cassandra cluster to ensure that deleted data is eventually removed from all nodes. This is a fundamental part of Cassandra's eventual consistency model.
+
+# Garbage Collection: Cassandra periodically performs a process called "compaction" to remove obsolete data, including tombstones, from SSTables (the data storage format in Cassandra). This helps manage disk space and improve read performance.
+
+# Tombstone Challenges: While tombstones are necessary for maintaining eventual consistency, they can also introduce challenges. If tombstones are overused or not cleaned up effectively, they can lead to increased storage and compaction overhead.
+# Cassandra issues a warning if a query scans more than this number of tombstones.
+tombstone_warn_threshold: 1000
+# In Apache Cassandra, the tombstone_failure_threshold is a configuration setting that defines the maximum number of tombstones allowed per read operation before Cassandra considers the read operation a failure. This setting helps prevent performance degradation and query timeouts that can occur when dealing with a high number of tombstones in a query result.
+
+# Here's a more detailed explanation of tombstone_failure_threshold:
+
+# Tombstones and Read Operations: In Cassandra, tombstones are special markers used to indicate that data has been deleted or has expired (in the case of Time to Live, TTL). When you perform a read operation (e.g., a SELECT query), Cassandra retrieves data from SSTables (the data storage format) and checks for tombstones.
+
+# Tombstone Impact on Reads: If a read operation encounters a large number of tombstones, it can lead to performance issues and timeouts. This is because Cassandra needs to process tombstones to determine if data should be included in the query result.
+
+# Threshold Setting: The tombstone_failure_threshold setting allows you to specify a threshold value. If the number of tombstones encountered during a read operation exceeds this threshold, Cassandra will consider the read operation a failure.
+tombstone_failure_threshold: 100000
+#  determines the maximum amount of time (in milliseconds) that a Cassandra node will wait for a range query to complete. A range query is a query that retrieves a range of rows from a column family based on a specified column range or key range.
+range_request_timeout_in_ms: 1000
+#  The number of milliseconds that the coordinator waits for read operations to complete before timing it out
+read_request_timeout_in_ms: 5000
+
+# The number of milliseconds that the coordinator waits for counter writes to complete before timing it out.
+counter_write_request_timeout_in_ms: 5000
+
+# non researched, used default value
+cas_contention_timeout_in_ms: 1000
+
+# non researched, used default value
+cqlTruncateequest_timeout_in_ms: 60000
+# The number of milliseconds that the coordinator waits for a write operations to complete before timing it out.
+write_request_timeout_in_ms: 2000
+# The default timeout value for other miscellaneous operations.
+request_timeout_in_ms: 1000
