@@ -293,3 +293,10 @@ concurrent_compactors: 2
 # sstable_preemptive_open_interval_in_mb: This setting defines the size threshold for SSTable files. When a read operation is requested, Cassandra checks the size of the SSTable file. If the file's size exceeds the value specified in sstable_preemptive_open_interval_in_mb, Cassandra may preemptively open and cache the SSTable in memory, anticipating future read requests.
 sstable_preemptive_open_interval_in_mb: 50
 
+# The method Cassandra uses to allocate and manage memtable memory. See Off-heap memtables in Cassandra 2.1. In releases 3.2.0 and 3.2.1, the only option that works is: heap-buffers (On heap NIO (non-blocking I/O) buffers).
+memtable_allocation_type: heap_buffers
+
+#  Cassandra adds memtable_heap_space_in_mb to memtable_offheap_space_in_mb and multiplies the total by memtable_cleanup_threshold to get a space amount in MB. When the total amount of memory used by all non-flushing memtables exceeds this amount, Cassandra flushes the largest memtable to disk.
+# For example, consider a node where the total of memtable_heap_space_in_mb and memtable_offheap_space_in_mb is 1000, and memtable_cleanup_threshold is 0.50. The memtable_cleanup amount is 500MB. This node has two memtables: Memtable A (150MB) and Memtable B (350MB). When either memtable increases, the total space they use exceeds 500MB and Cassandra flushes the Memtable B to disk.
+# A larger value for memtable_cleanup_threshold means larger flushes, less frequent flushes and potentially less compaction activity, but also less concurrent flush activity, which can make it difficult to keep your disks saturated under heavy write load
+memtable_cleanup_threshold: 0.5
