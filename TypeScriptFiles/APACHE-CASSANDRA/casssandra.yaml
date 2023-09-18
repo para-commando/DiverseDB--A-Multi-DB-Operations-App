@@ -369,3 +369,11 @@ windows_timer_interval: 1
 #  Cassandra fails any batch whose size exceeds this setting. The default value is 10X the value of batch_size_warn_threshold_in_kb.
 batch_size_fail_threshold_in_kb: 50
 
+# specifies a threshold for warning messages related to unlogged batch operations that span multiple partitions. Unlogged batch operations are a type of write operation in Cassandra that are not guaranteed to be atomic and durable. They are typically used for non-critical data, where high write throughput is more important than data consistency and durability. in this when write request come it is directly written to memtables and commit log is skipped this poses a risk as if the node shuts down before data being flushed to disk then that would cause data loss as no commit log entry would be present for it, this approach is preferred sometimes as it's performance overhead is comparatively less than logged batch operations where entries are added to the commit log
+unlogged_batch_across_partitions_warn_threshold: 10
+
+# listen_address (or listen_interface) is used for internal communication among Cassandra nodes within the cluster.
+# broadcast_address is used for cluster discovery and external client access. It's like telling others how to find your Cassandra cluster.
+# rpc_address is specifically for client applications to connect and communicate with the Cassandra cluster. It's like the "front desk" where clients interact with the database.
+# The "public" IP address this node uses to broadcast to other nodes outside the network or across regions in multiple-region EC2 deployments. If this property is commented out, the node uses the same IP address or hostname as listen_address. A node does not need a separate broadcast_address in a single-node or single-datacenter installation, or in an EC2-based network that supports automatic switching between private and public communication. It is necessary to set a separate listen_address and broadcast_address on a node with multiple physical network interfaces or other topologies where not all nodes have access to other nodes by their private IP addresses
+broadcast_address: 172.17.0.2
