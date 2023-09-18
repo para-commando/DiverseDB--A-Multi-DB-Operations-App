@@ -454,3 +454,15 @@ counter_cache_save_period: 7200
 # Tombstone Challenges: While tombstones are necessary for maintaining eventual consistency, they can also introduce challenges. If tombstones are overused or not cleaned up effectively, they can lead to increased storage and compaction overhead.
 # Cassandra issues a warning if a query scans more than this number of tombstones.
 tombstone_warn_threshold: 1000
+# In Apache Cassandra, the tombstone_failure_threshold is a configuration setting that defines the maximum number of tombstones allowed per read operation before Cassandra considers the read operation a failure. This setting helps prevent performance degradation and query timeouts that can occur when dealing with a high number of tombstones in a query result.
+
+# Here's a more detailed explanation of tombstone_failure_threshold:
+
+# Tombstones and Read Operations: In Cassandra, tombstones are special markers used to indicate that data has been deleted or has expired (in the case of Time to Live, TTL). When you perform a read operation (e.g., a SELECT query), Cassandra retrieves data from SSTables (the data storage format) and checks for tombstones.
+
+# Tombstone Impact on Reads: If a read operation encounters a large number of tombstones, it can lead to performance issues and timeouts. This is because Cassandra needs to process tombstones to determine if data should be included in the query result.
+
+# Threshold Setting: The tombstone_failure_threshold setting allows you to specify a threshold value. If the number of tombstones encountered during a read operation exceeds this threshold, Cassandra will consider the read operation a failure.
+tombstone_failure_threshold: 100000
+#  determines the maximum amount of time (in milliseconds) that a Cassandra node will wait for a range query to complete. A range query is a query that retrieves a range of rows from a column family based on a specified column range or key range.
+range_request_timeout_in_ms: 1000
