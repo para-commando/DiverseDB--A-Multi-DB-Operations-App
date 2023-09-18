@@ -275,3 +275,21 @@ cdc_free_space_check_interval_ms: 250
 #  allows you to set a limit on the total disk space that the commit log directory can use. When this limit is reached, Cassandra will start recycling or removing older commit log segments to free up space for new write operations. This limit helps prevent the commit log from consuming all available disk space
 commitlog_total_space_in_mb : 40
 
+# control how many simultaneous compaction tasks can be executed at once, In Apache Cassandra, compaction is not inherently a blocking operation. However, during the compaction process, different compaction strategies and configurations can impact the behavior of reads and writes in the system.
+
+# By default, Cassandra utilizes a concurrent compaction model, where multiple compaction tasks can be executed concurrently. This means that compactions can occur simultaneously with read and write operations without blocking them entirely.
+
+# However, it's important to consider that compaction operations can consume system resources such as CPU, I/O, and disk bandwidth. If the compaction workload or system resources are heavily utilized, it may have an impact on the overall performance of read and write operations during compaction.
+concurrent_compactors: 2
+
+#  determines the size threshold, in megabytes (MB), that triggers preemptive opening of SSTable files during read operations. This setting is related to the optimization of read performance in Cassandra.
+
+# Here's an explanation of sstable_preemptive_open_interval_in_mb:
+
+# SSTable Preemptive Open: Cassandra stores data in SSTables (Sorted String Tables) on disk. When a read operation is requested, Cassandra typically opens the SSTable file associated with the read request, reads the necessary data, and serves the request.
+
+# Preemptive Opening: Preemptive opening refers to the practice of opening and caching SSTable files in memory before they are explicitly requested by read operations. This can improve read performance because it reduces the latency associated with opening files from disk when a read request arrives.
+
+# sstable_preemptive_open_interval_in_mb: This setting defines the size threshold for SSTable files. When a read operation is requested, Cassandra checks the size of the SSTable file. If the file's size exceeds the value specified in sstable_preemptive_open_interval_in_mb, Cassandra may preemptively open and cache the SSTable in memory, anticipating future read requests.
+sstable_preemptive_open_interval_in_mb: 50
+
