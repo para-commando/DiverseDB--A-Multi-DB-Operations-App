@@ -377,3 +377,14 @@ unlogged_batch_across_partitions_warn_threshold: 10
 # rpc_address is specifically for client applications to connect and communicate with the Cassandra cluster. It's like the "front desk" where clients interact with the database.
 # The "public" IP address this node uses to broadcast to other nodes outside the network or across regions in multiple-region EC2 deployments. If this property is commented out, the node uses the same IP address or hostname as listen_address. A node does not need a separate broadcast_address in a single-node or single-datacenter installation, or in an EC2-based network that supports automatic switching between private and public communication. It is necessary to set a separate listen_address and broadcast_address on a node with multiple physical network interfaces or other topologies where not all nodes have access to other nodes by their private IP addresses
 broadcast_address: 172.17.0.2
+
+# The listen_on_broadcast_address setting in Cassandra's configuration determines whether the node should listen for connections on the broadcast_address in addition to the listen_address. When set to true, the node listens on both addresses; when set to false (the default), it listens only on the listen_address.
+
+# Here's what happens when you set listen_on_broadcast_address to true:
+
+# Listening on Multiple Addresses: When listen_on_broadcast_address is set to true, the Cassandra node will bind and listen for connections on both the listen_address and the broadcast_address. This means it will accept incoming connections on both network interfaces or addresses.
+
+# No Overrides: Setting listen_on_broadcast_address to true does not override any other settings, such as listen_address, rpc_address, or broadcast_address. Instead, it adds an additional address for the node to listen on.
+
+# Enhanced Network Flexibility: This configuration can be useful in scenarios where the node has multiple network interfaces or addresses, and you want to ensure that it accepts connections on both of them. It provides greater network flexibility and can be used in specific deployment situations.
+listen_on_broadcast_address: true
