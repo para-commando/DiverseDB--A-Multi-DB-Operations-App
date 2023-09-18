@@ -472,3 +472,8 @@ read_request_timeout_in_ms: 5000
 # The number of milliseconds that the coordinator waits for counter writes to complete before timing it out.
 counter_write_request_timeout_in_ms: 5000
 
+# non researched, used default value
+cas_contention_timeout_in_ms: 1000
+
+# non researched, used default value
+cqlTruncateequest_timeout_in_ms: 60000
