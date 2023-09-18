@@ -346,3 +346,16 @@ stream_throughput_outbound_megabits_per_sec: 200
 # Controlling the inter-datacenter streaming throughput helps manage the bandwidth usage between different datacenter locations
 inter_dc_stream_throughput_outbound_megabits_per_sec: 200
 
+# When set to true, this option forces the operating system to periodically flush dirty buffers ( 
+# Dirty buffers are areas of memory that contain data that has been changed but not yet written to disk. This data is typically stored in dirty buffers until there is enough data to write to disk efficiently.
+
+# Dirty buffers can improve performance by reducing the number of times that the operating system has to write to disk. However, if the operating system crashes or there is a power outage, the data in the dirty buffers may be lost. )to disk at the interval defined by trickle_fsync_interval_in_kb.
+# trickle_fsync is a configuration parameter in the Cassandra cassandra.yaml file that controls how Cassandra flushes data to disk. When set to true, Cassandra will force the operating system to flush the dirty buffers at a set interval (trickle_fsync_interval_in_kb) when doing sequential writing. This can help to improve read latencies by preventing sudden dirty buffer flushing from impacting them.
+
+# trickle_fsync is recommended to use on SSDs, but not on HDDs. This is because SSDs have much faster flush times than HDDs, so the impact on read latencies is less significant.
+trickle_fsync: true
+
+# The default value of trickle_fsync_interval_in_kb is 10240. This means that Cassandra will flush the dirty buffers to disk every 10240 kilobytes of data written when trickle_fsync is enabled.
+
+trickle_fsync_interval_in_kb: 10240
+
