@@ -249,3 +249,10 @@ max_mutation_size_in_kb: 16384
 # warning is been set to trigger when batch size is greater than or equal to 12 mb ( 12288 kb)
 batch_size_warn_threshold_in_kb: 12288
 
+# When commitlog_compression is enabled, Cassandra uses compressed commit log segments instead of memory-mapped segments. This can help reduce disk usage and improve performance, especially when dealing with large amounts of data. However, it is important to note that enabling compression can also increase CPU usage, as the data must be compressed and decompressed as it is written and read from disk
+# "Snappy" refers to the Snappy compression algorithm, which is a fast and efficient compression algorithm. Snappy is known for its speed and low CPU usage, making it a good choice for systems where compression and decompression need to be performed quickly with minimal impact on system performance
+commitlog_compression: Snappy
+
+
+# captures change data capture, Change Data Capture is a mechanism that allows you to capture and track changes made to data within Cassandra tables. It is particularly useful in scenarios where you need to replicate data changes to external systems, perform data synchronization, or enable real-time analytics and auditing.
+cdc_enabled: true
