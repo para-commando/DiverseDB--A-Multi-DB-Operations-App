@@ -477,3 +477,7 @@ cas_contention_timeout_in_ms: 1000
 
 # non researched, used default value
 cqlTruncateequest_timeout_in_ms: 60000
+# The number of milliseconds that the coordinator waits for a write operations to complete before timing it out.
+write_request_timeout_in_ms: 2000
+# The default timeout value for other miscellaneous operations.
+request_timeout_in_ms: 1000
