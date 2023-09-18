@@ -305,3 +305,19 @@ file_cache_size_in_mb : 100
 #  Indicates whether Cassandra allocates allocate on-heap or off-heap memory when the SSTable buffer pool is exhausted (when the buffer pool has exceeded the maximum memory file_cache_size_in_mb), beyond this amount, Cassandra stops caching buffers, but allocates on request.
 buffer_pool_use_heap_if_exhausted: true
 
+# configure the number of concurrent writer threads that can perform memtable flushes. These writer threads work in parallel to flush data from multiple memtables, which can improve write performance by reducing the time it takes to write data to disk.  setting it too high may result in excessive contention for system resources and may not necessarily lead to better performance.
+
+memtable_flush_writers: 2
+
+#  In Cassandra, data is organized into columns within rows. To efficiently look up and retrieve specific columns, Cassandra uses on-disk column indexes. These indexes contain information about the location of columns within SSTables, allowing for fast data retrieval.
+
+# Column Index Size: column_index_size_in_kb specifies the maximum size, in kilobytes (KB), for the on-disk column indexes associated with SSTables. In other words, it determines how much disk space can be used for storing column indexes.
+
+# Default Value: The default value for column_index_size_in_kb may vary depending on the Cassandra version and configuration. It is usually set to a moderate value that balances the need for efficient indexing with disk space considerations.
+
+# Tuning Considerations:
+
+# Increasing column_index_size_in_kb allows for larger and potentially more detailed column indexes, which can improve read performance by reducing the need to perform extensive scans of SSTable data.
+# Decreasing this setting conserves disk space but may result in less detailed indexes and slower read performance, especially for queries that need to locate specific columns within large SSTables.
+column_index_size_in_kb : 64
+
