@@ -423,3 +423,9 @@ row_cache_class_name: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvid
 
 # Maximum size of the row cache in memory. The row cache can save more time than key_cache_size_in_mb,, but it is space-intensive because it contains the entire row. 
 row_cache_size_in_mb: 100
+# The number of seconds that rows are kept in cache. Caches are saved to saved_caches_directory. This setting has limited use as described in row_cache_size_in_mb.
+row_cache_save_period: 10
+
+# non researched, used default value
+counter_cache_size_in_mb:
+
