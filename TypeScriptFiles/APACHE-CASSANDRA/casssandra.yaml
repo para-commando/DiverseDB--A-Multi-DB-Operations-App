@@ -401,3 +401,11 @@ tracetype_query_ttl: 86400
 # used to specify the time-to-live (TTL) for trace data related to repair operations
 tracetype_repair_ttl: 604800
 
+# Enables or disables whether Cassandra takes a snapshot of the data before truncating a keyspace or dropping a table
+auto_snapshot: true
+# determines how frequently the key cache data is saved to disk. The key cache is a component in Cassandra that caches the keys and their locations (e.g., row offsets) in memory to improve read performance
+# While the key cache is primarily a memory-based cache for quick access, its content can be persisted to disk to speed up warm-up times when a Cassandra node restarts or joins the cluster. This persistence ensures that the key cache can be efficiently rebuilt from disk after a restart.
+# on the consistency of data in cache
+# Cassandra allows you to configure the consistency level for your read operations. You can choose from consistency levels like ONE, QUORUM, LOCAL_QUORUM, and more. These levels determine how many replicas must agree on the data's value before it is considered valid. Choosing a higher consistency level increases the likelihood of reading the most recent data but may impact read performance.
+key_cache_save_period: 14400
+
