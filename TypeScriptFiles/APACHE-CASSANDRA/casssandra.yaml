@@ -359,3 +359,13 @@ trickle_fsync: true
 
 trickle_fsync_interval_in_kb: 10240
 
+# specific to windows kernel's power consumption and in linux systems this feature has no effect
+windows_timer_interval: 1
+
+# not included
+# auto_bootstrap
+
+
+#  Cassandra fails any batch whose size exceeds this setting. The default value is 10X the value of batch_size_warn_threshold_in_kb.
+batch_size_fail_threshold_in_kb: 50
+
