@@ -413,3 +413,13 @@ key_cache_save_period: 14400
 key_cache_size_in_mb: 100
 # determines the maximum amount of memory allocated for caching column index data on a per-column-family basis. This cache helps improve read performance by storing column index information in memory
 column_index_cache_size_in_kb: 2
+# The row cache is a cache mechanism in Cassandra used to store entire rows of data in memory for fast retrieval. Caching frequently accessed rows can significantly improve read performance, as it reduces the need to access data from disk.
+
+# Custom Caching Strategies: Cassandra supports different caching strategies, and you can choose the strategy that best suits your use case. The row_cache_class_name setting allows you to specify the Java class that implements the caching strategy for a specific column family.
+row_cache_class_name: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvide
+
+# commented code
+# row_cache_keys_to_save:
+
+# Maximum size of the row cache in memory. The row cache can save more time than key_cache_size_in_mb,, but it is space-intensive because it contains the entire row. 
+row_cache_size_in_mb: 100
