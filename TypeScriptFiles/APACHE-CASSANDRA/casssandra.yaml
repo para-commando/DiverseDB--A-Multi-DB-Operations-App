@@ -321,3 +321,17 @@ memtable_flush_writers: 2
 # Decreasing this setting conserves disk space but may result in less detailed indexes and slower read performance, especially for queries that need to locate specific columns within large SSTables.
 column_index_size_in_kb : 64
 
+# Fixed memory pool size in MB for SSTable index summaries. If the memory usage of all index summaries exceeds this limit, any SSTables with low read rates shrink their index summaries to meet this limit. This is a best-effort process. In extreme conditions, Cassandra may use more than this amount of memory.
+# The primary purpose of an index summary is to provide a high-level overview of the column index data contained within an SSTable. Rather than storing the complete index information for every column, which can be space-intensive, an index summary contains a subset of key information
+# leave it as empty for default values
+index_summary_capacity_in_mb:
+
+# Resizing Index Summaries: Over time, as data is written to an SSTable, the structure and distribution of data within the SSTable may change. For example, column values may be added, updated, or deleted. To maintain optimal query performance, index summaries need to be periodically updated to reflect these changes.
+
+# Resize Interval: index_summary_resize_interval_in_minutes specifies the time interval, in minutes, at which Cassandra checks if index summaries need to be resized or rebuilt for an SSTable. If an SSTable has experienced significant changes since the last index summary was built, resizing may be necessary to ensure the summary remains accurate and efficient.
+
+# Default Value: The default value for index_summary_resize_interval_in_minutes is typically set to a reasonable interval, such as 60 minutes. This means that every hour, Cassandra checks SSTables for changes and may initiate index summary resizing if needed.
+
+# Performance Impact: Resizing index summaries can consume CPU and I/O resources, as it involves scanning the SSTable to update the summary. Therefore, the frequency of resizing should be balanced with the system's resource availability and query performance requirements.
+index_summary_resize_interval_in_minutes: 60
+
