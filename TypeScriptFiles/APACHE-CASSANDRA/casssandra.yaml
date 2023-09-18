@@ -256,3 +256,15 @@ commitlog_compression: Snappy
 
 # captures change data capture, Change Data Capture is a mechanism that allows you to capture and track changes made to data within Cassandra tables. It is particularly useful in scenarios where you need to replicate data changes to external systems, perform data synchronization, or enable real-time analytics and auditing.
 cdc_enabled: true
+
+# This setting specifies the directory where the raw CDC log files are stored. 
+cdc_raw_directory: /var/lib/cassandra/cdc_raw
+
+
+# Cassandra provides a CDC feature that allows you to capture change data for tables in a cluster. These changes can be consumed by external applications or used for auditing and data analysis purposes. The cdc_total_space_in_mb property is used to specify the maximum amount of disk space, in megabytes, that can be consumed by the CDC log files.
+
+# When CDC is enabled for a table in Cassandra, change data is written to CDC log files on disk. These log files capture the details of the changes, such as inserts, updates, and deletes made to the table. The CDC log files are stored in a directory defined by the cdc_raw_directory property.
+
+# The cdc_total_space_in_mb property ensures that the CDC log files do not consume excessive disk space and helps manage the overall storage requirements for change data. If the total space occupied by the CDC log files exceeds the value set for this property, Cassandra stops writing change data until enough log files are removed or cleared to free up space.
+cdc_total_space_in_mb: 500
+
