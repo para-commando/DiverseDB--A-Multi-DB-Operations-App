@@ -300,3 +300,8 @@ memtable_allocation_type: heap_buffers
 # For example, consider a node where the total of memtable_heap_space_in_mb and memtable_offheap_space_in_mb is 1000, and memtable_cleanup_threshold is 0.50. The memtable_cleanup amount is 500MB. This node has two memtables: Memtable A (150MB) and Memtable B (350MB). When either memtable increases, the total space they use exceeds 500MB and Cassandra flushes the Memtable B to disk.
 # A larger value for memtable_cleanup_threshold means larger flushes, less frequent flushes and potentially less compaction activity, but also less concurrent flush activity, which can make it difficult to keep your disks saturated under heavy write load
 memtable_cleanup_threshold: 0.5
+#  As read operations are performed on SSTables, Cassandra checks the file cache first to see if the requested data is already in memory. If found, the data is retrieved from the cache, avoiding disk I/O.
+file_cache_size_in_mb : 100
+#  Indicates whether Cassandra allocates allocate on-heap or off-heap memory when the SSTable buffer pool is exhausted (when the buffer pool has exceeded the maximum memory file_cache_size_in_mb), beyond this amount, Cassandra stops caching buffers, but allocates on request.
+buffer_pool_use_heap_if_exhausted: true
+
