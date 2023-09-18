@@ -466,3 +466,9 @@ tombstone_warn_threshold: 1000
 tombstone_failure_threshold: 100000
 #  determines the maximum amount of time (in milliseconds) that a Cassandra node will wait for a range query to complete. A range query is a query that retrieves a range of rows from a column family based on a specified column range or key range.
 range_request_timeout_in_ms: 1000
+#  The number of milliseconds that the coordinator waits for read operations to complete before timing it out
+read_request_timeout_in_ms: 5000
+
+# The number of milliseconds that the coordinator waits for counter writes to complete before timing it out.
+counter_write_request_timeout_in_ms: 5000
+
