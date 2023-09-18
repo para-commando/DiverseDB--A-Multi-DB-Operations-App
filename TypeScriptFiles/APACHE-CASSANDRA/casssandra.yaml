@@ -388,3 +388,11 @@ broadcast_address: 172.17.0.2
 
 # Enhanced Network Flexibility: This configuration can be useful in scenarios where the node has multiple network interfaces or addresses, and you want to ensure that it accepts connections on both of them. It provides greater network flexibility and can be used in specific deployment situations.
 listen_on_broadcast_address: true
+
+# Commented out
+# allocate_tokens_keyspace
+
+partitioner: org.apache.cassandra.dht.Murmur3Partitioner
+
+# This setting specifies the port on which the Cassandra node listens for inter-node communication related to data storage and replication. It is essential for internal communication among nodes within the Cassandra cluster for data synchronization, consistency, and replication. The storage_port is primarily used for node-to-node communication for data distribution
+storage_port: 7000
