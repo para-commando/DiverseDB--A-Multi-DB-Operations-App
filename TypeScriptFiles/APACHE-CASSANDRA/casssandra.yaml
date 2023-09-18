@@ -429,3 +429,28 @@ row_cache_save_period: 10
 # non researched, used default value
 counter_cache_size_in_mb:
 
+# non researched, used default value
+counter_cache_save_period: 7200
+
+# code-commented
+# Number of keys from the counter cache to save. When this property is disabled, Cassandra saves all keys.
+# counter_cache_keys_to_save: 100
+
+
+#Tombstones
+
+# Tombstones are a crucial part of Cassandra's distributed and eventual consistency model, allowing deleted data to be propagated throughout the cluster and ensuring that data deletions are eventually consistent across all nodes.
+
+# Here are the key points to understand about tombstones in Cassandra:
+
+# Data Deletion: In Cassandra, data is not physically removed from disk immediately when you issue a delete operation. Instead, Cassandra marks the data to be deleted with a tombstone.
+
+# TTL (Time to Live): You can also set a TTL (Time to Live) for data when writing it to Cassandra. After the TTL expires, Cassandra treats the data as if it has been deleted, effectively creating a tombstone for it.
+
+# Deletion Propagation: Tombstones are distributed across the Cassandra cluster to ensure that deleted data is eventually removed from all nodes. This is a fundamental part of Cassandra's eventual consistency model.
+
+# Garbage Collection: Cassandra periodically performs a process called "compaction" to remove obsolete data, including tombstones, from SSTables (the data storage format in Cassandra). This helps manage disk space and improve read performance.
+
+# Tombstone Challenges: While tombstones are necessary for maintaining eventual consistency, they can also introduce challenges. If tombstones are overused or not cleaned up effectively, they can lead to increased storage and compaction overhead.
+# Cassandra issues a warning if a query scans more than this number of tombstones.
+tombstone_warn_threshold: 1000
