@@ -504,3 +504,7 @@ start_native_transport: true
 # Specifies the port where the CQL native transport listens for client connections.
 # might be node-specific
 native_transport_port: 9042
+# Sets the maximum number of threads dedicated to handling client requests for the native transport server. This property differs from rpc_max_threads and controls native transport threads specifically.
+native_transport_max_threads: 128
+# Defines the maximum allowed size (in megabytes) of a frame for CQL native transport. Frames larger than this size are rejected as invalid.
+native_transport_max_frame_size_in_mb: 256
