@@ -584,3 +584,8 @@ hints_flush_period_in_ms: 10000
 # maximum amount of traffic per delivery thread, measured in kilobytes per second, for replaying hints. Hinted handoff is a mechanism in Cassandra that temporarily stores write operations for nodes that are temporarily unavailable, allowing them to catch up on missed writes when they become available again
 hinted_handoff_throttle_in_kb: 1024
 
+# Maximum amount of time during which Cassandra generates hints for an unresponsive node. After this interval, Cassandra does not generate any new hints for the node until it is back up and responsive. If the node goes down again, Cassandra starts a new interval.
+max_hint_window_in_ms: 3600000
+# Number of threads Cassandra uses to deliver hints. In multiple data-center deployments, consider increasing this number because cross data-center handoff is generally slower.
+max_hints_delivery_threads: 2
+
