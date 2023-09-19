@@ -602,4 +602,12 @@ batchlog_replay_throttle_in_kb: 1024
 
 request_scheduler: org.apache.cassandra.scheduler.RoundRobinScheduler
 
+# The scope of the scheduler's activity. Currently, the only valid value is keyspace, which means that the scheduler operates on a per-keyspace basis
+request_scheduler_id: keyspace
+
+request_scheduler_options:
+  throttle_limit: 128
+  default_weight: 1
+  weights: 1
+
 
