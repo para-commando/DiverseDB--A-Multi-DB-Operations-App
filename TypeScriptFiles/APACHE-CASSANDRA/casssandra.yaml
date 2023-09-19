@@ -517,3 +517,19 @@ native_transport_max_concurrent_connections_per_ip: -1
 broadcast_rpc_address: 172.17.0.2
 # specifies the port number on which Cassandra listens for Remote Procedure Call (RPC) requests from client applications or other nodes.
 rpc_port: 9160
+# When start_rpc is set to true, it means that the RPC service is enabled, and Apache Cassandra will listen for RPC requests on the configured rpc_port
+# In Cassandra, RPC stands for "Remote Procedure Call." It's a communication protocol used for client applications to interact with the Cassandra database cluster. RPC enables client applications to send requests to the Cassandra nodes in the cluster, instructing them to perform various operations, such as reading or writing data.
+
+# Cassandra supports both Thrift RPC (Remote Procedure Call) and CQL (Cassandra Query Language) as the communication protocols. Thrift was the original RPC protocol used in Cassandra but has been largely replaced by the more modern and efficient CQL protocol.
+
+# The RPC mechanism in Cassandra allows clients to send queries, updates, and other commands to the database, and it also facilitates the retrieval of query results. Cassandra nodes listen for RPC requests on a designated port (usually port 9160 for Thrift and port 9042 for CQL) and handle incoming requests from client application
+start_rpc: true
+
+# determines whether or not to enable TCP keep-alive functionality for RPC connections.
+
+# TCP keep-alive is a feature of the TCP protocol that allows a node to periodically check the status of an ongoing connection and determine if the other node is still reachable. It helps in detecting and closing idle or broken connections, or connections that are no longer active.
+
+# When rpc_keepalive is set to true, Cassandra enables TCP keep-alive for RPC connections, which means it enables this functionality for the connections made between client applications or other Cassandra nodes and the Cassandra cluster.
+
+# Enabling rpc_keepalive can be useful in scenarios where there is a possibility of idle or long-lasting connections remaining open, or when network partitions or failures can result in inactive connections. By using TCP keep-alive, Cassandra can detect and close such connections, freeing up system resources and ensuring more efficient network utilization
+rpc_keepalive: true
