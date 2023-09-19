@@ -533,3 +533,8 @@ start_rpc: true
 
 # Enabling rpc_keepalive can be useful in scenarios where there is a possibility of idle or long-lasting connections remaining open, or when network partitions or failures can result in inactive connections. By using TCP keep-alive, Cassandra can detect and close such connections, freeing up system resources and ensuring more efficient network utilization
 rpc_keepalive: true
+# Sets the maximum number of concurrent requests that can be handled by the RPC thread pool. It safeguards against excessive memory usage.
+rpc_max_threads: 7
+# Defines the minimum thread pool size for remote procedure calls
+# to check number of threads available in your system in linux use this command: cat /proc/cpuinfo | grep processor | wc -l
+rpc_min_threads: 2
