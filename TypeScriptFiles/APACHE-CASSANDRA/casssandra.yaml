@@ -563,3 +563,8 @@ dynamic_snitch_badness_threshold: 0.4
 
 # controls how often to reset all host scores, allowing a bad host to possibly recover
 dynamic_snitch_reset_interval_in_ms: 6000
+#  Specifies the interval (in milliseconds) between Cassandra's calculations of node scores. Affects how frequently node scores are updated
+dynamic_snitch_update_interval_in_ms: 6000
+
+# A hint indicates that the write needs to be replayed to an unavailable node. Cassandra writes the hint to a hints file on the coordinator node.
+hinted_handoff_enabled: true
