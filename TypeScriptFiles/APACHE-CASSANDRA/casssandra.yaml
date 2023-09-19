@@ -508,3 +508,8 @@ native_transport_port: 9042
 native_transport_max_threads: 128
 # Defines the maximum allowed size (in megabytes) of a frame for CQL native transport. Frames larger than this size are rejected as invalid.
 native_transport_max_frame_size_in_mb: 256
+# Sets the maximum number of concurrent client connections that the native transport server can handle. A value of -1 indicates unlimited connections.
+native_transport_max_concurrent_connections: -1
+#  Specifies the maximum number of concurrent client connections allowed per source IP address for the native transport server. A value of -1 indicates unlimited connections.
+native_transport_max_concurrent_connections_per_ip: -1
+
