@@ -568,3 +568,19 @@ dynamic_snitch_update_interval_in_ms: 6000
 
 # A hint indicates that the write needs to be replayed to an unavailable node. Cassandra writes the hint to a hints file on the coordinator node.
 hinted_handoff_enabled: true
+#  Defines the time interval (in milliseconds) that Cassandra waits before flushing hints from internal buffers to disk. Hints are used for write retries.
+hints_flush_period_in_ms: 10000
+
+# Directory where Cassandra should store hints.
+# If not set, the default directory is $CASSANDRA_HOME/data/hints.
+# hints_directory: /var/lib/cassandra/hints
+
+
+# When hinted_handoff_enabled is true, a black list of data centers that will not
+# perform hinted handoff
+# hinted_handoff_disabled_datacenters: 
+
+
+# maximum amount of traffic per delivery thread, measured in kilobytes per second, for replaying hints. Hinted handoff is a mechanism in Cassandra that temporarily stores write operations for nodes that are temporarily unavailable, allowing them to catch up on missed writes when they become available again
+hinted_handoff_throttle_in_kb: 1024
+
