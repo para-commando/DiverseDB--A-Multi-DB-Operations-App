@@ -493,3 +493,8 @@ cross_node_timeout: false
 # Controls the compression of traffic between nodes. It determines whether data is compressed when sent between Cassandra nodes.
 # Default Value: all (Compresses all traffic)
 internode_compression: all
+#  Enables or disables the use of the TCP nodelay option for inter-datacenter communication. Disabling this option can reduce TCP protocol overhead but may increase latency.
+inter_dc_tcp_nodelay: false
+# Enables or disables socket timeouts for streaming operations. If a streaming operation exceeds this timeout, Cassandra retries it from the start of the current file. Setting this value too low can result in significant data re-streaming.
+streaming_socket_timeout_in_ms: 86400000
+
