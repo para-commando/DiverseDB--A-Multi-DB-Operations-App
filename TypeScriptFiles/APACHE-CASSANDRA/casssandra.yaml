@@ -513,3 +513,7 @@ native_transport_max_concurrent_connections: -1
 #  Specifies the maximum number of concurrent client connections allowed per source IP address for the native transport server. A value of -1 indicates unlimited connections.
 native_transport_max_concurrent_connections_per_ip: -1
 
+#  Defines the RPC address for broadcast to drivers and other Cassandra nodes. It is used when the RPC address or interface is not specified
+broadcast_rpc_address: 172.17.0.2
+# specifies the port number on which Cassandra listens for Remote Procedure Call (RPC) requests from client applications or other nodes.
+rpc_port: 9160
