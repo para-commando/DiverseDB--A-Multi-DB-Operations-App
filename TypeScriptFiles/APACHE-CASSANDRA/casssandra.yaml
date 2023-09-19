@@ -606,12 +606,61 @@ request_scheduler: org.apache.cassandra.scheduler.RoundRobinScheduler
 request_scheduler_id: keyspace
 
 request_scheduler_options:
-  throttle_limit: 128
-  default_weight: 1
-  weights: 1
+    -throttle_limit: 128
+    -default_weight: 1
+    -weights: 1
 
 # non researched, used default value
 thrift_framed_transport_size_in_mb: 15
 
 # non researched, used default value
 thrift_max_message_length_in_mb: 16
+
+# non researched part, used default value
+
+authenticator: AllowAllAuthenticator
+# internode_authenticator: org.apache.cassandra.auth.AllowAllInternodeAuthenticator
+authorizer: AllowAllAuthorizer
+role_manager: CassandraRoleManager
+roles_validity_in_ms: 2000
+roles_update_interval_in_ms: 2000
+credentials_validity_in_ms: 2000
+# Defaults to the same value as credentials_validity_in_ms.
+# credentials_update_interval_in_ms: 2000
+permissions_validity_in_ms: 2000
+# Defaults to the same value as permissions_validity_in_ms.
+# permissions_update_interval_in_ms: 2000
+
+server_encryption_options:
+    internode_encryption: none
+    keystore: conf/.keystore
+    keystore_password: cassandra
+    truststore: conf/.truststore
+    truststore_password: cassandra
+
+# enable or disable client/server encryption.
+client_encryption_options:
+    enabled: false
+    # If enabled and optional is set to true encrypted and unencrypted connections are handled.
+    optional: false
+    keystore: conf/.keystore
+    keystore_password: cassandra
+
+transparent_data_encryption_options:
+    enabled: false
+    chunk_length_kb: 64
+    cipher: AES/CBC/PKCS5Padding
+    key_alias: testing:1
+    # CBC IV length for AES needs to be 16 bytes (which is also the default size)
+    # iv_length: 16
+    key_provider: 
+      - class_name: org.apache.cassandra.security.JKSKeyProvider
+        parameters: 
+          - keystore: conf/.keystore
+            keystore_password: cassandra
+            store_type: JCEKS
+            key_password: cassandra
+
+ssl_storage_port: 7001
+
+native_transport_port_ssl: 9142
