@@ -593,3 +593,13 @@ max_hints_delivery_threads: 2
 max_hints_file_size_in_mb: 128
 #  The compressor for hint files. Supported compressors: LZ, Snappy, and Deflate. If you do not specify a compressor, Cassandra does not compress hints files.
 hints_compression: Snappy
+
+# non researched, used default value
+batchlog_replay_throttle_in_kb: 1024
+# useful for throttling client requests in single clusters containing multiple keyspaces. It is important to note that the request_scheduler settings apply only to the Thrift transport and have no effect on the use of CQL over the native protocol.
+# The primary purpose of the request scheduler is to manage and control the rate at which client requests are processed by the Cassandra cluster. By controlling request processing, you can prevent overloading the cluster with too many requests and ensure fair access to cluster resources
+# org.apache.cassandra.scheduler.RoundRobinScheduler: With this scheduler, Cassandra uses a round-robin approach to route client requests to nodes, and it maintains separate request queues for each keyspace. This means that each keyspace can have its own rate limit.
+
+request_scheduler: org.apache.cassandra.scheduler.RoundRobinScheduler
+
+
