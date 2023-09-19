@@ -481,3 +481,15 @@ cqlTruncateequest_timeout_in_ms: 60000
 write_request_timeout_in_ms: 2000
 # The default timeout value for other miscellaneous operations.
 request_timeout_in_ms: 1000
+# Determines whether operation timeout information is exchanged between nodes to measure request timeouts accurately. Enabling this property ensures that Cassandra can account for request timeouts correctly, even under overload conditions.
+cross_node_timeout: false
+
+# non researched, used default value
+# internode_send_buff_size_in_bytes: 
+
+# non researched, used default value
+# internode_recv_buff_size_in_bytes:
+
+# Controls the compression of traffic between nodes. It determines whether data is compressed when sent between Cassandra nodes.
+# Default Value: all (Compresses all traffic)
+internode_compression: all
