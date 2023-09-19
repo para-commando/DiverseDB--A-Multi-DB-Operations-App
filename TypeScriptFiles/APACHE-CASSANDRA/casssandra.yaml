@@ -538,3 +538,18 @@ rpc_max_threads: 7
 # Defines the minimum thread pool size for remote procedure calls
 # to check number of threads available in your system in linux use this command: cat /proc/cpuinfo | grep processor | wc -l
 rpc_min_threads: 2
+
+# non researched, used default value
+# rpc_send_buff_size_in_bytes:
+
+# non researched, used default value
+# rpc_recv_buff_size_in_bytes:
+
+
+# determines the type of RPC (Remote Procedure Call) server used by Apache Cassandra.
+
+# In earlier versions of Cassandra, the default value for rpc_server_type was set to "sync". This implied that Cassandra employed a synchronous RPC server model. In this model, each request is processed synchronously, meaning the server must wait for a request to complete before starting another one. Synchronous processing can be resource-intensive and may impact throughput under heavy loads.
+# hsha: Half synchronous, half asynchronous. All Thrift clients are handled asynchronously using a small number of threads that does not vary with the number of clients. This mechanism scales well to many clients. The RPC requests are synchronous (one thread per active request).
+rpc_server_type: hsha
+# allows you to specify a threshold duration in milliseconds. If the time taken by a garbage collection operation exceeds this threshold, Cassandra logs a warning message to draw attention to potentially long or inefficient garbage collection pauses.
+gc_warn_threshold_in_ms: 1000
