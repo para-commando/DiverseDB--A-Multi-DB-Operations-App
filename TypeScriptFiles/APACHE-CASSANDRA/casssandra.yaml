@@ -553,3 +553,13 @@ rpc_min_threads: 2
 rpc_server_type: hsha
 # allows you to specify a threshold duration in milliseconds. If the time taken by a garbage collection operation exceeds this threshold, Cassandra logs a warning message to draw attention to potentially long or inefficient garbage collection pauses.
 gc_warn_threshold_in_ms: 1000
+# The dynamic snitch is a component in Cassandra that monitors the performance of individual nodes in a cluster and adjusts its perception of their "badness" or performance relative to other nodes. It helps in routing client requests to nodes that are performing better in terms of response time and avoiding nodes that are experiencing performance issues or slower response times.
+# The dynamic_snitch_badness_threshold setting determines the threshold beyond which the dynamic snitch considers a node's performance to be significantly worse than other nodes. It is a value between 0 and 1, with a default of 0.1.
+
+# When a node's performance is worse than the specified threshold, the dynamic snitch may penalize that node by considering it "bad" and adjusting its preference for routing client requests to that node. This penalization is temporary and can be lifted if the node's performance improves.
+
+# By setting a higher value for dynamic_snitch_badness_threshold, you make the dynamic snitch less sensitive to performance fluctuations and reduce the chances of penalizing nodes unnecessarily. Conversely, setting a lower value makes the dynamic snitch more sensitive and quick to penalize nodes when their performance deviates from the average.
+dynamic_snitch_badness_threshold: 0.4
+
+# controls how often to reset all host scores, allowing a bad host to possibly recover
+dynamic_snitch_reset_interval_in_ms: 6000
