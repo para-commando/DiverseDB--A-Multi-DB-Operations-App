@@ -589,3 +589,7 @@ max_hint_window_in_ms: 3600000
 # Number of threads Cassandra uses to deliver hints. In multiple data-center deployments, consider increasing this number because cross data-center handoff is generally slower.
 max_hints_delivery_threads: 2
 
+# The maximum size for a single hints file, in megabytes.
+max_hints_file_size_in_mb: 128
+#  The compressor for hint files. Supported compressors: LZ, Snappy, and Deflate. If you do not specify a compressor, Cassandra does not compress hints files.
+hints_compression: Snappy
