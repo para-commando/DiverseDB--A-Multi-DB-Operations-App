@@ -481,3 +481,115 @@ cqlTruncateequest_timeout_in_ms: 60000
 write_request_timeout_in_ms: 2000
 # The default timeout value for other miscellaneous operations.
 request_timeout_in_ms: 1000
+# Determines whether operation timeout information is exchanged between nodes to measure request timeouts accurately. Enabling this property ensures that Cassandra can account for request timeouts correctly, even under overload conditions.
+cross_node_timeout: false
+
+# non researched, used default value
+# internode_send_buff_size_in_bytes: 
+
+# non researched, used default value
+# internode_recv_buff_size_in_bytes:
+
+# Controls the compression of traffic between nodes. It determines whether data is compressed when sent between Cassandra nodes.
+# Default Value: all (Compresses all traffic)
+internode_compression: all
+#  Enables or disables the use of the TCP nodelay option for inter-datacenter communication. Disabling this option can reduce TCP protocol overhead but may increase latency.
+inter_dc_tcp_nodelay: false
+# Enables or disables socket timeouts for streaming operations. If a streaming operation exceeds this timeout, Cassandra retries it from the start of the current file. Setting this value too low can result in significant data re-streaming.
+streaming_socket_timeout_in_ms: 86400000
+
+
+# Determines whether the native transport server is enabled or disabled. The native transport server handles client connections using the CQL binary protocol.
+start_native_transport: true
+# Specifies the port where the CQL native transport listens for client connections.
+# might be node-specific
+native_transport_port: 9042
+# Sets the maximum number of threads dedicated to handling client requests for the native transport server. This property differs from rpc_max_threads and controls native transport threads specifically.
+native_transport_max_threads: 128
+# Defines the maximum allowed size (in megabytes) of a frame for CQL native transport. Frames larger than this size are rejected as invalid.
+native_transport_max_frame_size_in_mb: 256
+# Sets the maximum number of concurrent client connections that the native transport server can handle. A value of -1 indicates unlimited connections.
+native_transport_max_concurrent_connections: -1
+#  Specifies the maximum number of concurrent client connections allowed per source IP address for the native transport server. A value of -1 indicates unlimited connections.
+native_transport_max_concurrent_connections_per_ip: -1
+
+#  Defines the RPC address for broadcast to drivers and other Cassandra nodes. It is used when the RPC address or interface is not specified
+broadcast_rpc_address: 172.17.0.2
+# specifies the port number on which Cassandra listens for Remote Procedure Call (RPC) requests from client applications or other nodes.
+rpc_port: 9160
+# When start_rpc is set to true, it means that the RPC service is enabled, and Apache Cassandra will listen for RPC requests on the configured rpc_port
+# In Cassandra, RPC stands for "Remote Procedure Call." It's a communication protocol used for client applications to interact with the Cassandra database cluster. RPC enables client applications to send requests to the Cassandra nodes in the cluster, instructing them to perform various operations, such as reading or writing data.
+
+# Cassandra supports both Thrift RPC (Remote Procedure Call) and CQL (Cassandra Query Language) as the communication protocols. Thrift was the original RPC protocol used in Cassandra but has been largely replaced by the more modern and efficient CQL protocol.
+
+# The RPC mechanism in Cassandra allows clients to send queries, updates, and other commands to the database, and it also facilitates the retrieval of query results. Cassandra nodes listen for RPC requests on a designated port (usually port 9160 for Thrift and port 9042 for CQL) and handle incoming requests from client application
+start_rpc: true
+
+# determines whether or not to enable TCP keep-alive functionality for RPC connections.
+
+# TCP keep-alive is a feature of the TCP protocol that allows a node to periodically check the status of an ongoing connection and determine if the other node is still reachable. It helps in detecting and closing idle or broken connections, or connections that are no longer active.
+
+# When rpc_keepalive is set to true, Cassandra enables TCP keep-alive for RPC connections, which means it enables this functionality for the connections made between client applications or other Cassandra nodes and the Cassandra cluster.
+
+# Enabling rpc_keepalive can be useful in scenarios where there is a possibility of idle or long-lasting connections remaining open, or when network partitions or failures can result in inactive connections. By using TCP keep-alive, Cassandra can detect and close such connections, freeing up system resources and ensuring more efficient network utilization
+rpc_keepalive: true
+# Sets the maximum number of concurrent requests that can be handled by the RPC thread pool. It safeguards against excessive memory usage.
+rpc_max_threads: 7
+# Defines the minimum thread pool size for remote procedure calls
+# to check number of threads available in your system in linux use this command: cat /proc/cpuinfo | grep processor | wc -l
+rpc_min_threads: 2
+
+# non researched, used default value
+# rpc_send_buff_size_in_bytes:
+
+# non researched, used default value
+# rpc_recv_buff_size_in_bytes:
+
+
+# determines the type of RPC (Remote Procedure Call) server used by Apache Cassandra.
+
+# In earlier versions of Cassandra, the default value for rpc_server_type was set to "sync". This implied that Cassandra employed a synchronous RPC server model. In this model, each request is processed synchronously, meaning the server must wait for a request to complete before starting another one. Synchronous processing can be resource-intensive and may impact throughput under heavy loads.
+# hsha: Half synchronous, half asynchronous. All Thrift clients are handled asynchronously using a small number of threads that does not vary with the number of clients. This mechanism scales well to many clients. The RPC requests are synchronous (one thread per active request).
+rpc_server_type: hsha
+# allows you to specify a threshold duration in milliseconds. If the time taken by a garbage collection operation exceeds this threshold, Cassandra logs a warning message to draw attention to potentially long or inefficient garbage collection pauses.
+gc_warn_threshold_in_ms: 1000
+# The dynamic snitch is a component in Cassandra that monitors the performance of individual nodes in a cluster and adjusts its perception of their "badness" or performance relative to other nodes. It helps in routing client requests to nodes that are performing better in terms of response time and avoiding nodes that are experiencing performance issues or slower response times.
+# The dynamic_snitch_badness_threshold setting determines the threshold beyond which the dynamic snitch considers a node's performance to be significantly worse than other nodes. It is a value between 0 and 1, with a default of 0.1.
+
+# When a node's performance is worse than the specified threshold, the dynamic snitch may penalize that node by considering it "bad" and adjusting its preference for routing client requests to that node. This penalization is temporary and can be lifted if the node's performance improves.
+
+# By setting a higher value for dynamic_snitch_badness_threshold, you make the dynamic snitch less sensitive to performance fluctuations and reduce the chances of penalizing nodes unnecessarily. Conversely, setting a lower value makes the dynamic snitch more sensitive and quick to penalize nodes when their performance deviates from the average.
+dynamic_snitch_badness_threshold: 0.4
+
+# controls how often to reset all host scores, allowing a bad host to possibly recover
+dynamic_snitch_reset_interval_in_ms: 6000
+#  Specifies the interval (in milliseconds) between Cassandra's calculations of node scores. Affects how frequently node scores are updated
+dynamic_snitch_update_interval_in_ms: 6000
+
+# A hint indicates that the write needs to be replayed to an unavailable node. Cassandra writes the hint to a hints file on the coordinator node.
+hinted_handoff_enabled: true
+#  Defines the time interval (in milliseconds) that Cassandra waits before flushing hints from internal buffers to disk. Hints are used for write retries.
+hints_flush_period_in_ms: 10000
+
+# Directory where Cassandra should store hints.
+# If not set, the default directory is $CASSANDRA_HOME/data/hints.
+# hints_directory: /var/lib/cassandra/hints
+
+
+# When hinted_handoff_enabled is true, a black list of data centers that will not
+# perform hinted handoff
+# hinted_handoff_disabled_datacenters: 
+
+
+# maximum amount of traffic per delivery thread, measured in kilobytes per second, for replaying hints. Hinted handoff is a mechanism in Cassandra that temporarily stores write operations for nodes that are temporarily unavailable, allowing them to catch up on missed writes when they become available again
+hinted_handoff_throttle_in_kb: 1024
+
+# Maximum amount of time during which Cassandra generates hints for an unresponsive node. After this interval, Cassandra does not generate any new hints for the node until it is back up and responsive. If the node goes down again, Cassandra starts a new interval.
+max_hint_window_in_ms: 3600000
+# Number of threads Cassandra uses to deliver hints. In multiple data-center deployments, consider increasing this number because cross data-center handoff is generally slower.
+max_hints_delivery_threads: 2
+
+# The maximum size for a single hints file, in megabytes.
+max_hints_file_size_in_mb: 128
+#  The compressor for hint files. Supported compressors: LZ, Snappy, and Deflate. If you do not specify a compressor, Cassandra does not compress hints files.
+hints_compression: Snappy
