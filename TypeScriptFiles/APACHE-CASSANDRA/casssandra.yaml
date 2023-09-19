@@ -498,3 +498,9 @@ inter_dc_tcp_nodelay: false
 # Enables or disables socket timeouts for streaming operations. If a streaming operation exceeds this timeout, Cassandra retries it from the start of the current file. Setting this value too low can result in significant data re-streaming.
 streaming_socket_timeout_in_ms: 86400000
 
+
+# Determines whether the native transport server is enabled or disabled. The native transport server handles client connections using the CQL binary protocol.
+start_native_transport: true
+# Specifies the port where the CQL native transport listens for client connections.
+# might be node-specific
+native_transport_port: 9042
