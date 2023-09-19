@@ -610,4 +610,8 @@ request_scheduler_options:
   default_weight: 1
   weights: 1
 
+# non researched, used default value
+thrift_framed_transport_size_in_mb: 15
 
+# non researched, used default value
+thrift_max_message_length_in_mb: 16
