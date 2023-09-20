@@ -17,7 +17,7 @@ num_tokens: 256
 # Caution: Never set listen_address to 0.0.0.0; it's always incorrect.
 # Exclusive Setting: Do not set both listen_address and listen_interface on the same node; choose one or the other.
 
-# listen_address: 172.17.0.2
+listen_address: 172.17.0.3
 
 # This approach abstracts away the need to specify an IP address directly and simply tells Cassandra to use the network interface named eth0.
 # It can be more convenient in situations where the network interface name (eth0) is stable and less likely to change, especially in static or well-configured environments.
@@ -25,11 +25,11 @@ num_tokens: 256
 # If your network setup is relatively stable and you want a more abstract way to specify the network interface without worrying about IP address changes, then using listen_interface can be more convenient.
 # Note that this doesn't support ip-aliasing, IP aliasing is a technique used in computer networking to assign multiple IP addresses to a single network interface (NIC) on a computer or network device. This technique allows a single NIC to have multiple IP addresses associated with it, each serving different purposes or used for specific network-related tasks. 
 
-listen_interface: eth0
+# listen_interface: eth0
 
 # If an interface has an ipv4 and an ipv6 address, Cassandra uses the first ipv4 address by default. Set this property to true to configure Cassandra to use the first ipv6 address.
 # since ipv6 is more improved version when compared to ipv4 hence set as true
-listen_interface_prefer_ipv6: true
+# listen_interface_prefer_ipv6: true
 
 # while the commit log and CDC log directories should be within the same filesystem for management reasons, it's also a common practice to consider placing the commit log on a separate storage device or partition to improve write performance and data durability, especially in production environments with high write workloads.
 # commit log.  when running on magnetic HDD, this should be a
@@ -44,8 +44,8 @@ commitlog_directory: /var/lib/cassandra/commitlog
 # data_file_directories: This is a list of one or more directory paths where Cassandra will store its data files. You can specify multiple directories by separating them with commas. Cassandra will evenly distribute the data across these directories, helping to balance the I/O load.
 # Having multiple data directories can help distribute the I/O load across multiple devices or disks, improving both read and write performance and increasing fault tolerance. It can also be useful when you have different types of storage devices (e.g., SSDs and HDDs) and want to allocate specific keyspaces or column families to different storage types based on their performance requirements.
 # If not set, the default directory is $CASSANDRA_HOME/data/data.
-data_file_directories: /var/lib/cassandra/data
-
+data_file_directories:
+    - /var/lib/cassandra/data
 # saved caches
 # saved_caches_directory setting specifies the directory where Cassandra stores its saved caches. Saved caches are used to speed up certain read operations by caching frequently accessed data structures, such as the row key cache and the counter cache.
 # The saved_caches_directory is used for storing various types of caches, including:
@@ -120,14 +120,14 @@ disk_failure_policy: stop
 
 endpoint_snitch: org.apache.cassandra.locator.GossipingPropertyFileSnitch
 #  This setting is used for client communication with the Cassandra cluster. It defines the IP address or hostname that clients (such as application servers) should use to connect to the Cassandra cluster. The rpc_address is where the Cassandra Query Language (CQL) clients send their requests for reading or writing data.
-# rpc_address : localhost
+rpc_address : localhost
 
 
 # The listen address for client connections. Interface must correspond to a single address, IP aliasing is not supported
-rpc_interface: eth1
+# rpc_interface: eth1
 
 
-rpc_interface_prefer_ipv6: true
+# rpc_interface_prefer_ipv6: true
 
 # In Apache Cassandra, a seed node is a special type of node within a Cassandra cluster that is used as an initial contact point for other nodes in the cluster to join or discover the cluster. Seed nodes play a crucial role in the node discovery process and are used during the bootstrapping of new nodes in the cluster. Here's what seed nodes are used for and how they work:
 
@@ -153,7 +153,7 @@ seed_provider :
           # seeds is actually a comma-delimited list of addresses.
           # Ex: "<ip1>,<ip2>,<ip3>" 
           # this is node-specific
-          - seeds: "172.17.0.2,172.17.0.3"
+          - seeds: "172.17.0.3"
 
 # UDFs (user defined functions) are disabled by default.
 # As of Cassandra 3.0 there is a sandbox in place that should prevent execution of evil code.
@@ -193,8 +193,8 @@ concurrent_counter_writes: 32
 
 # configuration file controls the level of parallelism for batch log writes. Batch log writes are used to ensure that multiple write operations (updates, inserts, deletes) are applied atomically, even if they affect multiple rows or columns across different tables.
 # This setting determines the number of simultaneous batch log write operations that Cassandra can handle concurrently on a single replica (node) without blocking other write operations
-
-concurrent_batchlog_writes: 32 
+# commeted it as it was being shown as invalid in cassandra 3.7
+# concurrent_batchlog_writes: 32 
 
 #  Limit on the number of concurrent materialized view writes. Set this to the lesser of concurrent reads or concurrent writes, because there is a read involved in each materialized view write.
 concurrent_materialized_view_writes: 32
@@ -251,14 +251,18 @@ batch_size_warn_threshold_in_kb: 12288
 
 # When commitlog_compression is enabled, Cassandra uses compressed commit log segments instead of memory-mapped segments. This can help reduce disk usage and improve performance, especially when dealing with large amounts of data. However, it is important to note that enabling compression can also increase CPU usage, as the data must be compressed and decompressed as it is written and read from disk
 # "Snappy" refers to the Snappy compression algorithm, which is a fast and efficient compression algorithm. Snappy is known for its speed and low CPU usage, making it a good choice for systems where compression and decompression need to be performed quickly with minimal impact on system performance
-commitlog_compression: Snappy
-
+# commeted it as it was being shown as invalid in cassandra 3.7
+# commitlog_compression:
+#     class_name: LZ4Compressor
+#     parameters:
 
 # captures change data capture, Change Data Capture is a mechanism that allows you to capture and track changes made to data within Cassandra tables. It is particularly useful in scenarios where you need to replicate data changes to external systems, perform data synchronization, or enable real-time analytics and auditing.
-cdc_enabled: true
+# commeted it as it was being shown as invalid in cassandra 3.7
+# cdc_enabled: true
 
 # This setting specifies the directory where the raw CDC log files are stored. 
-cdc_raw_directory: /var/lib/cassandra/cdc_raw
+# commeted it as it was being shown as invalid in cassandra 3.7
+# cdc_raw_directory: /var/lib/cassandra/cdc_raw
 
 
 # Cassandra provides a CDC feature that allows you to capture change data for tables in a cluster. These changes can be consumed by external applications or used for auditing and data analysis purposes. The cdc_total_space_in_mb property is used to specify the maximum amount of disk space, in megabytes, that can be consumed by the CDC log files.
@@ -266,10 +270,12 @@ cdc_raw_directory: /var/lib/cassandra/cdc_raw
 # When CDC is enabled for a table in Cassandra, change data is written to CDC log files on disk. These log files capture the details of the changes, such as inserts, updates, and deletes made to the table. The CDC log files are stored in a directory defined by the cdc_raw_directory property.
 
 # The cdc_total_space_in_mb property ensures that the CDC log files do not consume excessive disk space and helps manage the overall storage requirements for change data. If the total space occupied by the CDC log files exceeds the value set for this property, Cassandra stops writing change data until enough log files are removed or cleared to free up space.
-cdc_total_space_in_mb: 500
+# commeted it as it was being shown as invalid in cassandra 3.7
+# cdc_total_space_in_mb: 500
 
 # When the cdc_raw limit is hit and the CDCCompactor is either running behind or experiencing backpressure, this interval is checked to see if any new space for cdc-tracked tables has been made available.
-cdc_free_space_check_interval_ms: 250 
+# commeted it as it was being shown as invalid in cassandra 3.7
+# cdc_free_space_check_interval_ms: 250 
 
 
 #  allows you to set a limit on the total disk space that the commit log directory can use. When this limit is reached, Cassandra will start recycling or removing older commit log segments to free up space for new write operations. This limit helps prevent the commit log from consuming all available disk space
@@ -376,7 +382,7 @@ unlogged_batch_across_partitions_warn_threshold: 10
 # broadcast_address is used for cluster discovery and external client access. It's like telling others how to find your Cassandra cluster.
 # rpc_address is specifically for client applications to connect and communicate with the Cassandra cluster. It's like the "front desk" where clients interact with the database.
 # The "public" IP address this node uses to broadcast to other nodes outside the network or across regions in multiple-region EC2 deployments. If this property is commented out, the node uses the same IP address or hostname as listen_address. A node does not need a separate broadcast_address in a single-node or single-datacenter installation, or in an EC2-based network that supports automatic switching between private and public communication. It is necessary to set a separate listen_address and broadcast_address on a node with multiple physical network interfaces or other topologies where not all nodes have access to other nodes by their private IP addresses
-broadcast_address: 172.17.0.2
+broadcast_address: 172.17.0.3
 
 # The listen_on_broadcast_address setting in Cassandra's configuration determines whether the node should listen for connections on the broadcast_address in addition to the listen_address. When set to true, the node listens on both addresses; when set to false (the default), it listens only on the listen_address.
 
@@ -416,7 +422,8 @@ column_index_cache_size_in_kb: 2
 # The row cache is a cache mechanism in Cassandra used to store entire rows of data in memory for fast retrieval. Caching frequently accessed rows can significantly improve read performance, as it reduces the need to access data from disk.
 
 # Custom Caching Strategies: Cassandra supports different caching strategies, and you can choose the strategy that best suits your use case. The row_cache_class_name setting allows you to specify the Java class that implements the caching strategy for a specific column family.
-row_cache_class_name: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvide
+# commeted it as it was being shown as invalid in cassandra 3.7
+# row_cache_class_name: org.apache.cassandra.cache.ConcurrentLinkedHashCacheProvide
 
 # commented code
 # row_cache_keys_to_save:
@@ -476,7 +483,8 @@ counter_write_request_timeout_in_ms: 5000
 cas_contention_timeout_in_ms: 1000
 
 # non researched, used default value
-cqlTruncateequest_timeout_in_ms: 60000
+# commeted it as it was being shown as invalid in cassandra 3.7
+# cqlTruncateequest_timeout_in_ms: 60000
 # The number of milliseconds that the coordinator waits for a write operations to complete before timing it out.
 write_request_timeout_in_ms: 2000
 # The default timeout value for other miscellaneous operations.
@@ -514,7 +522,7 @@ native_transport_max_concurrent_connections: -1
 native_transport_max_concurrent_connections_per_ip: -1
 
 #  Defines the RPC address for broadcast to drivers and other Cassandra nodes. It is used when the RPC address or interface is not specified
-broadcast_rpc_address: 172.17.0.2
+broadcast_rpc_address: 172.17.0.3
 # specifies the port number on which Cassandra listens for Remote Procedure Call (RPC) requests from client applications or other nodes.
 rpc_port: 9160
 # When start_rpc is set to true, it means that the RPC service is enabled, and Apache Cassandra will listen for RPC requests on the configured rpc_port
@@ -592,8 +600,11 @@ max_hints_delivery_threads: 2
 # The maximum size for a single hints file, in megabytes.
 max_hints_file_size_in_mb: 128
 #  The compressor for hint files. Supported compressors: LZ, Snappy, and Deflate. If you do not specify a compressor, Cassandra does not compress hints files.
-hints_compression: Snappy
-
+# commeted it as it was being shown as invalid in cassandra 3.7
+#hints_compression:
+#   - class_name: LZ4Compressor
+#     parameters:
+# 
 # non researched, used default value
 batchlog_replay_throttle_in_kb: 1024
 # useful for throttling client requests in single clusters containing multiple keyspaces. It is important to note that the request_scheduler settings apply only to the Thrift transport and have no effect on the use of CQL over the native protocol.
@@ -604,11 +615,11 @@ request_scheduler: org.apache.cassandra.scheduler.RoundRobinScheduler
 
 # The scope of the scheduler's activity. Currently, the only valid value is keyspace, which means that the scheduler operates on a per-keyspace basis
 request_scheduler_id: keyspace
-
-request_scheduler_options:
-    -throttle_limit: 128
-    -default_weight: 1
-    -weights: 1
+# commeted it as it was being shown as invalid in cassandra 3.7
+# request_scheduler_options:
+    # -throttle_limit: 128
+    # -default_weight: 1
+    # -weights: 1
 
 # non researched, used default value
 thrift_framed_transport_size_in_mb: 15
@@ -662,5 +673,5 @@ transparent_data_encryption_options:
             key_password: cassandra
 
 ssl_storage_port: 7001
-
-native_transport_port_ssl: 9142
+# commeted it as it was being shown as invalid in cassandra 3.7
+# native_transport_port_ssl: 9142
