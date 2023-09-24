@@ -130,5 +130,10 @@ SELECT * FROM learn_cassandra.users_by_country WHERE country='US';
 
 
 
+-----------DELETE OPERATIONS--------------
 
+TRUNCATE learn_cassandra_tables.my_table;
+DROP TABLE learn_cassandra_tables.my_table;
+TRUNCATE learn_cassandra.users_by_country
+DROP TABLE learn_cassandra.users_by_country;
 
