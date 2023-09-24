@@ -3,3 +3,4 @@ FROM cassandra:3.7
 
 # Copy your custom cassandra.yaml into the container
 COPY /cassandra.yaml /etc/cassandra/cassandra.yaml
+COPY /cassandra-rackdc.properties /etc/cassandra/cassandra-rackdc.properties
