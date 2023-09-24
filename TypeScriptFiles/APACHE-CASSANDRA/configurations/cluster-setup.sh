@@ -3,7 +3,6 @@ sudo docker run --name cassandra-node-1 -p 9046:9042 -d custom-cassandra-image:3
 INSTANCE1=$(sudo docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-node-1)
 echo "Instance 1: ${INSTANCE1}"
 
-
 echo "Wait for 5 seconds please..."
 sleep 5
 # Running second node in background

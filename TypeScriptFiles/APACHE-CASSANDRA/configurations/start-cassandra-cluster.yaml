@@ -1,7 +1,7 @@
 version: '3'
 services:
   cassandra-node-1:
-    image: custom-cassandra:3.7
+    image: custom-cassandra-image:3.7
     container_name: cassandra-node-1
     ports:
       - "9046:9042"
@@ -9,7 +9,7 @@ services:
       - cassandra-net
 
   cassandra-node-2:
-    image: custom-cassandra:3.7
+    image: custom-cassandra-image:3.7
     container_name: cassandra-node-2
     environment:
       - CASSANDRA_SEEDS=cassandra-node-1
@@ -19,7 +19,7 @@ services:
       - cassandra-net
 
   cassandra-node-3:
-    image: custom-cassandra:3.7
+    image: custom-cassandra-image:3.7
     container_name: cassandra-node-3
     environment:
       - CASSANDRA_SEEDS=cassandra-node-1,cassandra-node-2
