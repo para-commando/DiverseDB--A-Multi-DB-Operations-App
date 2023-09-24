@@ -127,8 +127,68 @@ INSERT INTO learn_cassandra.users_by_country (country,user_email,first_name,last
 
 
 SELECT * FROM learn_cassandra.users_by_country WHERE country='US';
+ 
+CREATE TYPE learn_cassandra.address (
+    street text,
+    city text,
+    zip text,
+    contact_no text
+);
+CREATE TABLE learn_cassandra.products (
+  id UUID PRIMARY KEY,
+  name VARCHAR,
+  is_available BOOLEAN,
+  description TEXT,
+  price DECIMAL,
+  website_ip_address  INET,
+  quantity INT,
+  in_stock BOOLEAN,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  images BLOB,
+  categories TUPLE<INT, TEXT>,
+  attributes MAP<TEXT, TEXT>,
+  reviews LIST<frozen<MAP<TEXT, INT>>>,
+  warehouse_address address,
+);
 
+INSERT INTO learn_cassandra.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
+VALUES (
+  uuid(),
+  'Product 1',
+  true,
+  'Description for Product 1',
+  49.99,
+  '192.168.1.100',
+  100,
+  true,
+  toTimestamp(now()),
+  toTimestamp(now()),
+  0x0123456789ABCDEF,  -- BLOB (hexadecimal representation)
+  (1, 'Category 1'),   -- TUPLE<INT, TEXT>
+  {'color': 'Blue', 'weight': '2 lbs'},  -- MAP<TEXT, TEXT>
+  [{ 'user1': 5, 'user2': 4 }],  -- LIST<frozen<MAP<TEXT, INT>>>
+  { street: '123 Main St', city: 'City1', zip: '12345', contact_no: '123-456-7890' } -- User-defined Type address
+);
 
+INSERT INTO learn_cassandra.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
+VALUES (
+  uuid(),
+  'Product 2',
+  false,
+  'Description for Product 2',
+  29.99,
+  '192.168.1.101',
+  50,
+  false,
+  toTimestamp(now()),
+  toTimestamp(now()),
+  0xABCDEF0123456789,  -- BLOB (hexadecimal representation)
+  (2, 'Category 2'),   -- TUPLE<INT, TEXT>
+  {'color': 'Red', 'weight': '3 lbs'},  -- MAP<TEXT, TEXT>
+  [{ 'user3': 4, 'user4': 5 }],  -- LIST<frozen<MAP<TEXT, INT>>>
+  { street: '456 Elm St', city: 'City2', zip: '67890', contact_no: '987-654-3210' } -- User-defined Type address
+);
 
 -----------DELETE OPERATIONS--------------
 
@@ -136,4 +196,5 @@ TRUNCATE learn_cassandra_tables.my_table;
 DROP TABLE learn_cassandra_tables.my_table;
 TRUNCATE learn_cassandra.users_by_country
 DROP TABLE learn_cassandra.users_by_country;
+
 
