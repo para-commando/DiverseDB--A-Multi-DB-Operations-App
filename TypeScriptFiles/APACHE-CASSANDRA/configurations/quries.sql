@@ -197,4 +197,7 @@ DROP TABLE learn_cassandra_tables.my_table;
 TRUNCATE learn_cassandra.users_by_country
 DROP TABLE learn_cassandra.users_by_country;
 
+DROP Table learn_cassandra.products;
+DROP TYPE learn_cassandra.address;
+DROP TYPE learn_cassandra.phone;
 
