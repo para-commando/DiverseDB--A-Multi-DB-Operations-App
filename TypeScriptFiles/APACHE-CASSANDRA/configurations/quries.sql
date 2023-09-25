@@ -104,7 +104,7 @@ VALUES (UUID(), 'user4', 'user4@example.com', toTimestamp(now()));
 INSERT INTO learn_cassandra_tables.my_table (user_id, username, email, registration_date)
 VALUES (UUID(), 'user5', 'user5@example.com', toTimestamp(now()));
 
-CREATE TABLE learn_cassandra.users_by_country (
+CREATE TABLE learn_cassandra_tables.users_by_country (
     country text,
     user_email text,
     first_name text,
@@ -114,27 +114,27 @@ CREATE TABLE learn_cassandra.users_by_country (
 );
 
 
-INSERT INTO learn_cassandra.users_by_country (country,user_email,first_name,last_name,age) VALUES('US', 'john@email.com', 'John','Wick',55);
+INSERT INTO learn_cassandra_tables.users_by_country (country,user_email,first_name,last_name,age) VALUES('US', 'john@email.com', 'John','Wick',55);
 
-INSERT INTO learn_cassandra.users_by_country (country,user_email,first_name,last_name,age)
-  VALUES(de'UK', 'peter@email.com', 'Peter','Clark',65);
+INSERT INTO learn_cassandra_tables.users_by_country (country,user_email,first_name,last_name,age)
+  VALUES('UK', 'peter@email.com', 'Peter','Clark',65);
 
-INSERT INTO learn_cassandra.users_by_country (country,user_email,first_name,last_name,age)
+INSERT INTO learn_cassandra_tables.users_by_country (country,user_email,first_name,last_name,age)
   VALUES('UK', 'bob@email.com', 'Bob','Sandler',23);
 
-INSERT INTO learn_cassandra.users_by_country (country,user_email,first_name,last_name,age)
+INSERT INTO learn_cassandra_tables.users_by_country (country,user_email,first_name,last_name,age)
   VALUES('UK', 'alice@email.com', 'Alice','Brown',26);
 
 
-SELECT * FROM learn_cassandra.users_by_country WHERE country='US';
+SELECT * FROM learn_cassandra_tables.users_by_country WHERE country='US';
  
-CREATE TYPE learn_cassandra.address (
+CREATE TYPE learn_cassandra_tables.address (
     street text,
     city text,
     zip text,
     contact_no text
 );
-CREATE TABLE learn_cassandra.products (
+CREATE TABLE learn_cassandra_tables.products (
   id UUID PRIMARY KEY,
   name VARCHAR,
   is_available BOOLEAN,
@@ -152,7 +152,7 @@ CREATE TABLE learn_cassandra.products (
   warehouse_address address,
 );
 
-INSERT INTO learn_cassandra.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
+INSERT INTO learn_cassandra_tables.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
 VALUES (
   uuid(),
   'Product 1',
@@ -171,7 +171,7 @@ VALUES (
   { street: '123 Main St', city: 'City1', zip: '12345', contact_no: '123-456-7890' } -- User-defined Type address
 );
 
-INSERT INTO learn_cassandra.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
+INSERT INTO learn_cassandra_tables.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
 VALUES (
   uuid(),
   'Product 2',
@@ -190,6 +190,58 @@ VALUES (
   { street: '456 Elm St', city: 'City2', zip: '67890', contact_no: '987-654-3210' } -- User-defined Type address
 );
 
+
+-- user defined aggregate functions (UDAF)
+CREATE TABLE learn_cassandra_tables.sales (
+  transaction_id UUID PRIMARY KEY,
+  category TEXT,
+  price DECIMAL
+);
+
+-- Insert some sample data
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES (uuid(), 'Electronics', 500.00);
+
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES (uuid(), 'Clothing', 120.50);
+
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES  (uuid(), 'Clothing', 75.25);
+ 
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES (uuid(), 'Electronics', 300.00);
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES (uuid(), 'Electronics', 450.00);
+
+CREATE FUNCTION IF NOT EXISTS learn_cassandra_tables.sum_agg(state double, val double)
+  CALLED ON NULL INPUT
+  RETURNS double
+  LANGUAGE java
+  AS '
+    if (state == null) {
+      state = 0.0;
+    }
+    return state + val;
+  ';
+CREATE AGGREGATE IF NOT EXISTS learn_cassandra_tables.total_price_agg(double)
+  SFUNC sum_agg
+  STYPE double
+  INITCOND null;
+
+ 
+SELECT category, total_price_agg(CAST(price AS double)) AS total_price FROM learn_cassandra_tables.sales  where category= 'Electronics' ALLOW FILTERING;
+
+CREATE OR REPLACE FUNCTION learn_cassandra_tables.fifteenPctDiscountedPrice(amount double)
+CALLED ON NULL INPUT
+RETURNS double
+LANGUAGE java
+AS '
+double result = amount-(amount * 0.15);
+    return result;
+';
+
+SELECT category, price AS initialPrice, fifteenPctDiscountedPrice(CAST(price AS double)) AS discountedPrice from learn_cassandra_tables.sales;
+
 -----------DELETE OPERATIONS--------------
 
 TRUNCATE learn_cassandra_tables.my_table;
@@ -197,7 +249,7 @@ DROP TABLE learn_cassandra_tables.my_table;
 TRUNCATE learn_cassandra.users_by_country
 DROP TABLE learn_cassandra.users_by_country;
 
-DROP Table learn_cassandra.products;
-DROP TYPE learn_cassandra.address;
-DROP TYPE learn_cassandra.phone;
+DROP Table learn_cassandra_tables.products;
+DROP TYPE learn_cassandra_tables.address;
+DROP TYPE learn_cassandra_tables.phone;
 
