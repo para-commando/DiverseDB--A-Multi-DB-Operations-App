@@ -157,13 +157,13 @@ seed_provider :
 
 # UDFs (user defined functions) are disabled by default.
 # As of Cassandra 3.0 there is a sandbox in place that should prevent execution of evil code.
-enable_user_defined_functions: false
+enable_user_defined_functions: true
 
 # Enables scripted UDFs (JavaScript UDFs).
 # Java UDFs are always enabled, if enable_user_defined_functions is true.
 # Enable this option to be able to use UDFs with "language javascript" or any custom JSR-223 provider.
 # This option has no effect, if enable_user_defined_functions is false.
-enable_scripted_user_defined_functions: false
+enable_scripted_user_defined_functions: true
 
 # The setting is used to throttle the rate at which data compaction occurs. Compaction can be an I/O-intensive operation, and without rate limiting, it can potentially consume excessive system resources, causing performance issues.
 # this determines the rate at which compaction processes are allowed to consume system resources, specifically measured in megabytes per second (MB/s). Compaction is the process of merging and compacting data files (SSTables) to optimize storage and improve read performance You can set compaction_throughput_mb_per_sec to a specific value in MB/s that represents the maximum rate at which compaction processes are allowed to run
