@@ -190,8 +190,21 @@ VALUES (
   { street: '456 Elm St', city: 'City2', zip: '67890', contact_no: '987-654-3210' } -- User-defined Type address
 );
 
+-- this index is required as the query below it requires it for its execution otherwise we would need to use ALLOW filtering which can affect performance
+CREATE INDEX IF NOT EXISTS attributes_index
+ON learn_cassandra_tables.products ( KEYS (attributes) );
 
--- user defined aggregate functions (UDAF)
+SELECT * FROM learn_cassandra_tables.products
+ WHERE attributes CONTAINS KEY 'color';
+
+-- this index is required as the query below it requires it for its execution otherwise we would need to use ALLOW filtering which can affect performance
+CREATE INDEX IF NOT EXISTS attributes_values_index
+ON learn_cassandra_tables.products ( ENTRIES(attributes) );
+
+SELECT * FROM learn_cassandra_tables.products
+ WHERE attributes['color'] = 'Red';
+ 
+ -- user defined aggregate functions (UDAF)
 CREATE TABLE learn_cassandra_tables.sales (
   transaction_id UUID PRIMARY KEY,
   category TEXT,
@@ -242,6 +255,55 @@ double result = amount-(amount * 0.15);
 
 SELECT category, price AS initialPrice, fifteenPctDiscountedPrice(CAST(price AS double)) AS discountedPrice from learn_cassandra_tables.sales;
 
+
+CREATE TABLE IF NOT EXISTS learn_cassandra_tables.rank_by_year_and_name (
+  race_year int,
+  race_name text,
+  cyclist_name text,
+  rank int,
+  PRIMARY KEY ((race_year, race_name), rank)
+);
+
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 2, 'Daniel MARTIN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 3, 'Johan Esteban CHAVES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, 'Tour of Japan - Stage 4 - Minami > Shinshu', 1, 'Daniel MARTIN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, 'Tour of Japan - Stage 4 - Minami > Shinshu', 2, 'Johan Esteban CHAVES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, 'Tour of Japan - Stage 4 - Minami > Shinshu', 3, 'Benjamin PRADES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Giro d''Italia - Stage 11 - Forli > Imola', 1, 'Ilnur ZAKARIN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Giro d''Italia - Stage 11 - Forli > Imola', 2, 'Carlos BETANCUR');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 1, 'Benjamin PRADES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 2, 'Adam PHELAN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 3, 'Thomas LEBAS');
+
+
+SELECT * 
+FROM learn_cassandra_tables.rank_by_year_and_name 
+PER PARTITION LIMIT 2;
+
+-- this index is required as the query below it requires it for its execution otherwise we would need to use ALLOW filtering which can affect performance
+CREATE INDEX IF NOT EXISTS rank_idx
+ON learn_cassandra_tables.rank_by_year_and_name (rank);
+-- Tip: The database does not support queries with logical disjunctions (OR).
+
+SELECT *
+FROM learn_cassandra_tables.rank_by_year_and_name
+WHERE rank = 1;
+
+
+CREATE TABLE IF NOT EXISTS learn_cassandra_tables.calendar (
+  race_id int,
+  race_name text,
+  race_start_date timestamp,
+  race_end_date timestamp,
+  PRIMARY KEY (
+    race_id, race_start_date, race_end_date
+  )
+) WITH CLUSTERING ORDER BY (
+  race_start_date DESC, race_end_date DESC
+);
+
+-- Use an IN condition on the last column of a compound primary key only when it is preceded by equality conditions for all preceding columns of the primary key.
 -----------DELETE OPERATIONS--------------
 
 TRUNCATE learn_cassandra_tables.my_table;
