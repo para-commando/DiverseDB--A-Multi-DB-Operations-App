@@ -149,10 +149,11 @@ CREATE TABLE learn_cassandra_tables.products (
   categories TUPLE<INT, TEXT>,
   attributes MAP<TEXT, TEXT>,
   reviews LIST<frozen<MAP<TEXT, INT>>>,
+  alternateNames LIST<TEXT>,
   warehouse_address address,
 );
 
-INSERT INTO learn_cassandra_tables.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
+INSERT INTO learn_cassandra_tables.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, alternateNames, warehouse_address)
 VALUES (
   uuid(),
   'Product 1',
@@ -168,6 +169,7 @@ VALUES (
   (1, 'Category 1'),   -- TUPLE<INT, TEXT>
   {'color': 'Blue', 'weight': '2 lbs'},  -- MAP<TEXT, TEXT>
   [{ 'user1': 5, 'user2': 4 }],  -- LIST<frozen<MAP<TEXT, INT>>>
+  ['mango', 'banana'],
   { street: '123 Main St', city: 'City1', zip: '12345', contact_no: '123-456-7890' } -- User-defined Type address
 );
 
@@ -203,7 +205,23 @@ ON learn_cassandra_tables.products ( ENTRIES(attributes) );
 
 SELECT * FROM learn_cassandra_tables.products
  WHERE attributes['color'] = 'Red';
+
+
+-- UPDATE OPS ---
+UPDATE learn_cassandra_tables.products  SET alternateNames = ['Criterium du Dauphine','Tour de Suisse'] WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
  
+UPDATE learn_cassandra_tables.products 
+SET alternateNames = ['Tour de France'] + alternateNames  WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+
+UPDATE learn_cassandra_tables.products 
+SET alternateNames = alternateNames + ['Tour de France11']  WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+
+UPDATE learn_cassandra_tables.products 
+SET alternateNames[1] ='Tour de France__2' WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+
+UPDATE learn_cassandra_tables.products 
+SET alternateNames = alternateNames - ['Criterium du Dauphine'] WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+
  -- user defined aggregate functions (UDAF)
 CREATE TABLE learn_cassandra_tables.sales (
   transaction_id UUID PRIMARY KEY,
@@ -289,6 +307,12 @@ INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, 
 INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS;
 
 INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2019, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS USING  TTL 10000;
+
+-- UPDATE OPS ---
+
+UPDATE learn_cassandra_tables.rank_by_year_and_name SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
+
+UPDATE learn_cassandra_tables.rank_by_year_and_name USING TTL 10000 SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
 
 -- To get time remaining for data to get erased
 SELECT TTL(cyclist_name) 
