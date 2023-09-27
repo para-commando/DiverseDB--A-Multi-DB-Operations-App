@@ -226,6 +226,14 @@ VALUES (uuid(), 'Electronics', 300.00);
 INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
 VALUES (uuid(), 'Electronics', 450.00);
 
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES (uuid(), 'Electronics', 450.00);
+
+
+
+SELECT WRITETIME(category) FROM learn_cassandra_tables.sales;
+
+
 CREATE FUNCTION IF NOT EXISTS learn_cassandra_tables.sum_agg(state double, val double)
   CALLED ON NULL INPUT
   RETURNS double
@@ -276,6 +284,16 @@ INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, 
 INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 2, 'Adam PHELAN');
 INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 3, 'Thomas LEBAS');
 
+-- Add IF NOT EXISTS to the command to ensure that the operation is not performed if a row with the same primary key already exists
+-- returns true when data is new and returns the existing data if data is already present
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS;
+
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2019, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS USING  TTL 10000;
+
+-- To get time remaining for data to get erased
+SELECT TTL(cyclist_name) 
+FROM learn_cassandra_tables.rank_by_year_and_name
+WHERE race_year=2019 and race_name = '4th Tour of Beijing';
 
 SELECT * 
 FROM learn_cassandra_tables.rank_by_year_and_name 
@@ -289,7 +307,6 @@ ON learn_cassandra_tables.rank_by_year_and_name (rank);
 SELECT *
 FROM learn_cassandra_tables.rank_by_year_and_name
 WHERE rank = 1;
-
 
 CREATE TABLE IF NOT EXISTS learn_cassandra_tables.calendar (
   race_id int,
