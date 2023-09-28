@@ -208,19 +208,26 @@ SELECT * FROM learn_cassandra_tables.products
 
 
 -- UPDATE OPS ---
-UPDATE learn_cassandra_tables.products  SET alternateNames = ['Criterium du Dauphine','Tour de Suisse'] WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+-- after the specified seconds the value of that column will be null
+ UPDATE learn_cassandra_tables.products USING TTL 15 SET alternateNames = ['Criterium du Dauphine','Tour de Suisse'] WHERE id =065dde58-d4e3-408b-8819-3a7389df4893 IF EXISTS;
  
 UPDATE learn_cassandra_tables.products 
-SET alternateNames = ['Tour de France'] + alternateNames  WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+SET alternateNames = ['Tour de France'] + alternateNames  WHERE id =065dde58-d4e3-408b-8819-3a7389df4893 IF alternateNames[0]='Criterium du Dauphine';
+UPDATE learn_cassandra_tables.products 
+SET alternateNames = alternateNames + ['Tour de France11']  WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
 
 UPDATE learn_cassandra_tables.products 
-SET alternateNames = alternateNames + ['Tour de France11']  WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
-
+SET alternateNames[2] ='Tour de France__2' WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
 UPDATE learn_cassandra_tables.products 
-SET alternateNames[1] ='Tour de France__2' WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+SET alternateNames = alternateNames - ['Criterium du Dauphine'] WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
 
-UPDATE learn_cassandra_tables.products 
-SET alternateNames = alternateNames - ['Criterium du Dauphine'] WHERE id =252a8851-7a70-4a7d-8897-0e163986a80c;
+-- after the specified seconds the added element is gone
+UPDATE learn_cassandra_tables.products USING TTL 10
+SET alternateNames[1] = 'Vuelta Ciclista a Venezuela22222' WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+DELETE attributes['weight'] FROM learn_cassandra_tables.products WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+DELETE reviews[0] FROM learn_cassandra_tables.products WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
 
  -- user defined aggregate functions (UDAF)
 CREATE TABLE learn_cassandra_tables.sales (
@@ -304,16 +311,20 @@ INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, 
 
 -- Add IF NOT EXISTS to the command to ensure that the operation is not performed if a row with the same primary key already exists
 -- returns true when data is new and returns the existing data if data is already present
-INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS;
+ INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS;
 
 INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2019, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS USING  TTL 10000;
 
+DELETE cyclist_name FROM learn_cassandra_tables.rank_by_year_and_name where race_year=2019 AND race_name='4th Tour of Beijing' AND rank=1 IF EXISTS;
+
+DELETE cyclist_name FROM learn_cassandra_tables.rank_by_year_and_name where race_year=2014 AND race_name='4th Tour of Beijing' AND rank=2 IF cyclist_name='Daniel MARTIN';
 -- UPDATE OPS ---
 
 UPDATE learn_cassandra_tables.rank_by_year_and_name SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
 
-UPDATE learn_cassandra_tables.rank_by_year_and_name USING TTL 10000 SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
 
+UPDATE learn_cassandra_tables.rank_by_year_and_name USING TTL 10000 SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
+ 
 -- To get time remaining for data to get erased
 SELECT TTL(cyclist_name) 
 FROM learn_cassandra_tables.rank_by_year_and_name
