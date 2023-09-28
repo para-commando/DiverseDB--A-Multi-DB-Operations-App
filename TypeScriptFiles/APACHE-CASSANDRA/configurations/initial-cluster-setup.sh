@@ -14,6 +14,6 @@ echo "Wait for 5 seconds please..."
 sleep 5
 
 # Running third node in background
-sudo docker run --name cassandra-node-3 -p 9048:9042 -d -e CASSANDRA_SEEDS=$INSTANCE1,$INSTANCE2 custom-cassandra-image:3.7
-INSTANCE3=$(sudo docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-node-3)
-echo "Instance 3: ${INSTANCE3}"
+# sudo docker run --name cassandra-node-3 -p 9048:9042 -d -e CASSANDRA_SEEDS=$INSTANCE1,$INSTANCE2 custom-cassandra-image:3.7
+# INSTANCE3=$(sudo docker inspect --format="{{ .NetworkSettings.IPAddress }}" cassandra-node-3)
+# echo "Instance 3: ${INSTANCE3}"

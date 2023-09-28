@@ -126,7 +126,6 @@ INSERT INTO learn_cassandra_tables.users_by_country (country,user_email,first_na
   VALUES('UK', 'alice@email.com', 'Alice','Brown',26);
 
 
-SELECT * FROM learn_cassandra_tables.users_by_country WHERE country='US';
  
 CREATE TYPE learn_cassandra_tables.address (
     street text,
@@ -149,10 +148,11 @@ CREATE TABLE learn_cassandra_tables.products (
   categories TUPLE<INT, TEXT>,
   attributes MAP<TEXT, TEXT>,
   reviews LIST<frozen<MAP<TEXT, INT>>>,
+  alternateNames LIST<TEXT>,
   warehouse_address address,
 );
 
-INSERT INTO learn_cassandra_tables.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, warehouse_address)
+INSERT INTO learn_cassandra_tables.products (id, name, is_available, description, price, website_ip_address, quantity, in_stock, created_at, updated_at, images, categories, attributes, reviews, alternateNames, warehouse_address)
 VALUES (
   uuid(),
   'Product 1',
@@ -168,6 +168,7 @@ VALUES (
   (1, 'Category 1'),   -- TUPLE<INT, TEXT>
   {'color': 'Blue', 'weight': '2 lbs'},  -- MAP<TEXT, TEXT>
   [{ 'user1': 5, 'user2': 4 }],  -- LIST<frozen<MAP<TEXT, INT>>>
+  ['mango', 'banana'],
   { street: '123 Main St', city: 'City1', zip: '12345', contact_no: '123-456-7890' } -- User-defined Type address
 );
 
@@ -190,8 +191,17 @@ VALUES (
   { street: '456 Elm St', city: 'City2', zip: '67890', contact_no: '987-654-3210' } -- User-defined Type address
 );
 
+-- this index is required as the query below it requires it for its execution otherwise we would need to use ALLOW filtering which can affect performance
+CREATE INDEX IF NOT EXISTS attributes_index
+ON learn_cassandra_tables.products ( KEYS (attributes) );
 
--- user defined aggregate functions (UDAF)
+
+
+-- this index is required as the query below it requires it for its execution otherwise we would need to use ALLOW filtering which can affect performance
+CREATE INDEX IF NOT EXISTS attributes_values_index
+ON learn_cassandra_tables.products ( ENTRIES(attributes) );
+ 
+ -- user defined aggregate functions (UDAF)
 CREATE TABLE learn_cassandra_tables.sales (
   transaction_id UUID PRIMARY KEY,
   category TEXT,
@@ -213,6 +223,9 @@ VALUES (uuid(), 'Electronics', 300.00);
 INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
 VALUES (uuid(), 'Electronics', 450.00);
 
+INSERT INTO learn_cassandra_tables.sales (transaction_id, category, price)
+VALUES (uuid(), 'Electronics', 450.00);
+
 CREATE FUNCTION IF NOT EXISTS learn_cassandra_tables.sum_agg(state double, val double)
   CALLED ON NULL INPUT
   RETURNS double
@@ -228,8 +241,6 @@ CREATE AGGREGATE IF NOT EXISTS learn_cassandra_tables.total_price_agg(double)
   STYPE double
   INITCOND null;
 
- 
-SELECT category, total_price_agg(CAST(price AS double)) AS total_price FROM learn_cassandra_tables.sales  where category= 'Electronics' ALLOW FILTERING;
 
 CREATE OR REPLACE FUNCTION learn_cassandra_tables.fifteenPctDiscountedPrice(amount double)
 CALLED ON NULL INPUT
@@ -240,7 +251,122 @@ double result = amount-(amount * 0.15);
     return result;
 ';
 
+
+CREATE TABLE IF NOT EXISTS learn_cassandra_tables.rank_by_year_and_name (
+  race_year int,
+  race_name text,
+  cyclist_name text,
+  rank int,
+  PRIMARY KEY ((race_year, race_name), rank)
+);
+
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 2, 'Daniel MARTIN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 3, 'Johan Esteban CHAVES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, 'Tour of Japan - Stage 4 - Minami > Shinshu', 1, 'Daniel MARTIN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, 'Tour of Japan - Stage 4 - Minami > Shinshu', 2, 'Johan Esteban CHAVES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, 'Tour of Japan - Stage 4 - Minami > Shinshu', 3, 'Benjamin PRADES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Giro d''Italia - Stage 11 - Forli > Imola', 1, 'Ilnur ZAKARIN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Giro d''Italia - Stage 11 - Forli > Imola', 2, 'Carlos BETANCUR');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 1, 'Benjamin PRADES');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 2, 'Adam PHELAN');
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2015, 'Tour of Japan - Stage 4 - Minami > Shinshu', 3, 'Thomas LEBAS');
+
+-- Add IF NOT EXISTS to the command to ensure that the operation is not performed if a row with the same primary key already exists
+-- returns true when data is new and returns the existing data if data is already present
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2014, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS;
+
+INSERT INTO learn_cassandra_tables.rank_by_year_and_name (race_year, race_name, rank, cyclist_name) VALUES (2019, '4th Tour of Beijing', 1, 'Phillippe GILBERT') IF NOT EXISTS USING  TTL 10000;
+
+
+
+-- Materialized view
+CREATE MATERIALIZED VIEW learn_cassandra_tables.cyclist_mat_view_rank_1 AS SELECT * FROM learn_cassandra_tables.rank_by_year_and_name WHERE race_name IS NOT NULL AND race_year IS NOT NULL AND rank=1 PRIMARY KEY (rank, race_name, race_year);
+
+
+-- this index is required as the query below it requires it for its execution otherwise we would need to use ALLOW filtering which can affect performance
+CREATE INDEX IF NOT EXISTS rank_idx
+ON learn_cassandra_tables.rank_by_year_and_name (rank);
+-- Tip: The database does not support queries with logical disjunctions (OR).
+
+
+
+CREATE TABLE IF NOT EXISTS learn_cassandra_tables.calendar (
+  race_id int,
+  race_name text,
+  race_start_date timestamp,
+  race_end_date timestamp,
+  PRIMARY KEY (
+    race_id, race_start_date, race_end_date
+  )
+) WITH CLUSTERING ORDER BY (
+  race_start_date DESC, race_end_date DESC
+);
+
+-- Use an IN condition on the last column of a compound primary key only when it is preceded by equality conditions for all preceding columns of the primary key.
+
+
+
+
+----READ OPERATIONS----
+
+
+SELECT * FROM learn_cassandra_tables.users_by_country WHERE country='US';
+
+SELECT * FROM learn_cassandra_tables.products
+WHERE attributes CONTAINS KEY 'color';
+
+SELECT * FROM learn_cassandra_tables.products
+WHERE attributes['color'] = 'Red';
+
+SELECT WRITETIME(category) FROM learn_cassandra_tables.sales;
+
+SELECT category, total_price_agg(CAST(price AS double)) AS total_price FROM learn_cassandra_tables.sales where category= 'Electronics' ALLOW FILTERING;
+
 SELECT category, price AS initialPrice, fifteenPctDiscountedPrice(CAST(price AS double)) AS discountedPrice from learn_cassandra_tables.sales;
+
+SELECT * FROM learn_cassandra_tables.cyclist_mat_view_rank_1;
+
+-- To get time remaining for data to get erased
+SELECT TTL(cyclist_name)
+FROM learn_cassandra_tables.rank_by_year_and_name
+WHERE race_year=2019 and race_name = '4th Tour of Beijing';
+
+SELECT *
+FROM learn_cassandra_tables.rank_by_year_and_name
+PER PARTITION LIMIT 2;
+
+SELECT *
+FROM learn_cassandra_tables.rank_by_year_and_name
+WHERE rank = 1;
+
+
+----------------------UPDATE OPERATIONS-----------------
+
+UPDATE learn_cassandra_tables.rank_by_year_and_name SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
+
+UPDATE learn_cassandra_tables.rank_by_year_and_name USING TTL 10000 SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
+
+-- after the specified seconds the value of that column will be null
+
+-- change the id value accordingly
+UPDATE learn_cassandra_tables.products USING TTL 15 SET alternateNames = ['Criterium du Dauphine','Tour de Suisse'] WHERE id =065dde58-d4e3-408b-8819-3a7389df4893 IF EXISTS;
+UPDATE learn_cassandra_tables.products
+SET alternateNames = ['Tour de France'] + alternateNames WHERE id =065dde58-d4e3-408b-8819-3a7389df4893 IF alternateNames[0]='Criterium du Dauphine';
+UPDATE learn_cassandra_tables.products
+SET alternateNames = alternateNames + ['Tour de France11'] WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+UPDATE learn_cassandra_tables.products
+SET alternateNames[2] ='Tour de France__2' WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+UPDATE learn_cassandra_tables.products
+SET alternateNames = alternateNames - ['Criterium du Dauphine'] WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+
+-- after the specified seconds the added element is gone
+UPDATE learn_cassandra_tables.products USING TTL 10
+SET alternateNames[1] = 'Vuelta Ciclista a Venezuela22222' WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+
 
 -----------DELETE OPERATIONS--------------
 
@@ -253,3 +379,10 @@ DROP Table learn_cassandra_tables.products;
 DROP TYPE learn_cassandra_tables.address;
 DROP TYPE learn_cassandra_tables.phone;
 
+DELETE attributes['weight'] FROM learn_cassandra_tables.products WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+DELETE reviews[0] FROM learn_cassandra_tables.products WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
+
+DELETE cyclist_name FROM learn_cassandra_tables.rank_by_year_and_name where race_year=2019 AND race_name='4th Tour of Beijing' AND rank=1 IF EXISTS;
+
+DELETE cyclist_name FROM learn_cassandra_tables.rank_by_year_and_name where race_year=2014 AND race_name='4th Tour of Beijing' AND rank=2 IF cyclist_name='Daniel MARTIN';

@@ -5,7 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "startDev": "node app.js"
+    "startDev": "node app.js",
+    "start-cassandra-cluster": "bash ./TypeScriptFiles/APACHE-CASSANDRA/configurations/start-cluster.sh",
+    "initial-cassandra-cluster-setup": "bash ./TypeScriptFiles/APACHE-CASSANDRA/configurations/initial-cluster-setup.sh",
+    "build-custom-cassandra-image": "bash ./TypeScriptFiles/APACHE-CASSANDRA/configurations/build-custom-cassandra-image.sh",
+    "destroy-entire-cassandra-cluster": "bash ./TypeScriptFiles/APACHE-CASSANDRA/configurations/destroy-cluster.sh",
+    "destroy-cassandra-containers": "bash ./TypeScriptFiles/APACHE-CASSANDRA/configurations/destroy-container-nodes.sh",
+    "stop-cassandra-containers": "bash ./TypeScriptFiles/APACHE-CASSANDRA/configurations/stop-cluster.sh"
   },
   "keywords": [],
   "author": "",
