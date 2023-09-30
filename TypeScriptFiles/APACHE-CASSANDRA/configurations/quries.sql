@@ -1,17 +1,8 @@
-------KEYSPACE QUERIES--------
+-----------CREATE OPERATIONS------------------
+
 CREATE KEYSPACE IF NOT EXISTS learn_cassandra_keyspaces
   WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1': 2};
 
-ALTER KEYSPACE IF EXISTS learn_cassandra_keyspaces
-    WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1' : 2};
-
-DROP KEYSPACE IF EXISTS learn_cassandra_keyspaces;
-
-
-
-----------TABLE QUERIES-----------
-
------------CREATE OPERATIONS------------------
 CREATE KEYSPACE IF NOT EXISTS learn_cassandra_tables
   WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1': 2};
 
@@ -76,11 +67,7 @@ AND speculative_retry = 'ALWAYS';
 
 -- speculative_retry: Configures speculative query retries. In this example, speculative retries are set to 'ALWAYS,' meaning that Cassandra will retry queries if it suspects slow responses from replicas.
 
- ALTER TABLE learn_cassandra_tables.my_table DROP new_users;
 
- ALTER TABLE learn_cassandra_tables.my_table ADD new_users text ;
- ALTER TABLE learn_cassandra_tables.my_table ADD new_users_2 text ;
- ALTER TABLE learn_cassandra_tables.my_table DROP new_users_2;
 
 -- Inserting data into the Cassandra table
 
@@ -343,6 +330,9 @@ WHERE rank = 1;
 
 ----------------------UPDATE OPERATIONS-----------------
 
+ALTER KEYSPACE IF EXISTS learn_cassandra_keyspaces
+    WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1' : 2};
+
 UPDATE learn_cassandra_tables.rank_by_year_and_name SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
 
 UPDATE learn_cassandra_tables.rank_by_year_and_name USING TTL 10000 SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
@@ -366,9 +356,15 @@ SET alternateNames = alternateNames - ['Criterium du Dauphine'] WHERE id =065dde
 UPDATE learn_cassandra_tables.products USING TTL 10
 SET alternateNames[1] = 'Vuelta Ciclista a Venezuela22222' WHERE id =065dde58-d4e3-408b-8819-3a7389df4893;
 
+ ALTER TABLE learn_cassandra_tables.my_table DROP new_users;
 
+ ALTER TABLE learn_cassandra_tables.my_table ADD new_users text ;
+ ALTER TABLE learn_cassandra_tables.my_table ADD new_users_2 text ;
+ ALTER TABLE learn_cassandra_tables.my_table DROP new_users_2;
 
 -----------DELETE OPERATIONS--------------
+
+DROP KEYSPACE IF EXISTS learn_cassandra_keyspaces;
 
 TRUNCATE learn_cassandra_tables.my_table;
 DROP TABLE learn_cassandra_tables.my_table;

@@ -7,7 +7,7 @@ const contactPoints = ['127.0.0.1:9043/', '127.0.0.1:9042/'];
 const client = new cassandra.Client({
   contactPoints,
   localDataCenter: 'datacenter1', // Set the local data center name.
-  keyspace: 'learn_cassandra', // Specify the keyspace you want to use.
+  keyspace: 'learn_cassandra_tables', // Specify the keyspace you want to use.
 });
 
 // Connect to the Cassandra cluster.
