@@ -1,5 +1,5 @@
 
-ALTER KEYSPACE IF EXISTS learn_cassandra_keyspaces WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1' : 1};
+ALTER KEYSPACE learn_cassandra_keyspaces WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1' : 1};
 
 UPDATE learn_cassandra_tables.rank_by_year_and_name SET cyclist_name = 'bob' WHERE race_name='4th Tour of Beijing1' AND race_year = 2014 AND RANK=1;
 
