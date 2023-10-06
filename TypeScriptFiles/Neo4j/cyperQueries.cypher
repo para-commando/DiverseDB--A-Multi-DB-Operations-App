@@ -78,3 +78,22 @@ MERGE (p)-[:ACTED_IN]-(m)
 // creating nodes and relationships between them in a single statement
 MERGE (p:Person {name: 'Emily Blunt'})-[:ACTED_IN]->(m:Movie {title: 'A Quiet Place'})
 RETURN p, m
+
+// updating relationships between nodes, note that same clause can be used to even overwrite the value of a specfic property 
+
+MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
+WHERE p.name = 'Michael Caine' AND m.title = 'The Dark Knight'
+SET r.roles = ['Alfred Penny']
+RETURN p, r, m
+
+// removing specific property from a node
+MATCH (p:Person)-[r:ACTED_IN]->(m:Movie)
+WHERE p.name = 'Michael Caine' AND m.title = 'The Dark Knight'
+REMOVE r.roles
+RETURN p, r, m
+
+// setting value of a property to null also deletes it
+MATCH (p:Person)
+WHERE p.name = 'Gene Hackman'
+SET p.born = null
+RETURN p
