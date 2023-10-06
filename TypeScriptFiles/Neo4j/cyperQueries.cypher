@@ -40,3 +40,20 @@ RETURN p.name, keys(p)
 
 // to return all the property keys defined in the graph.
 CALL db.propertyKeys()
+
+// filtering using ranges
+// observe that it is not written like m.release <= 2008 and m.release <= 2003
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE 2000 <= m.released <= 2003
+RETURN p.name, m.title, m.released
+
+
+// options for creating nodes
+
+// It is said that MERGE clause checks if the node-property or relationship already exists to ensure uniqueness in thse nodes and. CREATE does not check for duplicates
+
+// CREATE Clause
+CREATE (alice:Person {name: 'Alice'})-[knows:KNOWS]->(bob:Person {name: 'Bob'})
+
+// MERGE Clause
+MERGE (alice:Person {name: 'Alice'})-[knows:KNOWS]->(bob:Person {name: 'Bob'})
