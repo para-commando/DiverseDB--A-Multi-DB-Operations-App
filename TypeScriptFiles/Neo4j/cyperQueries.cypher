@@ -97,3 +97,15 @@ MATCH (p:Person)
 WHERE p.name = 'Gene Hackman'
 SET p.born = null
 RETURN p
+
+
+// options in MERGE Clause
+
+MERGE (p:Person {name: 'McKenna Grace'})
+// Only set the `createdAt` property if the node is created during this query
+ON CREATE SET p.createdAt = datetime()
+// Only set the `updatedAt` property if the node was created previously
+ON MATCH SET p.updatedAt = datetime()
+// Set the `born` property regardless
+SET p.born = 2006
+RETURN p
