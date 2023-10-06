@@ -57,3 +57,24 @@ CREATE (alice:Person {name: 'Alice'})-[knows:KNOWS]->(bob:Person {name: 'Bob'})
 
 // MERGE Clause
 MERGE (alice:Person {name: 'Alice'})-[knows:KNOWS]->(bob:Person {name: 'Bob'})
+
+
+// Creating relationship between the existing nodes
+
+MATCH (p:Person {name: 'Michael Caine'})
+MATCH (m:Movie {title: 'The Dark Knight'})
+MERGE (p)-[:ACTED_IN]->(m)
+
+// note that in this query the direction of relationship to be found is not specified hence it will find all the connected nodes
+MATCH (p:Person {name: 'Michael Caine'})-[:ACTED_IN]-(m:Movie {title: 'The Dark Knight'})
+RETURN p, m
+
+
+// creating nodes and creating relationships between them at the same time also note that the direction in which relation should be created is not mentioned hence by default it will be from left to right as we are using MERGE clause here
+MERGE (p:Person {name: 'Chadwick Boseman'})
+MERGE (m:Movie {title: 'Black Panther'})
+MERGE (p)-[:ACTED_IN]-(m)
+
+// creating nodes and relationships between them in a single statement
+MERGE (p:Person {name: 'Emily Blunt'})-[:ACTED_IN]->(m:Movie {title: 'A Quiet Place'})
+RETURN p, m
