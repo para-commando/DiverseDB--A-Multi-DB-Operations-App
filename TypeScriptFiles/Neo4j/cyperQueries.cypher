@@ -109,3 +109,34 @@ ON MATCH SET p.updatedAt = datetime()
 // Set the `born` property regardless
 SET p.born = 2006
 RETURN p
+
+// Deleting a node  
+MATCH (p:Person)
+WHERE p.name = 'Jane Doe'
+DELETE p
+
+// Deleting a relationship
+MATCH (p:Person {name: 'Jane Doe'})-[r:ACTED_IN]->(m:Movie {title: 'The Matrix'})
+DELETE r
+RETURN p, m
+
+// deleting a node with its relationships
+MATCH (p:Person {name: 'Jane Doe'})
+DETACH DELETE p
+
+// to delete everything in a graph 
+MATCH (n)
+DETACH DELETE n
+
+// adding a label to an existing node
+MATCH (p:Person {name: 'Jane Doe'})
+SET p:Developer
+RETURN p
+
+// Deleting a label
+MATCH (p:Person {name: 'Jane Doe'})
+REMOVE p:Developer
+RETURN p
+
+// printing all the labels in the graph
+CALL db.labels()
