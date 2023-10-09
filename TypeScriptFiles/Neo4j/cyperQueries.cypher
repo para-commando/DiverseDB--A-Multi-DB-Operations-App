@@ -140,3 +140,8 @@ RETURN p
 
 // printing all the labels in the graph
 CALL db.labels()
+
+// query used to find the yougest actor acted in a movie
+MATCH (p:Person)-[:ACTED_IN]-(m:Movie)
+WHERE m.title = 'Hoffa'
+RETURN  p.name AS Actor, p.born as `Year Born` ORDER BY p.born DESC LIMIT 1
