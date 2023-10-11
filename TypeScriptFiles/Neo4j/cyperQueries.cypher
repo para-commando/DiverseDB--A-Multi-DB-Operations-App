@@ -145,3 +145,8 @@ CALL db.labels()
 MATCH (p:Person)-[:ACTED_IN]-(m:Movie)
 WHERE m.title = 'Hoffa'
 RETURN  p.name AS Actor, p.born as `Year Born` ORDER BY p.born DESC LIMIT 1
+
+// adding profile keyword to get overview of the performance of the query
+PROFILE MATCH (p:Person)-[:ACTED_IN]-(m:Movie)
+WHERE p.name = 'Tom Hanks'
+RETURN m.title AS Movie
