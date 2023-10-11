@@ -150,3 +150,58 @@ RETURN  p.name AS Actor, p.born as `Year Born` ORDER BY p.born DESC LIMIT 1
 PROFILE MATCH (p:Person)-[:ACTED_IN]-(m:Movie)
 WHERE p.name = 'Tom Hanks'
 RETURN m.title AS Movie
+
+
+// creating new nodes from existing properties of a node
+MATCH (m:Movie)
+UNWIND m.languages AS language
+WITH  language, collect(m) AS movies
+MERGE (l:Language {name:language})
+WITH l, movies
+UNWIND movies AS m
+WITH l,m
+MERGE (m)-[:IN_LANGUAGE]->(l);
+MATCH (m:Movie)
+SET m.languages = null
+// explanation
+// MATCH (m:Movie): This part of the query matches all nodes labeled as Movie and assigns the alias m to each movie node.
+
+// UNWIND m.languages AS language: It takes each movie's languages property (assuming it's an array) and unwinds it into individual elements, assigning each language to the variable language.
+
+// WITH language, collect(m) AS movies: In this line, it groups movies by language using the WITH clause. It collects all movies with the same language into a list called movies and keeps the language as language.
+
+// MERGE (l:Language {name:language}): For each unique language, it tries to create a Language node with the name property set to the language if it doesn't already exist. The MERGE clause ensures that duplicate language nodes are not created.
+
+// WITH l, movies: It retains the Language node (l) and the list of movies (movies) in the context.
+
+// UNWIND movies AS m: It unwinds the list of movies (movies) back into individual movie nodes (m), preparing for the next operation.
+
+// WITH l, m: It retains the Language node (l) and the movie node (m) in the context.
+
+// MERGE (m)-[:IN_LANGUAGE]->(l): For each movie (m) and language (l) pair, it creates a [:IN_LANGUAGE]` relationship from the movie to the language. This represents that the movie is in the specified language.
+
+// MATCH (m:Movie) SET m.languages = null: After establishing the relationships between movies and languages, this line matches all movie nodes and sets their languages property to null. This step is presumably done to clear the languages property on movie nodes since the language information is now represented by the relationships to Language nodes.
+
+// UNWIND:
+
+// The UNWIND clause is used to break down a collection (e.g., an array or a list) into individual elements. It is commonly used to work with multi-valued properties or lists.
+// It can be followed by a collection, and each element of that collection will be treated as an independent row in the query's result.
+// In your query, UNWIND m.languages AS language takes the languages property of movie nodes (m) and breaks it down into individual languages. For each language, the query processes the subsequent clauses, creating one row in the result for each language.
+// It's essential to use UNWIND before you use WITH to work with individual elements in the collection.
+
+
+// WITH:
+
+// The WITH clause is used to pass data from one part of a query to another, effectively chaining together multiple parts of a query.
+// It can be used to select, filter, or transform data before it's passed to the next part of the query. This makes it a crucial tool for shaping the data throughout the query.
+// In your query, WITH language, collect(m) AS movies selects the language and collects all movie nodes associated with that language into a list called movies. The result at this point includes one row for each language and the list of movies in that language.
+// You can use WITH multiple times in a query to continue processing the data, filtering or aggregating it as needed.
+// Combining UNWIND and WITH:
+
+// These clauses are often used together when dealing with collections. UNWIND breaks the collection into individual elements, and WITH allows you to work with those elements.
+// For example, in your query, you use UNWIND to handle each language separately and then pass the language and the list of associated movies to the next part of the query using WITH.
+// This combination is useful when you need to work with each element of a collection independently while retaining other contextual data.
+
+// The query processes each movie node and language combination separately due to the UNWIND clause, which unwinds the languages array, creating separate rows for each language.
+
+// The WITH clause then collects the movies associated with each language into a list. So, for each row in the result, you have one language and a list of movies associated with that language.
