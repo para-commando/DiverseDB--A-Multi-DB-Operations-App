@@ -228,3 +228,17 @@ MERGE (m)-[:IN_GENRE]->(g)
 SET m.genres = null;
 
 
+// creating a new relationship using the values in the node's properties
+MATCH (n:Actor)-[:ACTED_IN]->(m:Movie)
+CALL apoc.merge.relationship(n,
+  'ACTED_IN_' + left(m.released,4),
+  {},
+  {},
+  m ,
+  {}
+) YIELD rel
+RETURN count(*) AS `Number of relationships merged`;
+
+// USING OR condition to retrieve all of the nodes in the paths which has the mentioned relations
+MATCH (p:Person)-[:ACTED_IN_1995|DIRECTED_1995]->()
+RETURN p.name as `Actor or Director`
