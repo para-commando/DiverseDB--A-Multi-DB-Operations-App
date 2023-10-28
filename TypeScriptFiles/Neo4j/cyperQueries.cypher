@@ -243,3 +243,27 @@ RETURN count(*) AS `Number of relationships merged`;
 MATCH (p:Person)-[:ACTED_IN_1995|DIRECTED_1995]->()
 RETURN p.name as `Actor or Director`
 
+// changing the format of date value stored to yyyy-MM-dd from mm/dd/yyyy
+
+MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
+WITH bookings, booked_on, s,
+     split(booked_on.BookingID_Date, '/') AS dateParts
+WITH bookings, booked_on, s, dateParts[2] AS year, dateParts[0] AS month, dateParts[1] AS day
+WHERE toInteger(year) < 2023
+WITH bookings, booked_on, s, 
+     year + '-'  + month + '-' + day AS newDate
+SET booked_on.BookingID_Date = newDate
+RETURN bookings, booked_on, s
+
+// getting data between a date range 
+
+MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
+WITH bookings, booked_on, s,
+     split(booked_on.BookingID_Date, '/') AS dateParts
+WITH bookings, booked_on, s, 
+     toInteger(dateParts[2]) AS year,
+     toInteger(dateParts[0]) AS month,
+     toInteger(dateParts[1]) AS day
+WHERE datetime({year: year, month: month, day: day}) >= datetime({year: 2023, month: 7, day: 1})
+  AND datetime({year: year, month: month, day: day}) < datetime({year: 2023, month: 8, day: 1})
+RETURN bookings, booked_on, s
