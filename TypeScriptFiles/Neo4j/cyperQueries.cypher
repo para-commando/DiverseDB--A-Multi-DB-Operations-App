@@ -205,3 +205,65 @@ SET m.languages = null
 // The query processes each movie node and language combination separately due to the UNWIND clause, which unwinds the languages array, creating separate rows for each language.
 
 // The WITH clause then collects the movies associated with each language into a list. So, for each row in the result, you have one language and a list of movies associated with that language.
+
+// here the main problem in creating nodes for the genres is that they are present as an array in each movie node and hence are duplicated so first we want kinda unique elements of those hence use unwind to set free the elements from array as individual elements using the line "UNWIND m.genres AS genres" then we create a data such that infront of each genre its associated array of movies are present using the line "WITH genres, collect(m) AS movies" then for each unique genres we create nodes using the line "MERGE (g:genres{name:genres})" now since movies are present as list we want to get it as inidividual elements inorder to create link between those and the genre nodes we do that using the line "UNWIND movies AS m" then using this line "MERGE (m)-[:IN_GENRE]->(g)" we create unique link between movie and genre nodes then after that we fetch the movie nodes again and then delete the genres property from it using the line "SET m.genres=null"
+
+MATCH (m:Movie)
+UNWIND m.genres AS genres
+WITH genres, collect(m) AS movies
+MERGE (g:genres {name:genres})
+WITH g, movies
+UNWIND movies AS m
+WITH g,m
+MERGE (m)-[:IN_GENRE]->(g)
+MATCH (m:Movie)
+SET m.genres=null
+
+// the above query can be written like this also
+
+MATCH (m:Movie)
+UNWIND m.genres AS genre
+MERGE (g:Genre {name: genre})
+MERGE (m)-[:IN_GENRE]->(g)
+SET m.genres = null;
+
+
+// creating a new relationship using the values in the node's properties
+MATCH (n:Actor)-[:ACTED_IN]->(m:Movie)
+CALL apoc.merge.relationship(n,
+  'ACTED_IN_' + left(m.released,4),
+  {},
+  {},
+  m ,
+  {}
+) YIELD rel
+RETURN count(*) AS `Number of relationships merged`;
+
+// USING OR condition to retrieve all of the nodes in the paths which has the mentioned relations
+MATCH (p:Person)-[:ACTED_IN_1995|DIRECTED_1995]->()
+RETURN p.name as `Actor or Director`
+
+// changing the format of date value stored to yyyy-MM-dd from mm/dd/yyyy
+
+MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
+WITH bookings, booked_on, s,
+     split(booked_on.BookingID_Date, '/') AS dateParts
+WITH bookings, booked_on, s, dateParts[2] AS year, dateParts[0] AS month, dateParts[1] AS day
+WHERE toInteger(year) < 2023
+WITH bookings, booked_on, s, 
+     year + '-'  + month + '-' + day AS newDate
+SET booked_on.BookingID_Date = newDate
+RETURN bookings, booked_on, s
+
+// getting data between a date range 
+
+MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
+WITH bookings, booked_on, s,
+     split(booked_on.BookingID_Date, '/') AS dateParts
+WITH bookings, booked_on, s, 
+     toInteger(dateParts[2]) AS year,
+     toInteger(dateParts[0]) AS month,
+     toInteger(dateParts[1]) AS day
+WHERE datetime({year: year, month: month, day: day}) >= datetime({year: 2023, month: 7, day: 1})
+  AND datetime({year: year, month: month, day: day}) < datetime({year: 2023, month: 8, day: 1})
+RETURN bookings, booked_on, s
