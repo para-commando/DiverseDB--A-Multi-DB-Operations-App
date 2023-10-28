@@ -242,3 +242,4 @@ RETURN count(*) AS `Number of relationships merged`;
 // USING OR condition to retrieve all of the nodes in the paths which has the mentioned relations
 MATCH (p:Person)-[:ACTED_IN_1995|DIRECTED_1995]->()
 RETURN p.name as `Actor or Director`
+
