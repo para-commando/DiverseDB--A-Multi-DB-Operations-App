@@ -243,7 +243,59 @@ RETURN count(*) AS `Number of relationships merged`;
 MATCH (p:Person)-[:ACTED_IN_1995|DIRECTED_1995]->()
 RETURN p.name as `Actor or Director`
 
-// changing the format of date value stored to yyyy-MM-dd from mm/dd/yyyy
+
+
+
+// concept: neo4j docker image queries...............................
+
+// creating a model using queries while mapping data from the csv file stored in the container while creating the custom neo4j image using the Dockerfile
+
+LOAD CSV WITH HEADERS FROM 'file:///Delivery_truc_trip_data.csv' AS row  
+
+CREATE (Customer:Customer {customerID: row['customerID'], customerNameCode: row['customerNameCode']})
+
+CREATE (Bookings:Bookings {BookingID: row['BookingID']})
+
+CREATE (Shipments:Shipments {Planned_ETA: row['Planned_ETA'],actual_eta: row['actual_eta'],trip_start_date: row['trip_start_date'],trip_end_date: row['trip_end_date'],MaterialShipped: row['Material Shipped'],ShipmentID: row['ShipmentID'],shipment_type: row['shipment_type']})
+
+CREATE (VehicleModel:VehicleModel {vehicle_no: row['vehicle_no'], vehicleType : row['vehicleType']})
+
+CREATE (Suppliers:Suppliers {supplierID: row['supplierID'], supplierNameCode : row['supplierNameCode']})
+
+CREATE (Drivers:Drivers {Driver_Name: row['Driver_Name'], Driver_MobileNo : row['Driver_MobileNo']})
+
+CREATE (Origin:Origin {Origin_Location: row['Origin_Location'], Org_lat_lon : row['Org_lat_lon'], OriginLocation_Code: row['OriginLocation_Code']})
+
+CREATE (Destination:Destination {Destination_Location: row['Destination_Location'], DestinationLocation_Code : row['DestinationLocation_Code']})
+
+CREATE (GpsProviders:GpsProviders {GpsProvider: row['GpsProvider']})
+
+CREATE (CurrentLocation:CurrentLocation {Current_Location: row['Current_Location'], Curr_lat : row['Curr_lat'], Curr_lon : row['Curr_lon']})
+
+MERGE (Customer)-[:BOOKED]->(Bookings)
+
+MERGE (Bookings)-[:BOOKED_ON {BookingID_Date: row['BookingID_Date']}]->(Shipments)
+
+MERGE (Shipments)-[:SHIPPED_VEHICLE_TYPE]->(VehicleModel)
+
+MERGE (VehicleModel)<-[:SUPPLIED_VEHICLE_TYPE]-(Suppliers)
+
+MERGE (VehicleModel)<-[:CURRENTLY_AT]-(CurrentLocation)
+
+MERGE (CurrentLocation)<-[:SHIPMENT_LOCATED_AT]-(GpsProviders)
+
+MERGE (CurrentLocation)-[:CURRENTLY_AT]->(Drivers)
+
+MERGE (Drivers)-[:START_FROM]->(Origin)
+
+MERGE (Drivers)-[:END_AT]->(Destination)
+
+MERGE (Origin)-[:TO_COVER_DISTANCE {TRANSPORTATION_DISTANCE_IN_KM: row['TRANSPORTATION_DISTANCE_IN_KM']}]->(Destination)
+
+
+// concept:  queries used on the data model with data
+
+// concept:  changing the format of date value stored to yyyy-MM-dd from mm/dd/yyyy
 
 MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
 WITH bookings, booked_on, s,
@@ -255,7 +307,7 @@ WITH bookings, booked_on, s,
 SET booked_on.BookingID_Date = newDate
 RETURN bookings, booked_on, s
 
-// getting data between a date range 
+// concept: fetching data between a date range 
 
 MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
 WITH bookings, booked_on, s,
@@ -267,3 +319,93 @@ WITH bookings, booked_on, s,
 WHERE datetime({year: year, month: month, day: day}) >= datetime({year: 2023, month: 7, day: 1})
   AND datetime({year: year, month: month, day: day}) < datetime({year: 2023, month: 8, day: 1})
 RETURN bookings, booked_on, s
+
+
+
+// concept: creating nodes for efficient data retrieval 
+
+CREATE (twentyTwenty:`2020`:Year {year: '2020'})
+CREATE (twentyTwentyOne:`2021`:Year {year: '2021'})
+CREATE (twentyTwentyTwo:`2022`:Year {year: '2022'})
+CREATE (twentyTwentyThree:`2023`:Year {year: '2023'})
+
+
+CREATE (January:`1`:Month {monthName: 'January'})
+CREATE (February:`2`:Month {monthName: 'February'})
+CREATE (March:`3`:Month {monthName: 'March'})
+CREATE (April:`4`:Month {monthName: 'April'})
+CREATE (May:`5`:Month {monthName: 'May'})
+CREATE (June:`6`:Month {monthName: 'June'})
+CREATE (July:`7`:Month {monthName: 'July'})
+CREATE (August:`8`:Month {monthName: 'August'})
+CREATE (September:`9`:Month {monthName: 'September'})
+CREATE (October:`10`:Month {monthName: 'October'})
+CREATE (November:`11`:Month {monthName: 'November'})
+CREATE (December:`12`:Month {monthName: 'December'})
+
+CREATE (Day1:`1`:Days {dayOfTheMonth: 'Day1'})
+CREATE (Day2:`2`:Days {dayOfTheMonth: 'Day2'})
+CREATE (Day3:`3`:Days {dayOfTheMonth: 'Day3'})
+CREATE (Day4:`4`:Days {dayOfTheMonth: 'Day4'})
+CREATE (Day5:`5`:Days {dayOfTheMonth: 'Day5'})
+CREATE (Day6:`6`:Days {dayOfTheMonth: 'Day6'})
+CREATE (Day7:`7`:Days {dayOfTheMonth: 'Day7'})
+CREATE (Day8:`8`:Days {dayOfTheMonth: 'Day8'})
+CREATE (Day9:`9`:Days {dayOfTheMonth: 'Day9'})
+CREATE (Day10:`10`:Days {dayOfTheMonth: 'Day10'})
+CREATE (Day11:`11`:Days {dayOfTheMonth: 'Day11'})
+CREATE (Day12:`12`:Days {dayOfTheMonth: 'Day12'})
+CREATE (Day13:`13`:Days {dayOfTheMonth: 'Day13'})
+CREATE (Day14:`14`:Days {dayOfTheMonth: 'Day14'})
+CREATE (Day15:`15`:Days {dayOfTheMonth: 'Day15'})
+CREATE (Day16:`16`:Days {dayOfTheMonth: 'Day16'})
+CREATE (Day17:`17`:Days {dayOfTheMonth: 'Day17'})
+CREATE (Day18:`18`:Days {dayOfTheMonth: 'Day18'})
+CREATE (Day19:`19`:Days {dayOfTheMonth: 'Day19'})
+CREATE (Day20:`20`:Days {dayOfTheMonth: 'Day20'})
+CREATE (Day21:`21`:Days {dayOfTheMonth: 'Day21'})
+CREATE (Day22:`22`:Days {dayOfTheMonth: 'Day22'})
+CREATE (Day23:`23`:Days {dayOfTheMonth: 'Day23'})
+CREATE (Day24:`24`:Days {dayOfTheMonth: 'Day24'})
+CREATE (Day25:`25`:Days {dayOfTheMonth: 'Day25'})
+CREATE (Day26:`26`:Days {dayOfTheMonth: 'Day26'})
+CREATE (Day27:`27`:Days {dayOfTheMonth: 'Day27'})
+CREATE (Day28:`28`:Days {dayOfTheMonth: 'Day28'})
+CREATE (Day29:`29`:Days {dayOfTheMonth: 'Day29'})
+CREATE (Day30:`30`:Days {dayOfTheMonth: 'Day30'})
+CREATE (Day31:`31`:Days {dayOfTheMonth: 'Day31'})
+
+
+
+MATCH (month:Month)
+WITH collect(month) AS months
+MATCH (day:Days)
+WITH months, collect(day) AS days
+UNWIND months AS month
+UNWIND CASE
+  WHEN month.monthName IN ['January', 'March', 'May', 'July', 'August', 'October', 'December'] THEN days
+  WHEN month.monthName IN ['April', 'June', 'September', 'November'] THEN days[1..30]
+  ELSE days[1..29]
+  END AS valid_days
+CREATE (month)-[:HAS_DAY]->(valid_days)
+
+
+MATCH (year:Year)
+WITH collect(year) AS years
+MATCH (months:Month)
+UNWIND years AS year
+WITH year, collect(months) AS months
+UNWIND months AS month
+MERGE (year)-[:HAS_MONTH_${month}_IN_YEAR_${year}]->(month)
+
+MATCH (year:Year)
+WITH collect(year) AS years
+MATCH (months:Month)
+UNWIND years AS year
+WITH year, collect(months) AS months
+UNWIND months AS month
+MERGE (year)-[r:HAS_MONTH_IN_YEAR]->(month)
+ON CREATE SET r.type = 'HAS_MONTH_' + month.monthName + '_IN_YEAR_' + year.year
+
+
+// concept: 
