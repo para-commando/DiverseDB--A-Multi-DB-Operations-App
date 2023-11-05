@@ -1,0 +1,1452 @@
+{
+  "version": "1.1.0",
+  "graph": {
+    "nodes": [
+      {
+        "id": "n0",
+        "position": {
+          "x": -4993.782849496092,
+          "y": -2252
+        },
+        "caption": "Customer"
+      },
+      {
+        "id": "n1",
+        "position": {
+          "x": -4803.707664165397,
+          "y": -2252
+        },
+        "caption": "Bookings"
+      },
+      {
+        "id": "n2",
+        "position": {
+          "x": -4584.20538239782,
+          "y": -2252
+        },
+        "caption": "SHIPMENTS"
+      },
+      {
+        "id": "n4",
+        "position": {
+          "x": -4364.703100630244,
+          "y": -2252
+        },
+        "caption": "VehicleModel"
+      },
+      {
+        "id": "n6",
+        "position": {
+          "x": -4092.0124102583595,
+          "y": -2252
+        },
+        "caption": "Drivers"
+      },
+      {
+        "id": "n7",
+        "position": {
+          "x": -4223.780689610915,
+          "y": -2455.424808372779
+        },
+        "caption": "CurrentLocation"
+      },
+      {
+        "id": "n8",
+        "position": {
+          "x": -4520.400787592354,
+          "y": -2455.424808372779
+        },
+        "caption": "GpsProviders"
+      },
+      {
+        "id": "n11",
+        "position": {
+          "x": -4275.07618562542,
+          "y": -1949.2743773343545
+        },
+        "caption": "Origin"
+      },
+      {
+        "id": "n12",
+        "position": {
+          "x": -3933.241357246633,
+          "y": -1949.2743773343545
+        },
+        "caption": "Destination"
+      },
+      {
+        "id": "n13",
+        "position": {
+          "x": -4520.400787592354,
+          "y": -1949.2743773343545
+        },
+        "caption": "Suppliers"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "n0",
+        "type": "BOOKED",
+        "fromId": "n0",
+        "toId": "n1"
+      },
+      {
+        "id": "n1",
+        "type": "BOOKED_ON",
+        "fromId": "n1",
+        "toId": "n2"
+      },
+      {
+        "id": "n5",
+        "type": "DRIVEN_BY",
+        "fromId": "n4",
+        "toId": "n6"
+      },
+      {
+        "id": "n6",
+        "type": "CURRENTLY_AT",
+        "fromId": "n7",
+        "toId": "n4"
+      },
+      {
+        "id": "n7",
+        "type": "CURRENTLY_AT",
+        "fromId": "n7",
+        "toId": "n6"
+      },
+      {
+        "id": "n8",
+        "type": "SHIPMENT_LOCATED_AT",
+        "fromId": "n8",
+        "toId": "n7"
+      },
+      {
+        "id": "n13",
+        "type": "TO_COVER_DISTANCE",
+        "fromId": "n11",
+        "toId": "n12"
+      },
+      {
+        "id": "n14",
+        "type": "START_FROM",
+        "fromId": "n6",
+        "toId": "n11"
+      },
+      {
+        "id": "n15",
+        "type": "END_AT",
+        "fromId": "n6",
+        "toId": "n12"
+      },
+      {
+        "id": "n16",
+        "type": "SUPPLIED_VEHICLE_TYPE",
+        "fromId": "n13",
+        "toId": "n4"
+      },
+      {
+        "id": "n17",
+        "type": "SHIPPED_VEHICLE_TYPE",
+        "fromId": "n2",
+        "toId": "n4"
+      }
+    ]
+  },
+  "dataModel": {
+    "version": "1.1.0",
+    "graphSchemaRepresentation": {
+      "version": "1.0.0",
+      "graphSchema": {
+        "nodeLabels": [
+          {
+            "$id": "nl:n0",
+            "token": "Customer"
+          },
+          {
+            "$id": "nl:n1",
+            "token": "Bookings"
+          },
+          {
+            "$id": "nl:n2",
+            "token": "SHIPMENTS"
+          },
+          {
+            "$id": "nl:n4",
+            "token": "VehicleModel"
+          },
+          {
+            "$id": "nl:n6",
+            "token": "Drivers"
+          },
+          {
+            "$id": "nl:n7",
+            "token": "CurrentLocation"
+          },
+          {
+            "$id": "nl:n8",
+            "token": "GpsProviders"
+          },
+          {
+            "$id": "nl:n11",
+            "token": "Origin"
+          },
+          {
+            "$id": "nl:n12",
+            "token": "Destination"
+          },
+          {
+            "$id": "nl:n13",
+            "token": "Suppliers"
+          }
+        ],
+        "relationshipTypes": [
+          {
+            "$id": "rt:n0",
+            "token": "BOOKED"
+          },
+          {
+            "$id": "rt:n1",
+            "token": "BOOKED_ON"
+          },
+          {
+            "$id": "rt:n5",
+            "token": "DRIVEN_BY"
+          },
+          {
+            "$id": "rt:n6",
+            "token": "CURRENTLY_AT"
+          },
+          {
+            "$id": "rt:n7",
+            "token": "CURRENTLY_AT"
+          },
+          {
+            "$id": "rt:n8",
+            "token": "SHIPMENT_LOCATED_AT"
+          },
+          {
+            "$id": "rt:n13",
+            "token": "TO_COVER_DISTANCE"
+          },
+          {
+            "$id": "rt:n14",
+            "token": "START_FROM"
+          },
+          {
+            "$id": "rt:n15",
+            "token": "END_AT"
+          },
+          {
+            "$id": "rt:n16",
+            "token": "SUPPLIED_VEHICLE_TYPE"
+          },
+          {
+            "$id": "rt:n17",
+            "token": "SHIPPED_VEHICLE_TYPE"
+          }
+        ],
+        "nodeObjectTypes": [
+          {
+            "$id": "n:n0",
+            "labels": [
+              {
+                "$ref": "#nl:n0"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:1",
+                "token": "customerID",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:2",
+                "token": "customerNameCode",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n1",
+            "labels": [
+              {
+                "$ref": "#nl:n1"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:3",
+                "token": "BookingID",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n2",
+            "labels": [
+              {
+                "$ref": "#nl:n2"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:5",
+                "token": "Planned_ETA",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:6",
+                "token": "actual_eta",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:7",
+                "token": "trip_start_date",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:8",
+                "token": "trip_end_date",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:9",
+                "token": "Material Shipped",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:38",
+                "token": "ShipmentID",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:39",
+                "token": "shipment_type",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n4",
+            "labels": [
+              {
+                "$ref": "#nl:n4"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:12",
+                "token": "vehicle_no",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:13",
+                "token": "vehicleType",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n6",
+            "labels": [
+              {
+                "$ref": "#nl:n6"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:16",
+                "token": "Driver_Name",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:17",
+                "token": "Driver_MobileNo",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n7",
+            "labels": [
+              {
+                "$ref": "#nl:n7"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:19",
+                "token": "Current_Location",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:20",
+                "token": "Curr_lat",
+                "type": {
+                  "type": "float"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:21",
+                "token": "Curr_lon",
+                "type": {
+                  "type": "float"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n8",
+            "labels": [
+              {
+                "$ref": "#nl:n8"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:22",
+                "token": "GpsProvider",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n11",
+            "labels": [
+              {
+                "$ref": "#nl:n11"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:27",
+                "token": "Origin_Location",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:28",
+                "token": "Org_lat_lon",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:29",
+                "token": "OriginLocation_Code",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n12",
+            "labels": [
+              {
+                "$ref": "#nl:n12"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:30",
+                "token": "Destination_Location",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:32",
+                "token": "DestinationLocation_Code",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "n:n13",
+            "labels": [
+              {
+                "$ref": "#nl:n13"
+              }
+            ],
+            "properties": [
+              {
+                "$id": "p:36",
+                "token": "supplierID",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              {
+                "$id": "p:37",
+                "token": "supplierNameCode",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          }
+        ],
+        "relationshipObjectTypes": [
+          {
+            "$id": "r:n0",
+            "type": {
+              "$ref": "#rt:n0"
+            },
+            "from": {
+              "$ref": "#n:n0"
+            },
+            "to": {
+              "$ref": "#n:n1"
+            },
+            "properties": []
+          },
+          {
+            "$id": "r:n1",
+            "type": {
+              "$ref": "#rt:n1"
+            },
+            "from": {
+              "$ref": "#n:n1"
+            },
+            "to": {
+              "$ref": "#n:n2"
+            },
+            "properties": [
+              {
+                "$id": "p:4",
+                "token": "BookingID_Date",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "r:n5",
+            "type": {
+              "$ref": "#rt:n5"
+            },
+            "from": {
+              "$ref": "#n:n4"
+            },
+            "to": {
+              "$ref": "#n:n6"
+            },
+            "properties": []
+          },
+          {
+            "$id": "r:n6",
+            "type": {
+              "$ref": "#rt:n6"
+            },
+            "from": {
+              "$ref": "#n:n7"
+            },
+            "to": {
+              "$ref": "#n:n4"
+            },
+            "properties": []
+          },
+          {
+            "$id": "r:n7",
+            "type": {
+              "$ref": "#rt:n7"
+            },
+            "from": {
+              "$ref": "#n:n7"
+            },
+            "to": {
+              "$ref": "#n:n6"
+            },
+            "properties": []
+          },
+          {
+            "$id": "r:n8",
+            "type": {
+              "$ref": "#rt:n8"
+            },
+            "from": {
+              "$ref": "#n:n8"
+            },
+            "to": {
+              "$ref": "#n:n7"
+            },
+            "properties": []
+          },
+          {
+            "$id": "r:n13",
+            "type": {
+              "$ref": "#rt:n13"
+            },
+            "from": {
+              "$ref": "#n:n11"
+            },
+            "to": {
+              "$ref": "#n:n12"
+            },
+            "properties": [
+              {
+                "$id": "p:33",
+                "token": "TRANSPORTATION_DISTANCE_IN_KM",
+                "type": {
+                  "type": "integer"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "r:n14",
+            "type": {
+              "$ref": "#rt:n14"
+            },
+            "from": {
+              "$ref": "#n:n6"
+            },
+            "to": {
+              "$ref": "#n:n11"
+            },
+            "properties": [
+              {
+                "$id": "p:34",
+                "token": "Org_lat_lon",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "r:n15",
+            "type": {
+              "$ref": "#rt:n15"
+            },
+            "from": {
+              "$ref": "#n:n6"
+            },
+            "to": {
+              "$ref": "#n:n12"
+            },
+            "properties": [
+              {
+                "$id": "p:35",
+                "token": "DestinationLocation_code",
+                "type": {
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            ]
+          },
+          {
+            "$id": "r:n16",
+            "type": {
+              "$ref": "#rt:n16"
+            },
+            "from": {
+              "$ref": "#n:n13"
+            },
+            "to": {
+              "$ref": "#n:n4"
+            },
+            "properties": []
+          },
+          {
+            "$id": "r:n17",
+            "type": {
+              "$ref": "#rt:n17"
+            },
+            "from": {
+              "$ref": "#n:n2"
+            },
+            "to": {
+              "$ref": "#n:n4"
+            },
+            "properties": []
+          }
+        ]
+      }
+    },
+    "graphSchemaExtensionsRepresentation": {
+      "nodeKeyProperties": [
+        {
+          "node": {
+            "$ref": "#n:n0"
+          },
+          "keyProperty": {
+            "$ref": "#p:1"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n1"
+          },
+          "keyProperty": {
+            "$ref": "#p:3"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n2"
+          },
+          "keyProperty": {
+            "$ref": "#p:38"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n4"
+          },
+          "keyProperty": {
+            "$ref": "#p:12"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n6"
+          },
+          "keyProperty": {
+            "$ref": "#p:17"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n7"
+          },
+          "keyProperty": {
+            "$ref": "#p:19"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n8"
+          },
+          "keyProperty": {
+            "$ref": "#p:22"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n11"
+          },
+          "keyProperty": {
+            "$ref": "#p:29"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n12"
+          },
+          "keyProperty": {
+            "$ref": "#p:32"
+          }
+        },
+        {
+          "node": {
+            "$ref": "#n:n13"
+          },
+          "keyProperty": {
+            "$ref": "#p:36"
+          }
+        }
+      ]
+    },
+    "graphMappingRepresentation": {
+      "fileSchemas": [
+        {
+          "$id": "f:1",
+          "fileName": "Delivery truck trip data.csv",
+          "expanded": true,
+          "fields": [
+            {
+              "name": "GpsProvider",
+              "type": "string",
+              "sample": "GeoTrace",
+              "include": true
+            },
+            {
+              "name": "shipment_type",
+              "type": "string",
+              "sample": "Ground",
+              "include": true
+            },
+            {
+              "name": "BookingID_Date",
+              "type": "string",
+              "sample": "12/28/2022",
+              "include": true
+            },
+            {
+              "name": "vehicle_no",
+              "type": "string",
+              "sample": "PQR987",
+              "include": true
+            },
+            {
+              "name": "Origin_Location",
+              "type": "string",
+              "sample": "Palmas de Monte Alto",
+              "include": true
+            },
+            {
+              "name": "Destination_Location",
+              "type": "string",
+              "sample": "Kiruna",
+              "include": true
+            },
+            {
+              "name": "Org_lat_lon",
+              "type": "float",
+              "sample": "-14.1500098",
+              "include": true
+            },
+            {
+              "name": "Des_lat_lon",
+              "type": "float",
+              "sample": "-43.2521507",
+              "include": true
+            },
+            {
+              "name": "Data_Ping_time",
+              "type": "string",
+              "sample": "1:40 AM",
+              "include": true
+            },
+            {
+              "name": "Current_Location",
+              "type": "string",
+              "sample": "Brazil",
+              "include": true
+            },
+            {
+              "name": "Curr_lat",
+              "type": "float",
+              "sample": "67.8256178",
+              "include": true
+            },
+            {
+              "name": "Curr_lon",
+              "type": "float",
+              "sample": "20.3351033",
+              "include": true
+            },
+            {
+              "name": "OriginLocation_Code",
+              "type": "string",
+              "sample": "LOC008",
+              "include": true
+            },
+            {
+              "name": "DestinationLocation_Code",
+              "type": "string",
+              "sample": "VWX234",
+              "include": true
+            },
+            {
+              "name": "TRANSPORTATION_DISTANCE_IN_KM",
+              "type": "integer",
+              "sample": "23",
+              "include": true
+            },
+            {
+              "name": "Driver_Name",
+              "type": "string",
+              "sample": "Nikolas Quick",
+              "include": true
+            },
+            {
+              "name": "Driver_MobileNo",
+              "type": "integer",
+              "sample": "9203931349",
+              "include": true
+            },
+            {
+              "name": "customerID",
+              "type": "string",
+              "sample": "CUST002",
+              "include": true
+            },
+            {
+              "name": "customerNameCode",
+              "type": "string",
+              "sample": "MatthewClark789",
+              "include": true
+            },
+            {
+              "name": "supplierID",
+              "type": "string",
+              "sample": "S34567",
+              "include": true
+            },
+            {
+              "name": "supplierNameCode",
+              "type": "string",
+              "sample": "Supplier8",
+              "include": true
+            },
+            {
+              "name": "Material_Shipped",
+              "type": "string",
+              "sample": "Rubber",
+              "include": true
+            },
+            {
+              "name": "shipment_vehicle_type",
+              "type": "string",
+              "sample": "Oil Tanker",
+              "include": true
+            },
+            {
+              "name": "Planned_ETA",
+              "type": "datetime",
+              "sample": "2022-01-11T12:30:00",
+              "include": true
+            },
+            {
+              "name": "Actual_ETA",
+              "type": "datetime",
+              "sample": "2022-01-16T12:30:00",
+              "include": true
+            },
+            {
+              "name": "trip_start_date",
+              "type": "string",
+              "sample": "12/20/2021 06:18",
+              "include": true
+            },
+            {
+              "name": "trip_end_date",
+              "type": "string",
+              "sample": "4/2/2023 10:09",
+              "include": true
+            },
+            {
+              "name": "BookingID",
+              "type": "string",
+              "sample": "BKG6781",
+              "include": true
+            }
+          ]
+        }
+      ],
+      "nodeMappings": [
+        {
+          "node": {
+            "$ref": "#n:n0"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:1"
+              },
+              "fieldName": "customerID"
+            },
+            {
+              "property": {
+                "$ref": "#p:2"
+              },
+              "fieldName": "customerNameCode"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n1"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:3"
+              },
+              "fieldName": "BookingID"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n2"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:5"
+              },
+              "fieldName": "Planned_ETA"
+            },
+            {
+              "property": {
+                "$ref": "#p:7"
+              },
+              "fieldName": "trip_start_date"
+            },
+            {
+              "property": {
+                "$ref": "#p:6"
+              },
+              "fieldName": "Actual_ETA"
+            },
+            {
+              "property": {
+                "$ref": "#p:8"
+              },
+              "fieldName": "trip_end_date"
+            },
+            {
+              "property": {
+                "$ref": "#p:9"
+              },
+              "fieldName": "Material_Shipped"
+            },
+            {
+              "property": {
+                "$ref": "#p:38"
+              },
+              "fieldName": "BookingID"
+            },
+            {
+              "property": {
+                "$ref": "#p:39"
+              },
+              "fieldName": "shipment_type"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n4"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:12"
+              },
+              "fieldName": "vehicle_no"
+            },
+            {
+              "property": {
+                "$ref": "#p:13"
+              },
+              "fieldName": "shipment_vehicle_type"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n8"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:22"
+              },
+              "fieldName": "GpsProvider"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n7"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:19"
+              },
+              "fieldName": "Current_Location"
+            },
+            {
+              "property": {
+                "$ref": "#p:20"
+              },
+              "fieldName": "Curr_lat"
+            },
+            {
+              "property": {
+                "$ref": "#p:21"
+              },
+              "fieldName": "Curr_lon"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n6"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:16"
+              },
+              "fieldName": "Driver_Name"
+            },
+            {
+              "property": {
+                "$ref": "#p:17"
+              },
+              "fieldName": "Driver_MobileNo"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n11"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:27"
+              },
+              "fieldName": "Origin_Location"
+            },
+            {
+              "property": {
+                "$ref": "#p:28"
+              },
+              "fieldName": "Org_lat_lon"
+            },
+            {
+              "property": {
+                "$ref": "#p:29"
+              },
+              "fieldName": "OriginLocation_Code"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n12"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:30"
+              },
+              "fieldName": "Destination_Location"
+            },
+            {
+              "property": {
+                "$ref": "#p:32"
+              },
+              "fieldName": "DestinationLocation_Code"
+            }
+          ]
+        },
+        {
+          "node": {
+            "$ref": "#n:n13"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:36"
+              },
+              "fieldName": "supplierID"
+            },
+            {
+              "property": {
+                "$ref": "#p:37"
+              },
+              "fieldName": "supplierNameCode"
+            }
+          ]
+        }
+      ],
+      "relationshipMappings": [
+        {
+          "relationship": {
+            "$ref": "#r:n0"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "customerID"
+          },
+          "toMapping": {
+            "fieldName": "BookingID"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n1"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:4"
+              },
+              "fieldName": "BookingID_Date"
+            }
+          ],
+          "fromMapping": {
+            "fieldName": "BookingID"
+          },
+          "toMapping": {
+            "fieldName": "shipment_type"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n17"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "shipment_type"
+          },
+          "toMapping": {
+            "fieldName": "vehicle_no"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n16"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "supplierID"
+          },
+          "toMapping": {
+            "fieldName": "vehicle_no"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n6"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "Current_Location"
+          },
+          "toMapping": {
+            "fieldName": "vehicle_no"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n7"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "Current_Location"
+          },
+          "toMapping": {
+            "fieldName": "Driver_MobileNo"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n5"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "vehicle_no"
+          },
+          "toMapping": {
+            "fieldName": "Driver_MobileNo"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n14"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:34"
+              },
+              "fieldName": "Org_lat_lon"
+            }
+          ],
+          "fromMapping": {
+            "fieldName": "Driver_MobileNo"
+          },
+          "toMapping": {
+            "fieldName": "Origin_Location"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n15"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:35"
+              },
+              "fieldName": "DestinationLocation_Code"
+            }
+          ],
+          "fromMapping": {
+            "fieldName": "Driver_MobileNo"
+          },
+          "toMapping": {
+            "fieldName": "Destination_Location"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n13"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [
+            {
+              "property": {
+                "$ref": "#p:33"
+              },
+              "fieldName": "TRANSPORTATION_DISTANCE_IN_KM"
+            }
+          ],
+          "fromMapping": {
+            "fieldName": "Origin_Location"
+          },
+          "toMapping": {
+            "fieldName": "DestinationLocation_Code"
+          }
+        },
+        {
+          "relationship": {
+            "$ref": "#r:n8"
+          },
+          "fileSchema": {
+            "$ref": "#f:1"
+          },
+          "propertyMappings": [],
+          "fromMapping": {
+            "fieldName": "GpsProvider"
+          },
+          "toMapping": {
+            "fieldName": "Current_Location"
+          }
+        }
+      ]
+    },
+    "configurations": {
+      "idsToIgnore": []
+    },
+    "errors": {
+      "fileSchemaErrors": [],
+      "nodeErrors": [],
+      "relationshipErrors": []
+    }
+  }
+}
