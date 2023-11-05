@@ -408,4 +408,41 @@ MERGE (year)-[r:HAS_MONTH_IN_YEAR]->(month)
 ON CREATE SET r.type = 'HAS_MONTH_' + month.monthName + '_IN_YEAR_' + year.year
 
 
-// concept: 
+// concept: loading csv from remote google sheets 
+
+// concept: creating unique nodes
+ LOAD CSV WITH HEADERS FROM 'https:....refer env file for url' AS row
+
+MERGE (Customer:Customer {customerID: row['customerID']})
+ 
+
+MERGE (Bookings:Bookings {BookingID: row['BookingID']})
+
+MERGE (Shipments:Shipments {BookingID: row['BookingID']})
+
+
+MERGE (VehicleModel:VehicleModel {vehicle_no: row['vehicle_no']})
+
+MERGE (Suppliers:Suppliers {supplierID: row['supplierID']})
+
+MERGE (Drivers:Drivers {Driver_MobileNo: row['Driver_MobileNo']})
+
+MERGE (Origin:Origin {Org_lat_lon: row['Org_lat_lon']})
+
+
+MERGE (Destination:Destination {DestinationLocation_Code: row['DestinationLocation_Code']})
+
+MERGE (GpsProviders:GpsProviders {GpsProvider: row['GpsProvider']})
+
+MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']})
+
+// concept: updating the unique nodes with property values
+
+// USING MATCH
+MATCH (VehicleModel:VehicleModel {vehicle_no: row['vehicle_no']})
+SET VehicleModel.vehicleType = row['shipment_vehicle_type']
+
+// USING MERGE ON EXISTING NODES
+
+MERGE (Customer:Customer {customerID: row['customerID']})
+ON MATCH SET Customer.customerNameCode = row['customerNameCode']
