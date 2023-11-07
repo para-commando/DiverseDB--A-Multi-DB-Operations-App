@@ -1,5 +1,6 @@
 const { driver } = require('./neo4jInstanceDriverConnect');
 require('dotenv').config();
+const { runQuery } = require('./neo4jRunQuery');
 
 // Create a session to run Cypher queries
 const session = driver.session();
@@ -29,20 +30,9 @@ MERGE (GpsProviders:GpsProviders {GpsProvider: row['GpsProvider']})
 MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']});
 `;
 
-async function runQuery() {
-  try {
-    const result = await session.run(cypherQuery);
-
-    result.records.forEach((record) => {
-      console.log('🚀 ~ record._fields:', record._fields);
-      // Access node properties
-    });
-  } catch (error) {
-    console.error('Error running Cypher query:', error);
-  } finally {
-    session.close();
-    driver.close();
-  }
-}
-
-runQuery();
+runQuery({
+  driver: driver,
+  cypherQuery: cypherQuery,
+  session: session,
+  message: 'Create Operations Successful',
+});
