@@ -1,12 +1,13 @@
 const { driver } = require('./neo4jInstanceDriverConnect');
 require('dotenv').config();
-const { runQuery } = require('./neo4jRunQuery');
+const { runQuery } = require('./neo4jRunSingleQuery');
 
 // Create a session to run Cypher queries
 const session = driver.session();
 
-// Example Cypher query
-const cypherQuery = `
+module.exports.updateOps = async () => {
+  // Example Cypher query
+  const cypherQuery = `
 LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row 
 MATCH (Customer:Customer {customerID: row['customerID']}),(Shipments:Shipments {BookingID: row['BookingID']}), (VehicleModel:VehicleModel {vehicle_no: row['vehicle_no']}), (Suppliers:Suppliers {supplierID: row['supplierID']}), (Drivers:Drivers {Driver_MobileNo: row['Driver_MobileNo']}), (Origin:Origin {Org_lat_lon: row['Org_lat_lon']}), (Destination:Destination {DestinationLocation_Code: row['DestinationLocation_Code']}),(CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']})
 
@@ -14,9 +15,33 @@ SET Customer.customerNameCode = row['customerNameCode'],Shipments.Planned_ETA=ro
 
 `;
 
-runQuery({
-  driver: driver,
-  cypherQuery: cypherQuery,
-  session: session,
-  message: 'Update Operations Successful',
-});
+  await runQuery({
+    driver: driver,
+    cypherQuery: cypherQuery,
+    session: session,
+    message: 'Update Operations Successful',
+  });
+
+  const aaa = await session.executeWrite(async (tx) => {
+    // Create new Person node with given name, if not already existing
+    const kk = await tx.run(`MATCH (N) RETURN N`);
+
+    console.log(
+      '🚀 ~ file: neo4jRunQuery copy.js:10 ~ session.executeWrite ~ kk:',
+      JSON.stringify(kk)
+    );
+    const a = await tx.run(`
+    MATCH (N:Customer)
+    RETURN N
+    `);
+
+    console.log(
+      '🚀 ~ file: neo4jRunQuery copy.js:20 ~ module.exports.runQuery= ~ a:',
+      JSON.stringify(a)
+    );
+  });
+
+  console.log('🚀 ~ file: neo4jUpdateOps.js:45 ~ aaa ~ aaa:', aaa);
+  session.close();
+  driver.close();
+};

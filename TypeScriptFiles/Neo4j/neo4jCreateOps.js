@@ -1,12 +1,12 @@
 const { driver } = require('./neo4jInstanceDriverConnect');
 require('dotenv').config();
-const { runQuery } = require('./neo4jRunQuery');
+const { runQuery } = require('./neo4jRunSingleQuery');
 
 // Create a session to run Cypher queries
 const session = driver.session();
 
-// Example Cypher query
-const cypherQuery = `
+module.exports.createOps = async () => {
+  const cypherQuery = `
 LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row 
 
 MERGE (Customer:Customer {customerID: row['customerID']})
@@ -30,9 +30,10 @@ MERGE (GpsProviders:GpsProviders {GpsProvider: row['GpsProvider']})
 MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']});
 `;
 
-runQuery({
-  driver: driver,
-  cypherQuery: cypherQuery,
-  session: session,
-  message: 'Create Operations Successful',
-});
+  await runQuery({
+    driver: driver,
+    cypherQuery: cypherQuery,
+    session: session,
+    message: 'Create Operations Successful',
+  });
+};
