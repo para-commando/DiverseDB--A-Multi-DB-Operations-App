@@ -51,11 +51,11 @@ module.exports.readOps = async (driver) => {
       message: 'get all those shipments which are currently at a given location success',
     },
     {
-      query: `MATCH (Shipments:Shipments {BookingID: 'BKG012345' })-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)-[:DRIVEN_BY]->(Driver:Drivers) return Driver;`,
-      message: 'get details of the driver carrying a given shipment success',
+      query: `MATCH (shipments:Shipments {BookingID: 'BKG012345' })-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)-[:DRIVEN_BY{bookingsCarried:'BKG012345'}]->(Driver:Drivers) return Driver;`,
+      message: 'get details of a driver carrying a shipment',
     },
   ];
- 
+  
   const result = await runMultipleQueries({
     cypherQueries: cypherQuery,
     session: readOpsSession,
