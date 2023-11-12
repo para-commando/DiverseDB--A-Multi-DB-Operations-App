@@ -4,8 +4,8 @@ const {updateOps} = require('./neo4jUpdateOps')
 const {deleteOps} = require('./neo4jDeleteOps')
 
 const neo4jCRUD_Operations = async () => {
-    // await createOps();
-    await updateOps();
+    await createOps();
+    // await updateOps();
     // await deleteOps();
     // await readOps();
 }
