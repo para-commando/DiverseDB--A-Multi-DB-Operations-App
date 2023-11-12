@@ -52,9 +52,20 @@ module.exports.readOps = async (driver) => {
     },
     {
       query: `MATCH (shipments:Shipments {BookingID: 'BKG012345' })-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)-[:DRIVEN_BY{bookingsCarried:'BKG012345'}]->(Driver:Drivers) return Driver;`,
-      message: 'get details of a driver carrying a shipment',
+      message: 'get details of a driver carrying a shipment success',
     },
+    {
+      query: `MATCH (customer:Customer)-[:BOOKED]->(bookings:Bookings) 
+      where customer.customerID = 'CUST002' return bookings;`,
+      message: 'get all the shipments booked by a customer success',
+    },
+    {
+      query: `MATCH path= (shipment:Shipments{BookingID:'BKG012345'})-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)<-[:CURRENTLY_AT{shipmentID:'BKG012345'}]-(currentLocation:CurrentLocation)
+      return currentLocation;`,
+      message: 'get current location details of a shipment success',
+    }
   ];
+  
   
   const result = await runMultipleQueries({
     cypherQueries: cypherQuery,

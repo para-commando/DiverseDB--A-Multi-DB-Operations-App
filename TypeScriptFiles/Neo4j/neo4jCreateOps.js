@@ -59,17 +59,17 @@ MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row
       `);
 
       await tx.run(` LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row
-            MATCH (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']}),(VehicleModel:VehicleModel {vehicle_no: row['vehicle_no']})
-            WITH CurrentLocation, VehicleModel
-            MERGE (CurrentLocation)-[:CURRENTLY_AT]->(VehicleModel);
+            MATCH (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']}),(VehicleModel:VehicleModel {vehicle_no: row['vehicle_no']}),(Shipments:Shipments {BookingID: row['BookingID']})
+            WITH CurrentLocation, VehicleModel,row
+            MERGE (CurrentLocation)-[:CURRENTLY_AT{shipmentID:row['BookingID']}]->(VehicleModel);
 
       `);
 
       await tx.run(` LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row 
       
-      MATCH (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']}), (Drivers:Drivers {Driver_MobileNo: row['Driver_MobileNo']})
-      WITH Drivers,CurrentLocation
-      MERGE (CurrentLocation)-[:CURRENTLY_AT]->(Drivers);
+      MATCH (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']}), (Drivers:Drivers {Driver_MobileNo: row['Driver_MobileNo']}),(Shipments:Shipments {BookingID: row['BookingID']})
+      WITH Drivers,CurrentLocation, row
+      MERGE (CurrentLocation)-[:CURRENTLY_AT{shipmentID:row['BookingID']}]->(Drivers);
       `);
 
       await tx.run(` LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row
