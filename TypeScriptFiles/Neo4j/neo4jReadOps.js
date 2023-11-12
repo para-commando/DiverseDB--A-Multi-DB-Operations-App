@@ -1,10 +1,10 @@
-const { driver } = require('./neo4jInstanceDriverConnect');
 const { runMultipleQueries } = require('./neo4jRunMultipleQueries');
 
 // Create a session to run Cypher queries
-const readOpsSession = driver.session();
+ 
+module.exports.readOps = async (driver) => {
+  const readOpsSession = driver.session();
 
-module.exports.readOps = async () => {
   const cypherQuery = [
     {
       query: `MATCH (bookings:Bookings)-[booked_on:BOOKED_ON]->(s:Shipments)
@@ -36,7 +36,7 @@ module.exports.readOps = async () => {
     },
   ];
 
-  const result = runMultipleQueries({
+  const result = await runMultipleQueries({
     cypherQueries: cypherQuery,
     session: readOpsSession,
   });
@@ -45,5 +45,6 @@ module.exports.readOps = async () => {
     result
   );
   readOpsSession.close();
-  driver.close();
-};
+  return true;
+
+ };

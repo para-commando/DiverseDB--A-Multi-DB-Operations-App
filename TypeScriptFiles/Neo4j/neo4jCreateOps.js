@@ -1,11 +1,11 @@
-const { driver } = require('./neo4jInstanceDriverConnect');
 require('dotenv').config();
 const { runSingleQuery } = require('./neo4jRunSingleQuery');
 
 // Create a session to run Cypher queries
-const createOpsSession = driver.session();
 
-module.exports.createOps = async () => {
+module.exports.createOps = async (driver) => {
+  const createOpsSession = driver.session();
+
   const createNodesCypherQuery = `
 LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row 
 
@@ -51,6 +51,7 @@ MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row
       WITH Customer,Bookings,Shipments,VehicleModel,row
       MERGE (Customer)-[:BOOKED]->(Bookings)-[:BOOKED_ON{bookingID_Date:row['BookingID_Date']}]->(Shipments)-[:SHIPPED_VEHICLE_TYPE]->(VehicleModel);
 `);
+
       await tx.run(` LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row
             MATCH (VehicleModel:VehicleModel {vehicle_no: row['vehicle_no']}),(Suppliers:Suppliers {supplierID: row['supplierID']})
             WITH VehicleModel, Suppliers
@@ -63,12 +64,14 @@ MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row
             MERGE (CurrentLocation)-[:CURRENTLY_AT]->(VehicleModel);
 
       `);
+
       await tx.run(` LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row 
       
       MATCH (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']}), (Drivers:Drivers {Driver_MobileNo: row['Driver_MobileNo']})
       WITH Drivers,CurrentLocation
       MERGE (CurrentLocation)-[:CURRENTLY_AT]->(Drivers);
       `);
+
       await tx.run(` LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row
       MATCH (GpsProviders:GpsProviders {GpsProvider: row['GpsProvider']}),(CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row['Curr_lon']})
       WITH GpsProviders, CurrentLocation
@@ -109,5 +112,5 @@ MERGE (CurrentLocation:CurrentLocation {Curr_lat: row['Curr_lat'], Curr_lon: row
   );
 
   createOpsSession.close();
-  driver.close();
+  return true;
 };

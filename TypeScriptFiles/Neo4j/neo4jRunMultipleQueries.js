@@ -1,11 +1,7 @@
 module.exports.runMultipleQueries = async ({ cypherQueries, session }) => {
+  let transaction = await session.beginTransaction();
   try {
-    // const cypherQueries = [
-    //   { query: `MATCH (N) RETURN N`, message: 'getAll success' },
-    //   { query: `MATCH (N:Customer) RETURN N`, message: 'getCustomer success' },
-    // ];
 
-    let transaction = await session.beginTransaction();
     let result = '';
     cypherQueries.forEach(async (ele) => {
       result = await transaction.run(ele.query);
@@ -16,10 +12,10 @@ module.exports.runMultipleQueries = async ({ cypherQueries, session }) => {
         ele.message
       );
     });
+    return result;
   } catch (error) {
     console.error('Error running Cypher query:', error);
   } finally {
     await transaction.close();
-    return result;
   }
 };

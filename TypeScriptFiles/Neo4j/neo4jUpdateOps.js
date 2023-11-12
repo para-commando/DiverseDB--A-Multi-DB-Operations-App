@@ -1,11 +1,12 @@
-const { driver } = require('./neo4jInstanceDriverConnect');
+// const { driver } = require('./neo4jInstanceDriverConnect');
 require('dotenv').config();
 const { runSingleQuery } = require('./neo4jRunSingleQuery');
 
 // Create a session to run Cypher queries
-const updateOpsSession = driver.session();
 
-module.exports.updateOps = async () => {
+module.exports.updateOps = async (driver) => {
+  const updateOpsSession = driver.session();
+
   // Example Cypher query
   const cypherQuery = `
 LOAD CSV WITH HEADERS FROM '${process.env.NEO4J_REMOTE_DATASET_URL}' AS row 
@@ -22,27 +23,6 @@ SET Customer.customerNameCode = row['customerNameCode'],Shipments.Planned_ETA=ro
     message: 'Update Operations Successful',
   });
 
-  // batch queries example
- const batchQueryExecutionResult = await updateOpsSession.executeWrite(async (tx) => {
-    const queryResult1 = await tx.run(`MATCH (N) RETURN N`);
-
-    console.log(
-      '🚀 ~ file: neo4jRunQuery copy.js:10 ~ updateOpsSession.executeWrite ~ queryResult1:',
-      JSON.stringify(queryResult1)
-    );
-    const queryResult2 = await tx.run(`
-    MATCH (N:Customer)
-    RETURN N
-    `);
-
-    console.log(
-      '🚀 ~ file: neo4jRunQuery copy.js:20 ~ module.exports.runQuery= ~ queryResult2:',
-      JSON.stringify(queryResult2)
-    );
-    return {queryResult1,queryResult2};
-  });
- console.log("🚀 ~ file: neo4jUpdateOps.js:44 ~ batchQueryExecutionResult ~ batchQueryExecutionResult:", batchQueryExecutionResult)
-
   updateOpsSession.close();
-  driver.close();
-};
+  return true;
+ };
