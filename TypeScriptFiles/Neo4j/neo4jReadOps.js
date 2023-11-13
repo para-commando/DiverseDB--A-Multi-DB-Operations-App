@@ -60,7 +60,7 @@ module.exports.readOps = async (driver) => {
       message: 'get all the shipments booked by a customer success',
     },
     {
-      query: `MATCH path= (shipment:Shipments{BookingID:'BKG012345'})-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)<-[:CURRENTLY_AT{shipmentID:'BKG012345'}]-(currentLocation:CurrentLocation)
+      query: `MATCH (shipment:Shipments{BookingID:'BKG012345'})-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)<-[:CURRENTLY_AT{shipmentID:'BKG012345'}]-(currentLocation:CurrentLocation)
       return currentLocation;`,
       message: 'get current location details of a shipment success',
     }
