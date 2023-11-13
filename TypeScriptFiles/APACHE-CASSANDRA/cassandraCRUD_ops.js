@@ -40,8 +40,8 @@ if (isImagePresent === 'false') {
   console.log('Concerned image was not present, building it...');
   shell.cd('configurations');
   shell.exec('./build-custom-cassandra-image.sh');
-  shell.cd('..');
   shell.exec('./initial-cluster-setup.sh');
+  shell.cd('..');
 } else if (isContainer1Present === 'false' || isContainer2Present === 'false') {
   shell.cd('configurations');
   console.log('Concerned container(s) is/are absent, creating it...');
@@ -73,3 +73,11 @@ shell.exec('sleep 2');
 
 console.log('Starting delete query operations...');
 shell.exec('./queryExecuter.sh cassandra-node-1 deleteOpsQueries.cql');
+
+// console.log('Starting to erase the entire cluster...');
+// shell.cd('configurations');
+// shell.exec('./stop-cluster.sh');
+// shell.exec('./destroy-container-nodes.sh');
+// shell.exec('./destroy-custom-cassandra-image.sh');
+// shell.cd('..');
+// console.log('Successfully erased the entire cluster...');
