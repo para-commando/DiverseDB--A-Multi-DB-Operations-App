@@ -1,17 +1,18 @@
-const { createConnection } = require('typeorm');
-require('dotenv').config();
-const main = async () => {
+import { createConnection } from 'typeorm';
+import 'dotenv/config';
+
+const main = async (): Promise<void> => {
   try {
-    console.log("🚀 ~ file: connector.js:8 ~ main ~ process.env.MYSQL_HOST:", process.env.MYSQL_HOST)
+    console.log("🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:", process.env.MYSQL_HOST);
+
     await createConnection({
       type: 'mysql',
-      host: process.env.MYSQL_HOST,
-      port: process.env.MYSQL_PORT,
+      host: process.env.MYSQL_HOST || '',
+      port: parseInt(process.env.MYSQL_PORT || '3306', 10), 
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
     });
-   
 
     console.log('Connected to MySQL server successfully');
   } catch (error) {
