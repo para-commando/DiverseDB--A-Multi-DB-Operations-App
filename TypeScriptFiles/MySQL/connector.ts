@@ -1,10 +1,11 @@
 import { createConnection } from 'typeorm';
 import 'dotenv/config';
-
+import { Client } from './entities/client';
 const main = async (): Promise<void> => {
   try {
     console.log("🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:", process.env.MYSQL_HOST);
 
+    
     await createConnection({
       type: 'mysql',
       host: process.env.MYSQL_HOST || '',
@@ -12,6 +13,8 @@ const main = async (): Promise<void> => {
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
+      entities: [Client],
+      synchronize: true
     });
 
     console.log('Connected to MySQL server successfully');

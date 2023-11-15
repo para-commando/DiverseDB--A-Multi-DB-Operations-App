@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 require("dotenv/config");
+const client_1 = require("./entities/client");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:", process.env.MYSQL_HOST);
@@ -21,6 +22,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             username: process.env.MYSQL_USERNAME,
             password: process.env.MYSQL_PASSWORD,
             database: process.env.MYSQL_DATABASE,
+            entities: [client_1.Client],
+            synchronize: true
         });
         console.log('Connected to MySQL server successfully');
     }
