@@ -12,5 +12,5 @@ export const MysqlDataSource = new DataSource({
   logging: true,
   entities: ['src/**/*.entity.ts'],
   migrationsTableName: 'migrations',
-  migrations: ['src/db/migrations/mysql/*.ts'],
+  migrations: ['TypeScriptFiles/MySQL/migrations/mySql/*.ts'],
 });
