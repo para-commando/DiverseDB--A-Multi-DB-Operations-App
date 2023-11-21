@@ -19,13 +19,15 @@
     "migration:revertPostgres": "npm run typeormPostgres migration:revert",
     "migration:createPostgres": "typeorm-ts-node-commonjs migration:create",
     "create:entityPostgres": "typeorm-ts-node-commonjs entity:create",
+    "create:subscriberPostgres": "typeorm-ts-node-commonjs subscriber:create",
     "typeormMysql": "typeorm-ts-node-commonjs -d ./TypeScriptFiles/MySQL/Configs/mySqlOrmConfig.ts",
     "migration:generateMysql": "npm run typeormMysql migration:generate",
     "migration:showMysql": "npm run typeormMysql migration:show",
     "migration:runMysql": "npm run typeormMysql migration:run",
     "migration:revertMysql": "npm run typeormMysql migration:revert",
     "migration:createMysql": "typeorm-ts-node-commonjs migration:create",
-    "create:entityMysql": "typeorm-ts-node-commonjs entity:create"
+    "create:entityMysql": "typeorm-ts-node-commonjs entity:create",
+    "create:subscriberMysql": "typeorm-ts-node-commonjs subscriber:create"
   },
   "keywords": [],
   "author": "",
