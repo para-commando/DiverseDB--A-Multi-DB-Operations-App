@@ -1,7 +1,7 @@
 const { runMultipleQueries } = require('./neo4jRunMultipleQueries');
 
 // Create a session to run Cypher queries
- 
+
 module.exports.readOps = async (driver) => {
   const readOpsSession = driver.session();
 
@@ -34,8 +34,39 @@ module.exports.readOps = async (driver) => {
     `,
       message: 'get shipments originated at a given location success',
     },
-  ];
+    {
+      query: `MATCH (shipments:Shipments) 
+      WITH split(shipments.trip_start_date, ' ') AS dateWithoutTime, shipments
+      WITH split (dateWithoutTime[0],'/') as dateParts,shipments
+     WITH toInteger(dateParts[2]) AS year,
+     toInteger(dateParts[0]) AS month,
+     toInteger(dateParts[1]) AS day, shipments
+     WHERE datetime({year: year, month: month, day: day}) = datetime({year: 2023, month: 1, day: 24}) return shipments;
+    `,
+      message: 'get shipments whose trip start at a given date success',
+    },
 
+    {
+      query: `MATCH (shipments:Shipments)-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)<-[:CURRENTLY_AT]-(currentLocation:CurrentLocation) WHERE currentLocation.currentLocation  =~ '.*Brazil.*' return shipments;`,
+      message: 'get all those shipments which are currently at a given location success',
+    },
+    {
+      query: `MATCH (shipments:Shipments {BookingID: 'BKG012345' })-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)-[:DRIVEN_BY{bookingsCarried:'BKG012345'}]->(Driver:Drivers) return Driver;`,
+      message: 'get details of a driver carrying a shipment success',
+    },
+    {
+      query: `MATCH (customer:Customer)-[:BOOKED]->(bookings:Bookings) 
+      where customer.customerID = 'CUST002' return bookings;`,
+      message: 'get all the shipments booked by a customer success',
+    },
+    {
+      query: `MATCH (shipment:Shipments{BookingID:'BKG012345'})-[:SHIPPED_VEHICLE_TYPE]->(:VehicleModel)<-[:CURRENTLY_AT{shipmentID:'BKG012345'}]-(currentLocation:CurrentLocation)
+      return currentLocation;`,
+      message: 'get current location details of a shipment success',
+    }
+  ];
+  
+  
   const result = await runMultipleQueries({
     cypherQueries: cypherQuery,
     session: readOpsSession,
@@ -46,5 +77,4 @@ module.exports.readOps = async (driver) => {
   );
   readOpsSession.close();
   return true;
-
- };
+};
