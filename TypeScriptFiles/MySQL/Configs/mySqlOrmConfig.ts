@@ -10,7 +10,7 @@ export const MysqlDataSource = new DataSource({
   database: process.env.MYSQL_DATABASE,
   synchronize: false,
   logging: true,
-  entities: ['src/**/*.entity.ts'],
+  entities: ['TypeScriptFiles/MySQL/entities/mySql/*.ts'],
   migrationsTableName: 'migrations',
   migrations: ['TypeScriptFiles/MySQL/migrations/mySql/*.ts'],
 });

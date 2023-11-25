@@ -8,7 +8,7 @@ export const PostgresDataSource = new DataSource({
   username:process.env.POSTGRES_USERNAME,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DATABASE,
-  entities: ['src/**/*.entity.ts'],
+  entities: ['TypeScriptFiles/MySQL/entities/postgres/*.ts'],
   migrationsTableName: 'migrations',
   migrations: ['TypeScriptFiles/MySQL/migrations/postgres/*.ts'],
 });
