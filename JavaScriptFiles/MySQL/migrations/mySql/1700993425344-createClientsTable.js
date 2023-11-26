@@ -9,19 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const typeorm_1 = require("typeorm");
-require("dotenv/config");
-const mySqlOrmConfig_1 = require("./Configs/mySqlOrmConfig");
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        console.log('🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:', process.env.MYSQL_HOST);
-        yield (0, typeorm_1.createConnection)(mySqlOrmConfig_1.MySqlConfigObject);
-        console.log('Connected to MySQL server successfully');
+exports.CreateUserTable1700993425344 = void 0;
+class CreateUserTable1700993425344 {
+    up(queryRunner) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield queryRunner.query(`CREATE TABLE clients (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(255) NOT NULL
+            );`);
+        });
     }
-    catch (error) {
-        console.log('🚀 ~ file: connector.ts:15 ~ main ~ error:', error);
-        throw new Error('MySQL DB connection failed');
+    down(queryRunner) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield queryRunner.query("DROP TABLE clients;");
+        });
     }
-});
-main();
-//# sourceMappingURL=connector.js.map
+}
+exports.CreateUserTable1700993425344 = CreateUserTable1700993425344;
+//# sourceMappingURL=1700993425344-createClientsTable.js.map

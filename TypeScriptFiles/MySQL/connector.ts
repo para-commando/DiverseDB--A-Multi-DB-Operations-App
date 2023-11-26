@@ -1,21 +1,17 @@
 import { createConnection } from 'typeorm';
 import 'dotenv/config';
-import { Client } from './entities/client';
+import { Client } from './entities/postgres/client';
+import { Clients } from './entities/mySql/clientsEntity';
+import { ClientPhotos } from './entities/mySql/clientsPhotoEntity';
+import { MySqlConfigObject } from './Configs/mySqlOrmConfig';
 const main = async (): Promise<void> => {
   try {
-    console.log("🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:", process.env.MYSQL_HOST);
+    console.log(
+      '🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:',
+      process.env.MYSQL_HOST
+    );
 
-    
-    await createConnection({
-      type: 'mysql',
-      host: process.env.MYSQL_HOST || '',
-      port: parseInt(process.env.MYSQL_PORT || '3306', 10), 
-      username: process.env.MYSQL_USERNAME,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      entities: [Client],
-      synchronize: true
-    });
+    await createConnection(MySqlConfigObject);
 
     console.log('Connected to MySQL server successfully');
   } catch (error) {

@@ -1,6 +1,6 @@
 // helps to extend the base model with custom methods/functionality
 import { MysqlDataSource } from '../../Configs/mySqlOrmConfig';
-import { User } from '../../entities/mySql/entity';
+import { User } from '../../entities/mySql/userEntity';
 export const UserRepository = MysqlDataSource.getRepository(User).extend({
   findByName(firstName: string, lastName: string) {
     return this.createQueryBuilder('user')
@@ -9,5 +9,3 @@ export const UserRepository = MysqlDataSource.getRepository(User).extend({
       .getMany();
   },
 });
-
-
