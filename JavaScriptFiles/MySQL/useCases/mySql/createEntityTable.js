@@ -9,20 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const typeorm_1 = require("typeorm");
-require("dotenv/config");
-const mySqlOrmConfig_1 = require("./Configs/mySqlOrmConfig");
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        console.log('🚀 ~ file: connector.ts:8 ~ main ~ process.env.MYSQL_HOST:', process.env.MYSQL_HOST);
-        const connection = yield (0, typeorm_1.createConnection)(mySqlOrmConfig_1.MySqlConfigObject);
-        console.log('Connected to MySQL server successfully');
-        yield connection.close();
-    }
-    catch (error) {
-        console.log('🚀 ~ file: connector.ts:15 ~ main ~ error:', error);
-        throw new Error('MySQL DB connection failed');
-    }
+const createTablesFromMySqlEntity_1 = require("../../utilities/createTablesFromMySqlEntity");
+const createEntityTables = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, createTablesFromMySqlEntity_1.createTableForMySqlEntity)().catch((e) => {
+        console.log('🚀 ~ file: createEntityTable.ts:5 ~ createEntityTables ~ e:', e);
+        throw e;
+    });
 });
-main();
-//# sourceMappingURL=connector.js.map
+createEntityTables();
+//# sourceMappingURL=createEntityTable.js.map

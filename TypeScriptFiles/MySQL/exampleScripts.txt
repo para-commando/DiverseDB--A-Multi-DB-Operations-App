@@ -1,0 +1,8 @@
+To create a subscriber
+npm run create:subscriberMysql ./TypeScriptFiles/MySQL/subscribers/mySql/subscriber
+
+To create an entity
+npm run create:entityPostgres TypeScriptFiles/MySQL/entities/postgres/entity
+
+To create a migration
+npm run migration:createMysql ./TypeScriptFiles/MySQL/migrations/mySql/ddd 
