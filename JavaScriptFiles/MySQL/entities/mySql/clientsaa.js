@@ -9,24 +9,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Clients = void 0;
+exports.Clientsaa = void 0;
 const typeorm_1 = require("typeorm");
-const clientsPhotoEntity_1 = require("./clientsPhotoEntity");
-let Clients = exports.Clients = class Clients {
+let Clientsaa = exports.Clientsaa = class Clientsaa {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Clients.prototype, "id", void 0);
+], Clientsaa.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Clients.prototype, "name", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)((type) => clientsPhotoEntity_1.ClientPhotos, (clientPhotos) => clientPhotos.client),
-    __metadata("design:type", Array)
-], Clients.prototype, "photos", void 0);
-exports.Clients = Clients = __decorate([
-    (0, typeorm_1.Entity)({ name: "clients" })
-], Clients);
-//# sourceMappingURL=clientsEntity.js.map
+], Clientsaa.prototype, "name", void 0);
+exports.Clientsaa = Clientsaa = __decorate([
+    (0, typeorm_1.Entity)({ name: "clientsaa" })
+], Clientsaa);
+//# sourceMappingURL=clientsaa.js.map

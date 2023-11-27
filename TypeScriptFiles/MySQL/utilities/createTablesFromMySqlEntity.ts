@@ -1,25 +1,27 @@
-import { createConnection, Entity } from 'typeorm';
-import { MySqlConfigObject, MysqlDataSource } from '../Configs/mySqlOrmConfig';
-import { getInitializedMySqlDataSource } from '../useCases/mySql/dataSourceInitialization';
-export const createTableForMySqlEntity = async (entity: any) => {
+import { createConnection } from 'typeorm';
+import { MySqlConfigObject } from '../Configs/mySqlOrmConfig';
+
+export const createTableForMySqlEntity = async () => {
+  
+  const connection = await createConnection(MySqlConfigObject).catch(
+    (error) => {
+      console.log(
+        '🚀 ~ file: createTablesFromMySqlEntity.ts:11 ~ connection ~ error:',
+        error
+      );
+      throw new Error('Error while creating a connection');
+    }
+  );
   try {
-    const initializedMySqlDataSource = await getInitializedMySqlDataSource();
-    console.log("🚀 ~ file: createTablesFromMySqlEntity.ts:9 ~ createTableForMySqlEntity ~ initializedMySqlDataSource.hasMetadata(entity):", initializedMySqlDataSource.hasMetadata(entity))
-    if (initializedMySqlDataSource.hasMetadata(entity))
-     
-      console.log('asfdffffffff');
-    const userMetadata = initializedMySqlDataSource.getMetadata(entity);
-    console.log(
-      '🚀 ~ file: createTablesFromMySqlEntity.ts:8 ~ createTableForMySqlEntity ~ userMetadata:',
-      userMetadata
-    );
-    await createConnection(MySqlConfigObject);
+    console.log(`Successfully synchronized tables for all the entities`);
   } catch (e) {
     console.log(
       '🚀 ~ file: createTablesFromMySqlEntity.ts:14 ~ createTableForMySqlEntity ~ e:',
       e
     );
 
-    throw new Error('Failed to create table for Entity');
+    throw new Error('Failed to create table for an entity');
+  } finally {
+    connection.close();
   }
 };

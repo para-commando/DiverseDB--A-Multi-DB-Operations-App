@@ -12,20 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createTableForMySqlEntity = void 0;
 const typeorm_1 = require("typeorm");
 const mySqlOrmConfig_1 = require("../Configs/mySqlOrmConfig");
-const dataSourceInitialization_1 = require("../useCases/mySql/dataSourceInitialization");
-const createTableForMySqlEntity = (entity) => __awaiter(void 0, void 0, void 0, function* () {
+const createTableForMySqlEntity = () => __awaiter(void 0, void 0, void 0, function* () {
+    const connection = yield (0, typeorm_1.createConnection)(mySqlOrmConfig_1.MySqlConfigObject).catch((error) => {
+        console.log('🚀 ~ file: createTablesFromMySqlEntity.ts:11 ~ connection ~ error:', error);
+        throw new Error('Error while creating a connection');
+    });
     try {
-        const initializedMySqlDataSource = yield (0, dataSourceInitialization_1.getInitializedMySqlDataSource)();
-        console.log("🚀 ~ file: createTablesFromMySqlEntity.ts:9 ~ createTableForMySqlEntity ~ initializedMySqlDataSource.hasMetadata(entity):", initializedMySqlDataSource.hasMetadata(entity));
-        if (initializedMySqlDataSource.hasMetadata(entity))
-            console.log('asfdffffffff');
-        const userMetadata = initializedMySqlDataSource.getMetadata(entity);
-        console.log('🚀 ~ file: createTablesFromMySqlEntity.ts:8 ~ createTableForMySqlEntity ~ userMetadata:', userMetadata);
-        yield (0, typeorm_1.createConnection)(mySqlOrmConfig_1.MySqlConfigObject);
+        console.log(`Successfully synchronized tables for all the entities`);
     }
     catch (e) {
         console.log('🚀 ~ file: createTablesFromMySqlEntity.ts:14 ~ createTableForMySqlEntity ~ e:', e);
-        throw new Error('Failed to create table for Entity');
+        throw new Error('Failed to create table for an entity');
+    }
+    finally {
+        connection.close();
     }
 });
 exports.createTableForMySqlEntity = createTableForMySqlEntity;

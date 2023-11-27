@@ -9,24 +9,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Clients = void 0;
+exports.newEntity1 = void 0;
 const typeorm_1 = require("typeorm");
-const clientsPhotoEntity_1 = require("./clientsPhotoEntity");
-let Clients = exports.Clients = class Clients {
+let newEntity1 = exports.newEntity1 = class newEntity1 {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Clients.prototype, "id", void 0);
+], newEntity1.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Clients.prototype, "name", void 0);
+], newEntity1.prototype, "firstName", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)((type) => clientsPhotoEntity_1.ClientPhotos, (clientPhotos) => clientPhotos.client),
-    __metadata("design:type", Array)
-], Clients.prototype, "photos", void 0);
-exports.Clients = Clients = __decorate([
-    (0, typeorm_1.Entity)({ name: "clients" })
-], Clients);
-//# sourceMappingURL=clientsEntity.js.map
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], newEntity1.prototype, "lastName", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Boolean)
+], newEntity1.prototype, "isActive", void 0);
+exports.newEntity1 = newEntity1 = __decorate([
+    (0, typeorm_1.Entity)({ name: 'newEntity1' })
+], newEntity1);
+//# sourceMappingURL=newEntity1.js.map

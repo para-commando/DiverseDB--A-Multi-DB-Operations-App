@@ -4,7 +4,7 @@ import { User } from '../entities/mySql/userEntity';
 import { Clients } from '../entities/mySql/clientsEntity';
 import { ClientPhotos } from '../entities/mySql/clientsPhotoEntity';
 
-export interface MySqlConfigObject {
+export interface MySqlConfigObjectType {
   type: 'mysql' | 'mariadb' | 'postgres'; // Use the enum for database types
   host: string;
   port: number;
@@ -18,7 +18,7 @@ export interface MySqlConfigObject {
   migrations: string[];
 }
 
-export const MySqlConfigObject: MySqlConfigObject = {
+export const MySqlConfigObject: MySqlConfigObjectType = {
   type: 'mysql',
   host: process.env.MYSQL_HOST || 'localhost',
   port: Number(process.env.MYSQL_PORT),
@@ -26,8 +26,8 @@ export const MySqlConfigObject: MySqlConfigObject = {
   password: process.env.MYSQL_PASSWORD || '',
   database: process.env.MYSQL_DATABASE || '',
   synchronize: true,
-  logging: true,
-  entities: [User, ClientPhotos, Clients],
+  logging: false,
+  entities: [Clients,ClientPhotos, User],
   migrationsTableName: 'migrations',
   migrations: ['TypeScriptFiles/MySQL/migrations/mySql/*.ts'],
 };

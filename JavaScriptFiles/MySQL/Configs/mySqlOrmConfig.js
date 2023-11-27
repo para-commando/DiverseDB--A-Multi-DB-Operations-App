@@ -14,8 +14,8 @@ exports.MySqlConfigObject = {
     password: process.env.MYSQL_PASSWORD || '',
     database: process.env.MYSQL_DATABASE || '',
     synchronize: true,
-    logging: true,
-    entities: [userEntity_1.User, clientsPhotoEntity_1.ClientPhotos, clientsEntity_1.Clients],
+    logging: false,
+    entities: [clientsEntity_1.Clients, clientsPhotoEntity_1.ClientPhotos, userEntity_1.User],
     migrationsTableName: 'migrations',
     migrations: ['TypeScriptFiles/MySQL/migrations/mySql/*.ts'],
 };

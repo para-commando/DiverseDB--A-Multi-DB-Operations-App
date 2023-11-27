@@ -10,21 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const createTablesFromMySqlEntity_1 = require("../../utilities/createTablesFromMySqlEntity");
-const aaa_1 = require("../../entities/mySql/aaa");
-const entitiesDirectory = '../../entities/mySql/';
-const aoo = () => __awaiter(void 0, void 0, void 0, function* () {
-    //   const entities = fs
-    //     .readdirSync(entitiesDirectory)
-    //     .filter((file) => file.endsWith('.js'))
-    //     .map((file) => import(path.join(entitiesDirectory, file)));
-    //   console.log('🚀 ~ file: createEntityTable.ts:12 ~ entities:', entities);
-    //   const aa = await Promise.all(entities);
-    //   aa.forEach(async (ele) => {
-    //     await createTableForMySqlEntity(ele);
-    //   });
-    yield (0, createTablesFromMySqlEntity_1.createTableForMySqlEntity)(aaa_1.Usera);
-    //   console.log('🚀 ~ file: createEntityTable.ts:14 ~ aoo ~ aa:', aa);
+const createEntityTables = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, createTablesFromMySqlEntity_1.createTableForMySqlEntity)().catch((e) => {
+        console.log('🚀 ~ file: createEntityTable.ts:5 ~ createEntityTables ~ e:', e);
+        throw e;
+    });
 });
-aoo();
-// createTableForMySqlEntity()
+createEntityTables();
 //# sourceMappingURL=createEntityTable.js.map
