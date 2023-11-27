@@ -9,7 +9,12 @@ export class ClientPhotos {
     @Column()
     url!: string;
 
+    @Column()
+    clientID!: number
+
     @ManyToOne((type) => Clients, (clients) => clients.photos)
     @JoinColumn({ name: 'clientID' }) // Specify your custom foreign key column name
     client!: Clients;
+
+   
 }

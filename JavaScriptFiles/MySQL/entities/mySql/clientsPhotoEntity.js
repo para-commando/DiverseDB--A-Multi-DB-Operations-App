@@ -23,6 +23,10 @@ __decorate([
     __metadata("design:type", String)
 ], ClientPhotos.prototype, "url", void 0);
 __decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ClientPhotos.prototype, "clientID", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)((type) => clientsEntity_1.Clients, (clients) => clients.photos),
     (0, typeorm_1.JoinColumn)({ name: 'clientID' }) // Specify your custom foreign key column name
     ,

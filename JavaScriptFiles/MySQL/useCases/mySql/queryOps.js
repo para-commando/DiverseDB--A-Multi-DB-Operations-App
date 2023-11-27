@@ -108,11 +108,16 @@ const queryOps = () => __awaiter(void 0, void 0, void 0, function* () {
             .insert()
             .into(clientsPhotoEntity_1.ClientPhotos)
             .values([
-            { url: 'AlasonCandid.jpg' },
-            { url: 'PhantomCandid.jpg' },
+            { url: 'AlasonCandid.jpg', clientID: 1 },
+            { url: 'PhantomCandid.jpg', clientID: 2 },
         ])
             .execute();
         console.log('🚀 ~ file: queryOps.ts:50 ~ queryOps ~ insertQueryBuilderClientPhotoEntity:', insertQueryBuilderClientPhotoEntity);
+        const user = yield initializedMySqlDataSource.createQueryBuilder()
+            .leftJoinAndSelect("clients.photos", "photo")
+            .where("clients.name = :name", { name: "Alason" })
+            .getMany();
+        console.log("🚀 ~ file: queryOps.ts:163 ~ queryOps ~ user:", user);
     }
     catch (error) {
         console.log('🚀 ~ file: createOps.ts:72 ~ aa ~ error:', JSON.stringify(error));
