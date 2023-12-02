@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, DeleteDateColumn } from "typeorm"
 import { ClientPhotos } from "./clientsPhotoEntity"
 
 @Entity({name: "clients"})
@@ -11,4 +11,7 @@ export class Clients {
 
     @OneToMany((type) => ClientPhotos, (clientPhotos) => clientPhotos.client)
     photos!: ClientPhotos[]
+
+    @DeleteDateColumn()
+    deletedAt?: Date
 }

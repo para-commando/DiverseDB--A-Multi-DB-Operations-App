@@ -174,6 +174,11 @@ const queryOps = async () => {
       '🚀 ~ file: queryOps.ts:166 ~ queryOps ~ leftJoinOnClients:',
       leftJoinOnClients
     );
+    const innerJoinOnClients = await initializedMySqlDataSource
+    .createQueryBuilder(Clients, 'client')
+    .innerJoinAndSelect('client.photos', 'photo')
+    .getMany();
+    console.log("🚀 ~ file: queryOps.ts:181 ~ queryOps ~ innerJoinOnClients:", innerJoinOnClients)
 
     const conditionalLeftJoinOnClientPhotosV1 = await initializedMySqlDataSource
       .createQueryBuilder(ClientPhotos, 'clientpics')
@@ -197,6 +202,19 @@ const queryOps = async () => {
       '🚀 ~ file: queryOps.ts:163 ~ queryOps ~ conditionalLeftJoinOnClientPhotosV2:',
       conditionalLeftJoinOnClientPhotosV2
     );
+
+    // here all the data from clientPhotos is listed and only those data is joined from client table which satisfies the given additional condition 'clientpics.url=:urlValue', here more than one condition is specified for joining itself and not in where clause
+    const conditionalLeftJoinOnClientPhotosV3 = await initializedMySqlDataSource
+    .createQueryBuilder(ClientPhotos, 'clientpics')
+    .leftJoinAndSelect('clientpics.client', 'client' ) // Join with the alias "clientpics"
+    .where('client.name=:nameValue',{nameValue:'Alason'})
+    .getMany();
+
+  console.log(
+    '🚀 ~ file: queryOps.ts:163 ~ queryOps ~ conditionalLeftJoinOnClientPhotosV3:',
+    conditionalLeftJoinOnClientPhotosV3
+  );   
+
   } catch (error) {
     console.log('🚀 ~ file: queryOps.ts:166 ~ queryOps ~ error:', error);
     console.log(

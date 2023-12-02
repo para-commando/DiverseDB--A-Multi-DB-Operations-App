@@ -125,6 +125,11 @@ const queryOps = () => __awaiter(void 0, void 0, void 0, function* () {
             .leftJoinAndSelect('client.photos', 'photo')
             .getMany();
         console.log('🚀 ~ file: queryOps.ts:166 ~ queryOps ~ leftJoinOnClients:', leftJoinOnClients);
+        const innerJoinOnClients = yield initializedMySqlDataSource
+            .createQueryBuilder(clientsEntity_1.Clients, 'client')
+            .innerJoinAndSelect('client.photos', 'photo')
+            .getMany();
+        console.log("🚀 ~ file: queryOps.ts:181 ~ queryOps ~ innerJoinOnClients:", innerJoinOnClients);
         const conditionalLeftJoinOnClientPhotosV1 = yield initializedMySqlDataSource
             .createQueryBuilder(clientsPhotoEntity_1.ClientPhotos, 'clientpics')
             .leftJoinAndSelect('clientpics.client', 'photo') // Join with the alias "clientpics"
@@ -138,6 +143,13 @@ const queryOps = () => __awaiter(void 0, void 0, void 0, function* () {
             .where('client.name = :name', { name: 'Alason' }) // Corrected alias to "photo"
             .getMany();
         console.log('🚀 ~ file: queryOps.ts:163 ~ queryOps ~ conditionalLeftJoinOnClientPhotosV2:', conditionalLeftJoinOnClientPhotosV2);
+        // here all the data from clientPhotos is listed and only those data is joined from client table which satisfies the given additional condition 'clientpics.url=:urlValue', here more than one condition is specified for joining itself and not in where clause
+        const conditionalLeftJoinOnClientPhotosV3 = yield initializedMySqlDataSource
+            .createQueryBuilder(clientsPhotoEntity_1.ClientPhotos, 'clientpics')
+            .leftJoinAndSelect('clientpics.client', 'client') // Join with the alias "clientpics"
+            .where('client.name=:nameValue', { nameValue: 'Alason' })
+            .getMany();
+        console.log('🚀 ~ file: queryOps.ts:163 ~ queryOps ~ conditionalLeftJoinOnClientPhotosV3:', conditionalLeftJoinOnClientPhotosV3);
     }
     catch (error) {
         console.log('🚀 ~ file: queryOps.ts:166 ~ queryOps ~ error:', error);
