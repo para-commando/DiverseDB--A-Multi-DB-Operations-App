@@ -1,5 +1,8 @@
 const shell = require('shelljs');
 
+console.log(
+  '\n\n 👁️ 👁️ 👁️ 👁️ Starting Apache-Cassandra Operations 👁️ 👁️ 👁️ 👁️\n\n'
+);
 // Check if the image is present
 const isImagePresent = shell
   .exec('./isImagePresent.sh', { silent: true })
@@ -60,19 +63,48 @@ if (isImagePresent === 'false') {
 }
 
 console.log('Starting create query operations...');
-shell.exec('./queryExecuter.sh cassandra-node-1 createOpsQueries.cql');
+const createQueryResult = shell.exec(
+  './queryExecuter.sh cassandra-node-1 createOpsQueries.cql'
+);
+console.log(
+  '🚀 ~ file: cassandraCRUD_ops.js:65 ~ createQueryResult:',
+  createQueryResult.stderr
+);
+if (
+  createQueryResult.stderr.includes('Error response from daemon: Container ') &&
+  createQueryResult.stderr.includes('is not running')
+) {
+  shell.cd('configurations');
+  console.log('Container(s) is/are not running, starting them...');
+  shell.exec('./start-cluster.sh');
+  shell.cd('..');
+  console.log('Starting create query operations...');
+  shell.exec('./queryExecuter.sh cassandra-node-1 createOpsQueries.cql');
+}
+
 shell.exec('sleep 2');
 
 console.log('Starting read query operations...');
-shell.exec('./queryExecuter.sh cassandra-node-1 readOpsQueries.cql');
+const readQueryResult = shell.exec(
+  './queryExecuter.sh cassandra-node-1 readOpsQueries.cql'
+);
+console.log(
+  '🚀 ~ file: cassandraCRUD_ops.js:89 ~ readQueryResult:',
+  readQueryResult.stderr
+);
 shell.exec('sleep 2');
 
 console.log('Starting update query operations...');
-shell.exec('./queryExecuter.sh cassandra-node-1 updateOpsQueries.cql');
+const updateQueryResult = shell.exec(
+  './queryExecuter.sh cassandra-node-1 updateOpsQueries.cql'
+);
 shell.exec('sleep 2');
 
 console.log('Starting delete query operations...');
-shell.exec('./queryExecuter.sh cassandra-node-1 deleteOpsQueries.cql');
+const deleteQueryResult = shell.exec(
+  './queryExecuter.sh cassandra-node-1 deleteOpsQueries.cql'
+);
+// console.log("🚀 ~ file: cassandraCRUD_ops.js:77 ~ kk:", deleteQueryResult.stderr.includes('Error response'))
 
 // console.log('Starting to erase the entire cluster...');
 // shell.cd('configurations');
@@ -81,3 +113,7 @@ shell.exec('./queryExecuter.sh cassandra-node-1 deleteOpsQueries.cql');
 // shell.exec('./destroy-custom-cassandra-image.sh');
 // shell.cd('..');
 // console.log('Successfully erased the entire cluster...');
+
+console.log(
+  '\n\n 👁️ 👁️ 👁️ 👁️ Apache-Cassandra Operations Completed 👁️ 👁️ 👁️ 👁️'
+);

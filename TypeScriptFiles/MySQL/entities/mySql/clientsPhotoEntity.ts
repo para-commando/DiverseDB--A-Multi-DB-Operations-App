@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from "typeorm";
 import { Clients } from "./clientsEntity";
 
 @Entity()
@@ -15,6 +15,7 @@ export class ClientPhotos {
     @ManyToOne((type) => Clients, (clients) => clients.photos)
     @JoinColumn({ name: 'clientID' }) // Specify your custom foreign key column name
     client!: Clients;
-
-   
+    
+    @DeleteDateColumn()
+    deletedAt?: Date
 }

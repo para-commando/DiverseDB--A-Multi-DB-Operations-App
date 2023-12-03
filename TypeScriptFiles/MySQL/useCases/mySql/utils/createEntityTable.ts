@@ -1,4 +1,4 @@
-import { createTableForMySqlEntity } from '../../utilities/createTablesFromMySqlEntity';
+import { createTableForMySqlEntity } from '../../../utilities/createTablesFromMySqlEntity';
 
 const createEntityTables = async () => {
   await createTableForMySqlEntity().catch((e) => {

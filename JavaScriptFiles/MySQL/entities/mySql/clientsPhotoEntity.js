@@ -32,6 +32,10 @@ __decorate([
     ,
     __metadata("design:type", clientsEntity_1.Clients)
 ], ClientPhotos.prototype, "client", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], ClientPhotos.prototype, "deletedAt", void 0);
 exports.ClientPhotos = ClientPhotos = __decorate([
     (0, typeorm_1.Entity)()
 ], ClientPhotos);

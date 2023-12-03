@@ -1,4 +1,4 @@
-import { MysqlDataSource } from '../../Configs/mySqlOrmConfig';
+import { MysqlDataSource } from '../../../Configs/mySqlOrmConfig';
 
 export const getInitializedMySqlDataSource = async () => {
   try {
@@ -18,5 +18,5 @@ export const getInitializedMySqlDataSource = async () => {
 
     throw err;
   }
-  return MysqlDataSource
+  return MysqlDataSource;
 };

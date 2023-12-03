@@ -17,7 +17,7 @@ exports.MySqlConfigObject = {
     logging: false,
     entities: [clientsEntity_1.Clients, clientsPhotoEntity_1.ClientPhotos, userEntity_1.User],
     migrationsTableName: 'migrations',
-    migrations: ['TypeScriptFiles/MySQL/migrations/mySql/*.ts'],
+    migrations: [],
 };
 exports.MysqlDataSource = new typeorm_1.DataSource({
     type: exports.MySqlConfigObject.type,

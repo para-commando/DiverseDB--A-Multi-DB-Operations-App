@@ -29,7 +29,7 @@ export const MySqlConfigObject: MySqlConfigObjectType = {
   logging: false,
   entities: [Clients,ClientPhotos, User],
   migrationsTableName: 'migrations',
-  migrations: ['TypeScriptFiles/MySQL/migrations/mySql/*.ts'],
+  migrations: [ ],
 };
 export const MysqlDataSource = new DataSource({
   type: MySqlConfigObject.type,

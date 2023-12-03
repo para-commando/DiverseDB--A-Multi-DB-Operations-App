@@ -26,6 +26,10 @@ __decorate([
     (0, typeorm_1.OneToMany)((type) => clientsPhotoEntity_1.ClientPhotos, (clientPhotos) => clientPhotos.client),
     __metadata("design:type", Array)
 ], Clients.prototype, "photos", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)(),
+    __metadata("design:type", Date)
+], Clients.prototype, "deletedAt", void 0);
 exports.Clients = Clients = __decorate([
     (0, typeorm_1.Entity)({ name: "clients" })
 ], Clients);
