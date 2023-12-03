@@ -10,4 +10,4 @@ CONTAINER_NAME="${1:-cassandra-node-1}"
 CQL_FILE="${2:-myqueries.cql}"
 
 # Run cqlsh inside the specified container, passing the CQL script file as standard input
-docker exec -i $CONTAINER_NAME cqlsh < "$SCRIPT_DIR/$CQL_FILE"
+sudo docker exec -i $CONTAINER_NAME cqlsh < "$SCRIPT_DIR/$CQL_FILE"

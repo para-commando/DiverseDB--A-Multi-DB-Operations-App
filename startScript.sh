@@ -1,7 +1,11 @@
+sleep 2
 node JavaScriptFiles/app.js
+sleep 3
 cd TypeScriptFiles/APACHE-CASSANDRA
 node cassandraCRUD_ops.js
+sleep 2
 cd ../../
 cd TypeScriptFiles/Neo4j
+sleep 2
 node neo4jCRUD_Operations.js
 cd ../../

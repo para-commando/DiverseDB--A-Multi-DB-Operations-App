@@ -10,27 +10,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mySqlQueryOps = void 0;
-const createQueryOps_1 = require("./createQueryOps");
-const readQueryOps_1 = require("./readQueryOps");
-const updateQueryOps_1 = require("./updateQueryOps");
-const deleteQueryOps_1 = require("./deleteQueryOps");
+const createQueryOps_1 = require("./crudOps/createQueryOps");
+const readQueryOps_1 = require("./crudOps/readQueryOps");
+const updateQueryOps_1 = require("./crudOps/updateQueryOps");
+const deleteQueryOps_1 = require("./crudOps/deleteQueryOps");
 const mySqlQueryOps = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('starting create Query Operations');
+        console.log('\n\nstarting create Query Operations\n\n');
         yield (0, createQueryOps_1.createQueryOps)();
-        console.log('Ended create Query Operations');
-        console.log('starting read Query Operations');
+        console.log('\n\nEnded create Query Operations');
+        console.log('\n\nstarting read Query Operations\n\n');
         yield (0, readQueryOps_1.readQueryOps)();
-        console.log('Ended read Query Operations');
-        console.log('starting update Query Operations');
+        console.log('\n\nEnded read Query Operations');
+        console.log('\n\nstarting update Query Operations\n\n');
         yield (0, updateQueryOps_1.updateQueryOps)();
-        console.log('Ended update Query Operations');
-        console.log('starting delete Query Operations');
+        console.log('\n\nEnded update Query Operations');
+        console.log('\n\nstarting delete Query Operations\n\n');
         yield (0, deleteQueryOps_1.deleteQueryOps)();
-        console.log('Ended delete Query Operations');
+        console.log('\n\nEnded delete Query Operations');
     }
-    catch (err) { }
+    catch (err) {
+        console.log('🚀 ~ file: mySqlQueryOps.ts:24 ~ mySqlQueryOps ~ err:', JSON.stringify(err));
+    }
 });
 exports.mySqlQueryOps = mySqlQueryOps;
-(0, exports.mySqlQueryOps)();
-//# sourceMappingURL=queryOps.js.map
+//# sourceMappingURL=mySqlQueryOps.js.map

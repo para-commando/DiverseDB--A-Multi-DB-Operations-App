@@ -3,6 +3,6 @@
 
 
 # Capture the result of the docker images command and grep
-RESULTs=$(docker ps | grep -q "$IMAGE_NAME" && echo "true" || echo "false")
+RESULTs=$(sudo docker ps | grep -q "$IMAGE_NAME" && echo "true" || echo "false")
 
 echo "$RESULTs"

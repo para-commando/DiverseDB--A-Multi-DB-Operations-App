@@ -7,4 +7,4 @@ CONTAINER_NAME="${1:-cassandra-node-1}"
 CQL_COMMAND="${2:-DESCRIBE KEYSPACES;}"
 
 # Run cqlsh inside the specified container
-docker exec -it $CONTAINER_NAME cqlsh -e "$CQL_COMMAND"
+sudo docker exec -it $CONTAINER_NAME cqlsh -e "$CQL_COMMAND"
