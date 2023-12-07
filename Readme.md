@@ -4,7 +4,7 @@
 
 
 <p>
-    <img src="./images/overviewImage.jpg" width="220" height="240" />
+    <img src="overviewImage.jpg"/>
 </p>
 
 DiverseDB is a comprehensive project designed for performing operations on multiple databases, showcasing its versatility in seamlessly interacting with various database systems. The project's primary objective is to provide a unified platform for developers to conduct Create, Read, Update, and Delete (CRUD) operations across diverse database technologies, enabling efficient management and manipulation of data.
