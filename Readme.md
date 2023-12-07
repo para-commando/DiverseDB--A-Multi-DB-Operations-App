@@ -2,16 +2,13 @@
 
 ***DiverseDB - A Multi-DB Operations App***
 
-
-<p>
-    <img src="overviewImage.jpg"/>
-</p>
+ ![overviewImage](https://github.com/anirudh-nayak-172k/DiverseDB--A-Multi-DB-Operations-App/assets/123434846/a1164f2a-da58-47eb-929e-3cc4dbc5da2d)
 
 DiverseDB is a comprehensive project designed for performing operations on multiple databases, showcasing its versatility in seamlessly interacting with various database systems. The project's primary objective is to provide a unified platform for developers to conduct Create, Read, Update, and Delete (CRUD) operations across diverse database technologies, enabling efficient management and manipulation of data.
 
 **Introduction**
 
-![Example Image](./images/introductory.jpg)
+![introductory](https://github.com/anirudh-nayak-172k/DiverseDB--A-Multi-DB-Operations-App/assets/123434846/d945f906-4cf4-4fc9-8167-a901e5c1a58b)
 
 The project encompasses four major database systems: MongoDB, Apache Cassandra, MySQL, and Neo4j, each represented by a dedicated module within the application. Leveraging TypeScript, JavaScript, and advanced ORM technologies like Mongoose, TypeORM, and Neo4j-Driver, DiverseDB ensures a consistent and streamlined experience for developers working across different database paradigms.
 
@@ -20,8 +17,7 @@ The MongoDB module utilizes MongoDB Atlas, a cloud-based service, and Mongoose, 
 
 **MongoDB:**
 
-![Example Image](./images/mongodb.png)
-
+![mongodb](https://github.com/anirudh-nayak-172k/DiverseDB--A-Multi-DB-Operations-App/assets/123434846/56e8ee5d-99ac-4330-9a14-285b0a5cddaa)
 
 - Connects to MongoDB via MongoDB Atlas, a fully managed cloud service.
 - TypeScript is the primary language, and Mongoose serves as the Object-Document Mapper.
@@ -35,8 +31,7 @@ The MongoDB module utilizes MongoDB Atlas, a cloud-based service, and Mongoose, 
 
 **Apache Cassandra:**
 
-![Example Image](./images/apachecCassandra.png)
-
+ ![apachecCassandra](https://github.com/anirudh-nayak-172k/DiverseDB--A-Multi-DB-Operations-App/assets/123434846/e51839dd-d30f-4457-88ba-ce1953898980)
 
 - Implemented in vanilla JavaScript.
 - Custom Docker image for Cassandra using the official image with a modified `cassandra.yaml`.
@@ -51,8 +46,7 @@ The MongoDB module utilizes MongoDB Atlas, a cloud-based service, and Mongoose, 
 
 **MySQL:**
 
-![Example Image](./images/mysql.png)
-
+ ![mysql](https://github.com/anirudh-nayak-172k/DiverseDB--A-Multi-DB-Operations-App/assets/123434846/a2e2f57e-db62-4003-9fd0-c43abdcd7362)
 
 - TypeScript with TypeORM for database queries.
 - Initialization of a datasource with credentials, entity creation for table interaction.
@@ -65,8 +59,7 @@ The MongoDB module utilizes MongoDB Atlas, a cloud-based service, and Mongoose, 
 
 **Neo4j:**
 
-![Example Image](./images/Neo4j.png)
-
+ ![Neo4j](https://github.com/anirudh-nayak-172k/DiverseDB--A-Multi-DB-Operations-App/assets/123434846/a22e14de-7448-450f-98d1-0bd06a9ff9c0)
 
 - Utilizes the npm package `neo4j-driver` to connect to Neo4j via AuraDB.
 - Session creation for query execution with options like `.run()` and `.executeWrite()`.
